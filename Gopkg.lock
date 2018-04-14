@@ -4,20 +4,24 @@
 [[projects]]
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
-  revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
-  version = "v1.0.4"
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
 
 [[projects]]
   branch = "master"
   name = "github.com/santhosh-tekuri/jsonschema"
-  packages = [".","formats","loader"]
+  packages = [
+    ".",
+    "formats",
+    "loader"
+  ]
   revision = "63accc9deedeee33b7caf4e241f8a9ebdf031069"
 
 [[projects]]
+  branch = "master"
   name = "github.com/urfave/cli"
   packages = ["."]
-  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
-  version = "v1.20.0"
+  revision = "8e01ec4cd3e2d84ab2fe90d8210528ffbb06d8ff"
 
 [[projects]]
   branch = "master"
@@ -28,7 +32,10 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix","windows"]
+  packages = [
+    "unix",
+    "windows"
+  ]
   revision = "9167dbfd0f8e88b731dd88cbf73a270701a37bb4"
 
 [[projects]]
@@ -40,6 +47,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "92711da67fe53e97f494e96755e1f765c010dce34a118095786cb33fdd8e6471"
+  inputs-digest = "4b24fe48e7c403870de08ccb1642191ea1b9b330db45ee7ea7787365fe1db563"
   solver-name = "gps-cdcl"
   solver-version = 1
