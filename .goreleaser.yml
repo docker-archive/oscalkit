@@ -1,0 +1,21 @@
+builds:
+  - binary: oscalkit
+    main: ./cli/main.go
+    ldflags: -s -w -X github.com/opencontrol/oscalkit/cli/version.Version={{.Version}} -X github.com/opencontrol/oscalkit/cli/version.Commit={{.Commit}} -X github.com/opencontrol/oscalkit/cli/version.Date={{.Date}}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+
+nfpm:
+  homepage: https://github.com/opencontrol/oscalkit
+  license: CC0 1.0
+  dependencies:
+    - xmllint
+  formats:
+    - deb
+    - rpm
