@@ -1,12 +1,14 @@
 # oscalkit
 
+[![GoDoc](https://godoc.org/github.com/opencontrol/oscalkit?status.svg)](https://godoc.org/github.com/opencontrol/oscalkit)
+
 > In development
 
-Barebones toolkit for translating between OSCAL-formatted XML and JSON and for converting from OpenControl projects in to OSCAL.
+Barebones Go SDK and CLI tool for parsing OSCAL, translating between OSCAL-formatted XML and JSON and for converting from OpenControl projects in to OSCAL.
 
 ## Installing
 
-You can download the appropriate oscalkit command-line utility for your system from the [TBD] page and run it from your local machine directly. For easier execution, you can include it in your `$PATH` environment variable as follows:
+You can download the appropriate oscalkit command-line utility for your system from the [GitHub Releases](https://github.com/opencontrol/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can include it in your `$PATH` environment variable as follows:
 
 ### Windows
 
