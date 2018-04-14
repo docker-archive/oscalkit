@@ -94,7 +94,9 @@ Convert OSCAL-formatted NIST 800-53 declarations from XML to JSON via STDIN (not
 
     $ cat SP800-53-declarations.xml | oscalkit convert oscal -
 
-### Convert from OpenControl project to OSCAL
+### Convert from OpenControl project to OSCAL [Experimental]
+
+> Depends on usnistgov/OSCAL [#92](https://github.com/usnistgov/OSCAL/issues/92)
 
 `oscalkit` also supports converting OpenControl projects to OSCAL-formatted JSON. You will need both the path to the `opencontrol.yaml` file and the `opencontrols/` directory which is created when you run a `compliance-masonry get` command.
 
