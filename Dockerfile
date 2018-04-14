@@ -9,7 +9,7 @@
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 FROM golang:1.10-alpine AS builder
-WORKDIR /go/src/github.com/opencontrol/oscalkit
+WORKDIR /go/src/github.com/opencontrol/oscalkit/cli
 COPY . .
 RUN CGO_ENABLED=0 go install -v -ldflags="-s -w"
 

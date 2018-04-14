@@ -35,9 +35,9 @@ push: build-docker
 $(BINARY):
 	docker container run --rm \
 		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
-		-w /go/src/github.com/opencontrol/oscalkit \
+		-w /go/src/github.com/opencontrol/oscalkit/cli \
 		golang:1.10-alpine \
-		sh -c 'GOOS=${GOOS} GOARCH=${GOARCH} go build -v ${LDFLAGS} -o ${BINARY}'
+		sh -c 'GOOS=${GOOS} GOARCH=${GOARCH} go build -v ${LDFLAGS} -o ../${BINARY}'
 
 clean:
 	if [ -f ${BINARY} ]; then rm ${BINARY}; fi

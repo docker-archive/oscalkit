@@ -11,17 +11,24 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/opencontrol/oscalkit/cmd/convert"
+	"github.com/opencontrol/oscalkit/cli/cmd/convert"
+	"github.com/opencontrol/oscalkit/cli/version"
 	"github.com/urfave/cli"
 )
 
 // Execute ...
 func Execute() error {
+	cli.VersionPrinter = func(c *cli.Context) {
+		fmt.Printf("oscal-proxy version %s, build %s, date %s\n", c.App.Version, version.Version, version.Date)
+	}
+
 	app := cli.NewApp()
 	app.Name = "oscalkit"
+	app.Version = version.Version
 	app.Usage = "OSCAL toolkit"
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{

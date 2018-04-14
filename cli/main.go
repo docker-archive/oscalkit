@@ -11,7 +11,7 @@
 package main
 
 import (
-	"github.com/opencontrol/oscalkit/cmd"
+	"github.com/opencontrol/oscalkit/cli/cmd"
 )
 
 func main() {
