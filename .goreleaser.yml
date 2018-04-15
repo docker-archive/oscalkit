@@ -15,7 +15,26 @@ nfpm:
   homepage: https://github.com/opencontrol/oscalkit
   license: CC0 1.0
   dependencies:
-    - xmllint
+    - libxml2-utils
   formats:
     - deb
     - rpm
+
+dockers:
+  - image: opencontrolorg/oscalkit
+    dockerfile: Dockerfile.release
+    tag_templates:
+      - "{{ .Version }}"
+      - latest
+
+brew:
+  name: oscalkit
+  github:
+    owner: opencontrol
+    name: homebrew-oscalkit
+  commit_author:
+    name: OpenControl
+    email: dev@open-control.org
+  homepage: https://github.com/opencontrol/oscalkit
+  dependencies:
+    - libxml2

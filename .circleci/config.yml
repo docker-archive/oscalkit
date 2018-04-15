@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/opencontrol/oscalkit
+    docker:
+      - image: circleci/golang:1.10
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-pkg-cache
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: sudo apt-get install -y rpm
+      - run: docker login -u $HUB_USERNAME -p $HUB_PASSWORD
+      - deploy:
+          name: goreleaser
+          command: |
+            if [[ -n ${CIRCLE_TAG} ]]; then
+              curl -sL https://git.io/goreleaser | bash
+            fi
+
+deployment:
+  trigger_tag:
+    tag: /.*/

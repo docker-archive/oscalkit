@@ -1,6 +1,6 @@
 # oscalkit
 
-[![GoDoc](https://godoc.org/github.com/opencontrol/oscalkit?status.svg)](https://godoc.org/github.com/opencontrol/oscalkit)
+[![CircleCI](https://circleci.com/gh/opencontrol/oscalkit.svg?style=svg)](https://circleci.com/gh/opencontrol/oscalkit) [![GoDoc](https://godoc.org/github.com/opencontrol/oscalkit?status.svg)](https://godoc.org/github.com/opencontrol/oscalkit)
 
 > In development
 
@@ -8,32 +8,18 @@ Barebones Go SDK and CLI tool for parsing OSCAL, translating between OSCAL-forma
 
 ## Installing
 
-You can download the appropriate oscalkit command-line utility for your system from the [GitHub Releases](https://github.com/opencontrol/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can include it in your `$PATH` environment variable as follows:
+You can download the appropriate oscalkit command-line utility for your system from the [GitHub Releases](https://github.com/opencontrol/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can include it in your `$PATH` environment variable. If you prefer, you can download and install via the included RPM/Deb packages on Linux or Homebrew recipe on macOS. A [Docker image](https://hub.docker.com/r/opencontrolorg/oscalkit/) is also made available on Docker Hub.
 
-### Windows
+### Homebrew
 
-> XML validation requires the `xmllint` tool which is not included with Windows. Installation instructions for Windows can be found [here](https://stackoverflow.com/a/21227833).
-
-Run the following commands in a PowerShell console
-
-```powershell
-$newPath = "<path_to_oscalkit.exe>;" + [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
-
-[Environment]::SetEnvironmentVariable("PATH", $newPath, [EnvironmentVariableTarget]::Machine)
-```
-
-### macOS/Linux
-
-Add the following line to to the .profile file in your home directory (~/.profile)
-
-    $ PATH=$PATH:/<path_to_oscalkit>
-    $ export PATH
+    $ brew tap opencontrol/homebrew-oscalkit
+    $ brew install oscalkit
 
 ### Docker
 
 > Running the oscalkit Docker container requires either bind-mounting the directory containing your source files or passing file contents in to the command via stdin.
 
-    $ docker pull opencontrolorg/oscalkit:latest
+    $ docker pull opencontrolorg/oscalkit:<version>
     $ docker run -it --rm -v $PWD:/data -w /data opencontrolorg/oscalkit convert oscal-core.xml
 
 or via stdin:
@@ -172,3 +158,15 @@ Compile for macOS:
 Compile for Windows:
 
     $ GOOS=windows GOARCH=amd64 make
+
+### Releasing
+
+The [GoReleaser](https://goreleaser.com/) tool is used to publish `oscalkit` to GitHub Releases. The following release artifacts are currently supported:
+
+- OSX binary
+- Linux binary
+- Windows binary
+- Docker Image
+- RPM package
+- Deb package
+- Homebrew recipe

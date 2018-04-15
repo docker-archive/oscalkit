@@ -9,13 +9,14 @@
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 FROM golang:1.10-alpine AS builder
-WORKDIR /go/src/github.com/opencontrol/oscalkit/cli
+WORKDIR /go/src/github.com/opencontrol/oscalkit
 COPY . .
-RUN CGO_ENABLED=0 go install -v -ldflags="-s -w"
+WORKDIR /go/src/github.com/opencontrol/oscalkit/cli
+RUN CGO_ENABLED=0 go build -o oscalkit -v -ldflags="-s -w"
 
 FROM alpine:3.7
 RUN apk --no-cache add ca-certificates libxml2-utils
 WORKDIR /oscalkit
-COPY --from=builder /go/bin/oscalkit /oscalkit-linux-x86_64
+COPY --from=builder /go/src/github.com/opencontrol/oscalkit/cli/oscalkit /oscalkit-linux-x86_64
 RUN ln -s /oscalkit-linux-x86_64 /usr/local/bin/oscalkit
 ENTRYPOINT ["oscalkit"]
