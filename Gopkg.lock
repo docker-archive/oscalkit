@@ -2,51 +2,87 @@
 
 
 [[projects]]
+  digest = "1:8cf46b6c18a91068d446e26b67512cf16f1540b45d90b28b9533706a127f0ca6"
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
+  pruneopts = ""
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
   version = "v1.0.5"
 
 [[projects]]
   branch = "master"
+  digest = "1:67bcf41677f33b22aee1b82e9460aa093a96cfe4877445dd19ea950c200a47ab"
+  name = "github.com/iancoleman/strcase"
+  packages = ["."]
+  pruneopts = ""
+  revision = "3605ed457bf7f8caa1371b4fafadadc026673479"
+
+[[projects]]
+  digest = "1:713b341855f1480e4baca1e7c5434e1d266441340685ecbde32d59bdc065fb3f"
+  name = "github.com/mitchellh/go-wordwrap"
+  packages = ["."]
+  pruneopts = ""
+  revision = "9e67c67572bc5dd02aef930e2b0ae3c02a4b5a5c"
+  version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:eb6fa398c7a10d3a4a34e52cb5dca190c288416f9ef59ef4759c2725a756d90e"
   name = "github.com/santhosh-tekuri/jsonschema"
   packages = [
     ".",
     "formats",
-    "loader"
+    "loader",
   ]
+  pruneopts = ""
   revision = "63accc9deedeee33b7caf4e241f8a9ebdf031069"
 
 [[projects]]
   branch = "master"
+  digest = "1:2c3cdaaa7ac9f06021636d163884979d008b3c5148203923c3448a0c974d608c"
   name = "github.com/urfave/cli"
   packages = ["."]
+  pruneopts = ""
   revision = "8e01ec4cd3e2d84ab2fe90d8210528ffbb06d8ff"
 
 [[projects]]
   branch = "master"
+  digest = "1:c3415eeb330bf30a2d8181e516ec79804c198f3d171ab9c9364f29dbe76c05d9"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
+  pruneopts = ""
   revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
 
 [[projects]]
   branch = "master"
+  digest = "1:a9b593bd80a86f44d3334e03e966cf2800ec5f01cc4464a5a2ac3424e12ec84e"
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
   ]
+  pruneopts = ""
   revision = "9167dbfd0f8e88b731dd88cbf73a270701a37bb4"
 
 [[projects]]
   branch = "v2"
+  digest = "1:f769ed60e075e4221612c2f4162fccc9d3795ef358fa463425e3b3d7a5debb27"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = ""
   revision = "287cf08546ab5e7e37d55a84f7ed3fd1db036de5"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4b24fe48e7c403870de08ccb1642191ea1b9b330db45ee7ea7787365fe1db563"
+  input-imports = [
+    "github.com/Sirupsen/logrus",
+    "github.com/iancoleman/strcase",
+    "github.com/mitchellh/go-wordwrap",
+    "github.com/santhosh-tekuri/jsonschema",
+    "github.com/santhosh-tekuri/jsonschema/loader",
+    "github.com/urfave/cli",
+    "gopkg.in/yaml.v2",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
