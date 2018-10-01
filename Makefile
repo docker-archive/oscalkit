@@ -11,7 +11,7 @@
 GOOS ?= darwin
 GOARCH ?= amd64
 LDFLAGS=-ldflags "-s -w"
-NAMESPACE ?= opencontrol
+NAMESPACE ?= opencontrolorg
 REPO ?= oscalkit
 BUILD ?= dev
 BINARY=oscalkit_$(GOOS)_$(GOARCH)
@@ -19,24 +19,31 @@ BINARY=oscalkit_$(GOOS)_$(GOARCH)
 .DEFAULT_GOAL := $(BINARY)
 .PHONY: test build-docker push $(BINARY) clean
 
-test:
+generate:
+	docker build -t $(NAMESPACE)/$(REPO):generate -f Dockerfile.generate .
+	docker container run \
+		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
+		$(NAMESPACE)/$(REPO):generate \
+		sh -c "go generate"
+
+test: generate
 	docker container run \
 		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
 		-w /go/src/github.com/opencontrol/oscalkit \
-		golang:1.10 \
+		golang:1.11 \
 		sh -c "go test \$$(go list ./... | grep -v /vendor/)"
 
 build-docker:
 	docker image build -t $(NAMESPACE)/$(REPO):$(BUILD) .
 
 push: build-docker
-	docker image push opencontrolorg/oscalkit:latest
+	docker image push $(NAMESPACE)/$(REPO):$(BUILD)
 
-$(BINARY):
+$(BINARY): generate
 	docker container run --rm \
 		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
 		-w /go/src/github.com/opencontrol/oscalkit/cli \
-		golang:1.10-alpine \
+		golang:1.11-alpine \
 		sh -c 'GOOS=${GOOS} GOARCH=${GOARCH} go build -v ${LDFLAGS} -o ../${BINARY}'
 
 clean:

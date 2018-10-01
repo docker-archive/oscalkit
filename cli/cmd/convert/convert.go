@@ -22,6 +22,6 @@ var Convert = cli.Command{
 	Usage: "convert between one or more OSCAL file formats and from OpenControl format",
 	Subcommands: []cli.Command{
 		ConvertOSCAL,
-		ConvertOpenControl,
+		// ConvertOpenControl,
 	},
 }

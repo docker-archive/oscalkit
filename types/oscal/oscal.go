@@ -17,22 +17,18 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	"os"
-	"path/filepath"
 
-	"github.com/opencontrol/oscalkit/types/opencontrol"
+	"github.com/opencontrol/oscalkit/types/oscal/catalog"
+	"github.com/opencontrol/oscalkit/types/oscal/profile"
 	yaml "gopkg.in/yaml.v2"
 )
 
 // OSCAL ...
 type OSCAL struct {
-	XMLName        xml.Name        `json:"-" yaml:"-"`
-	Catalog        *Catalog        `json:"catalog,omitempty" yaml:"catalog,omitempty"`
-	Framework      *Framework      `json:"framework,omitempty" yaml:"framework,omitempty"`
-	Worksheet      *Worksheet      `json:"worksheet,omitempty" yaml:"worksheet,omitempty"`
-	Declarations   *Declarations   `json:"declarations,omitempty" yaml:"declarations,omitempty"`
-	Profile        *Profile        `json:"profile,omitempty" yaml:"profile,omitempty"`
-	Implementation *Implementation `json:"implementation,omitempty" yaml:"implementation,omitempty"`
+	XMLName xml.Name         `json:"-" yaml:"-"`
+	Catalog *catalog.Catalog `json:"catalog,omitempty" yaml:"catalog,omitempty"`
+	// Declarations *Declarations `json:"declarations,omitempty" yaml:"declarations,omitempty"`
+	Profile *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
 }
 
 // MarshalXML ...
@@ -42,29 +38,9 @@ func (o *OSCAL) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		if err := e.Encode(o.Catalog); err != nil {
 			return err
 		}
-	} else if o.Declarations != nil {
-		o.XMLName = o.Declarations.XMLName
-		if err := e.Encode(o.Declarations); err != nil {
-			return err
-		}
-	} else if o.Framework != nil {
-		o.XMLName = o.Framework.XMLName
-		if err := e.Encode(o.Framework); err != nil {
-			return err
-		}
-	} else if o.Worksheet != nil {
-		o.XMLName = o.Worksheet.XMLName
-		if err := e.Encode(o.Worksheet); err != nil {
-			return err
-		}
 	} else if o.Profile != nil {
 		o.XMLName = o.Profile.XMLName
 		if err := e.Encode(o.Profile); err != nil {
-			return err
-		}
-	} else if o.Implementation != nil {
-		o.XMLName = o.Implementation.XMLName
-		if err := e.Encode(o.Implementation); err != nil {
 			return err
 		}
 	}
@@ -84,56 +60,56 @@ type OpenControlOptions struct {
 }
 
 // NewFromOC initializes an OSCAL type from raw OpenControl data
-func NewFromOC(options OpenControlOptions) (*OSCAL, error) {
-	ocFile, err := os.Open(options.OpenControlYAMLFilepath)
-	if err != nil {
-		return nil, err
-	}
-	defer ocFile.Close()
+// func NewFromOC(options OpenControlOptions) (*OSCAL, error) {
+// 	ocFile, err := os.Open(options.OpenControlYAMLFilepath)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer ocFile.Close()
 
-	rawOC, err := ioutil.ReadAll(ocFile)
-	if err != nil {
-		return nil, err
-	}
+// 	rawOC, err := ioutil.ReadAll(ocFile)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	var oc opencontrol.OpenControl
-	if err := yaml.Unmarshal(rawOC, &oc); err != nil {
-		return nil, err
-	}
+// 	var oc opencontrol.OpenControl
+// 	if err := yaml.Unmarshal(rawOC, &oc); err != nil {
+// 		return nil, err
+// 	}
 
-	ocComponentFileList := []string{}
-	filepath.Walk(filepath.Join(options.OpenControlsDir, "components/"), func(path string, f os.FileInfo, err error) error {
-		if !f.IsDir() && (filepath.Ext(path) == ".yaml" || filepath.Ext(path) == ".yml") {
-			absPath, err := filepath.Abs(path)
-			if err != nil {
-				return err
-			}
-			ocComponentFileList = append(ocComponentFileList, absPath)
-		}
+// 	ocComponentFileList := []string{}
+// 	filepath.Walk(filepath.Join(options.OpenControlsDir, "components/"), func(path string, f os.FileInfo, err error) error {
+// 		if !f.IsDir() && (filepath.Ext(path) == ".yaml" || filepath.Ext(path) == ".yml") {
+// 			absPath, err := filepath.Abs(path)
+// 			if err != nil {
+// 				return err
+// 			}
+// 			ocComponentFileList = append(ocComponentFileList, absPath)
+// 		}
 
-		return nil
-	})
+// 		return nil
+// 	})
 
-	ocComponents := []opencontrol.Component{}
-	for _, ocComponentFilepath := range ocComponentFileList {
-		ocComponentFile, err := os.Open(ocComponentFilepath)
-		if err != nil {
-			return nil, err
-		}
-		defer ocComponentFile.Close()
+// 	ocComponents := []opencontrol.Component{}
+// 	for _, ocComponentFilepath := range ocComponentFileList {
+// 		ocComponentFile, err := os.Open(ocComponentFilepath)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		defer ocComponentFile.Close()
 
-		rawOCComponentFile, err := ioutil.ReadAll(ocComponentFile)
+// 		rawOCComponentFile, err := ioutil.ReadAll(ocComponentFile)
 
-		var ocComponent opencontrol.Component
-		if err := yaml.Unmarshal(rawOCComponentFile, &ocComponent); err != nil {
-			return nil, err
-		}
+// 		var ocComponent opencontrol.Component
+// 		if err := yaml.Unmarshal(rawOCComponentFile, &ocComponent); err != nil {
+// 			return nil, err
+// 		}
 
-		ocComponents = append(ocComponents, ocComponent)
-	}
+// 		ocComponents = append(ocComponents, ocComponent)
+// 	}
 
-	return convertOC(oc, ocComponents)
-}
+// 	return convertOC(oc, ocComponents)
+// }
 
 // New ...
 func New(r io.Reader) (*OSCAL, error) {
@@ -154,46 +130,25 @@ func New(r io.Reader) (*OSCAL, error) {
 		case xml.StartElement:
 			switch startElement.Name.Local {
 			case "catalog":
-				var catalog Catalog
+				var catalog catalog.Catalog
 				if err := xml.Unmarshal(rawOSCAL, &catalog); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			case "framework":
-				var framework Framework
-				if err := xml.Unmarshal(rawOSCAL, &framework); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Framework: &framework}, nil
-
-			case "worksheet":
-				var worksheet Worksheet
-				if err := xml.Unmarshal(rawOSCAL, &worksheet); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Worksheet: &worksheet}, nil
-
-			case "declarations":
-				var declarations Declarations
-				if err := xml.Unmarshal(rawOSCAL, &declarations); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Declarations: &declarations}, nil
+			// case "declarations":
+			// 	var declarations Declarations
+			// 	if err := xml.Unmarshal(rawOSCAL, &declarations); err != nil {
+			// 		return nil, err
+			// 	}
+			// 	return &OSCAL{Declarations: &declarations}, nil
 
 			case "profile":
-				var profile Profile
+				var profile profile.Profile
 				if err := xml.Unmarshal(rawOSCAL, &profile); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Profile: &profile}, nil
-
-			case "implementation":
-				var implementation Implementation
-				if err := xml.Unmarshal(rawOSCAL, &implementation); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Implementation: &implementation}, nil
 			}
 
 		}
@@ -207,46 +162,25 @@ func New(r io.Reader) (*OSCAL, error) {
 		for k, v := range oscalT {
 			switch k {
 			case "catalog":
-				var catalog Catalog
+				var catalog catalog.Catalog
 				if err := json.Unmarshal(v, &catalog); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			case "framework":
-				var framework Framework
-				if err := json.Unmarshal(v, &framework); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Framework: &framework}, nil
-
-			case "worksheet":
-				var worksheet Worksheet
-				if err := json.Unmarshal(v, &worksheet); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Worksheet: &worksheet}, nil
-
-			case "declarations":
-				var declarations Declarations
-				if err := json.Unmarshal(v, &declarations); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Declarations: &declarations}, nil
+			// case "declarations":
+			// 	var declarations Declarations
+			// 	if err := json.Unmarshal(v, &declarations); err != nil {
+			// 		return nil, err
+			// 	}
+			// 	return &OSCAL{Declarations: &declarations}, nil
 
 			case "profile":
-				var profile Profile
+				var profile profile.Profile
 				if err := json.Unmarshal(v, &profile); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Profile: &profile}, nil
-
-			case "implementation":
-				var implementation Implementation
-				if err := json.Unmarshal(v, &implementation); err != nil {
-					return nil, err
-				}
-				return &OSCAL{Implementation: &implementation}, nil
 			}
 		}
 

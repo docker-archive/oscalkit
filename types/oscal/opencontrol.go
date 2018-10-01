@@ -1,173 +1,165 @@
 package oscal
 
-import (
-	"fmt"
-	"path"
-	"strings"
+// func convertOC(oc opencontrol.OpenControl, ocComponents []opencontrol.Component) (*OSCAL, error) {
+// 	ocOSCAL := Implementation{}
+// 	ocOSCAL.Title = oc.Name
 
-	"github.com/opencontrol/oscalkit/types/opencontrol"
-)
+// 	ocOSCAL.Paragraphs = append(ocOSCAL.Paragraphs, P{
+// 		// OptionalClass: "description",
+// 		Raw: oc.Metadata.Description,
+// 	})
 
-func convertOC(oc opencontrol.OpenControl, ocComponents []opencontrol.Component) (*OSCAL, error) {
-	ocOSCAL := Implementation{}
-	ocOSCAL.Title = oc.Name
+// 	for _, maintainer := range oc.Metadata.Maintainers {
+// 		ocOSCAL.Props = append(ocOSCAL.Props, Prop{
+// 			OptionalClass: "maintainer",
+// 			Value:         maintainer,
+// 		})
+// 	}
 
-	ocOSCAL.Paragraphs = append(ocOSCAL.Paragraphs, P{
-		OptionalClass: "description",
-		Raw:           oc.Metadata.Description,
-	})
+// 	implementationProfiles := &Profiles{}
 
-	for _, maintainer := range oc.Metadata.Maintainers {
-		ocOSCAL.Props = append(ocOSCAL.Props, Prop{
-			OptionalClass: "maintainer",
-			Value:         maintainer,
-		})
-	}
+// 	for _, cert := range oc.Certifications {
+// 		implementationProfiles.Links = append(implementationProfiles.Links, Link{
+// 			Rel:  "profile",
+// 			Href: cert,
+// 		})
+// 	}
 
-	implementationProfiles := &Profiles{}
+// 	if oc.Dependencies != nil {
+// 		for _, cert := range oc.Dependencies.Certifications {
+// 			implementationProfiles.Links = append(implementationProfiles.Links, Link{
+// 				Rel:   "profile",
+// 				Href:  "../../FedRAMP/FedRAMP-MODERATE-crude",
+// 				Value: parseOCCert(cert.URL),
+// 			})
+// 		}
+// 	}
 
-	for _, cert := range oc.Certifications {
-		implementationProfiles.Links = append(implementationProfiles.Links, Link{
-			Rel:  "profile",
-			Href: cert,
-		})
-	}
+// 	ocOSCAL.Profiles = implementationProfiles
+// 	ocOSCAL.Params = Params{}
+// 	ocOSCAL.Components = Components{}
 
-	if oc.Dependencies != nil {
-		for _, cert := range oc.Dependencies.Certifications {
-			implementationProfiles.Links = append(implementationProfiles.Links, Link{
-				Rel:   "profile",
-				Href:  "../../FedRAMP/FedRAMP-MODERATE-crude",
-				Value: parseOCCert(cert.URL),
-			})
-		}
-	}
+// 	for _, ocComponent := range ocComponents {
+// 		item := Item{}
 
-	ocOSCAL.Profiles = implementationProfiles
-	ocOSCAL.Params = Params{}
-	ocOSCAL.Components = Components{}
+// 		item.Title = &Raw{Value: ocComponent.Name}
+// 		item.Prose = &Prose{}
 
-	for _, ocComponent := range ocComponents {
-		item := Item{}
+// 		// Outputs "null" JSON value since this is self-closing XML tag
+// 		item.Prose.P = append(item.Prose.P, P{
+// 			// OptionalClass: "description",
+// 		})
 
-		item.Title = &Raw{Value: ocComponent.Name}
-		item.Prose = &Prose{}
+// 		if ocComponent.ResponsibleRole != "" {
+// 			item.Prose.P = append(item.Prose.P, P{
+// 				// OptionalClass: "responsibleRoles",
+// 				Raw: ocComponent.ResponsibleRole,
+// 			})
+// 		}
 
-		// Outputs "null" JSON value since this is self-closing XML tag
-		item.Prose.P = append(item.Prose.P, P{
-			OptionalClass: "description",
-		})
+// 		for _, ocSatisfy := range ocComponent.Satisfies {
+// 			var part Part
 
-		if ocComponent.ResponsibleRole != "" {
-			item.Prose.P = append(item.Prose.P, P{
-				OptionalClass: "responsibleRoles",
-				Raw:           ocComponent.ResponsibleRole,
-			})
-		}
+// 			part.OptionalClass = "satisfies"
 
-		for _, ocSatisfy := range ocComponent.Satisfies {
-			var part Part
+// 			key := strings.ToLower(ocSatisfy.ControlKey)
+// 			r := strings.NewReplacer(
+// 				" ", "",
+// 				"-", ".",
+// 				"(", ".",
+// 				")", "",
+// 			)
+// 			key = fmt.Sprintf("#%s", r.Replace(key))
+// 			part.Links = append(part.Links, Link{
+// 				Rel:  "satisfies",
+// 				Href: key,
+// 				// TODO: Value from linked "catalog"
+// 			})
 
-			part.OptionalClass = "satisfies"
+// 			part.Prose = &Prose{}
+// 			for _, ocNarrative := range ocSatisfy.Narrative {
+// 				raw := ocNarrative.Text
+// 				if strings.HasSuffix(raw, "\n") {
+// 					raw = strings.TrimSuffix(raw, "\n")
+// 				}
+// 				part.Prose.P = append(part.Prose.P, P{
+// 					// OptionalClass: "narrative",
+// 					Raw: raw,
+// 				})
+// 			}
 
-			key := strings.ToLower(ocSatisfy.ControlKey)
-			r := strings.NewReplacer(
-				" ", "",
-				"-", ".",
-				"(", ".",
-				")", "",
-			)
-			key = fmt.Sprintf("#%s", r.Replace(key))
-			part.Links = append(part.Links, Link{
-				Rel:  "satisfies",
-				Href: key,
-				// TODO: Value from linked "catalog"
-			})
+// 			for _, ocOrigin := range ocSatisfy.ControlOrigins {
+// 				part.Props = append(part.Props, Prop{
+// 					OptionalClass: "origin",
+// 					Value:         ocOrigin,
+// 				})
+// 			}
 
-			part.Prose = &Prose{}
-			for _, ocNarrative := range ocSatisfy.Narrative {
-				raw := ocNarrative.Text
-				if strings.HasSuffix(raw, "\n") {
-					raw = strings.TrimSuffix(raw, "\n")
-				}
-				part.Prose.P = append(part.Prose.P, P{
-					OptionalClass: "narrative",
-					Raw:           raw,
-				})
-			}
+// 			if ocSatisfy.ControlOrigin != "" {
+// 				part.Props = append(part.Props, Prop{
+// 					OptionalClass: "origin",
+// 					Value:         ocSatisfy.ControlOrigin,
+// 				})
+// 			}
 
-			for _, ocOrigin := range ocSatisfy.ControlOrigins {
-				part.Props = append(part.Props, Prop{
-					OptionalClass: "origin",
-					Value:         ocOrigin,
-				})
-			}
+// 			for _, ocParameter := range ocSatisfy.Parameters {
+// 				ocOSCAL.Params.SetParams = append(ocOSCAL.Params.SetParams, ImplementationParam{
+// 					ID: ocParameter.Key,
+// 					Desc: Desc{
+// 						Raw: ocParameter.Text,
+// 					},
+// 				})
+// 			}
 
-			if ocSatisfy.ControlOrigin != "" {
-				part.Props = append(part.Props, Prop{
-					OptionalClass: "origin",
-					Value:         ocSatisfy.ControlOrigin,
-				})
-			}
+// 			for _, ocStatus := range ocSatisfy.ImplementationStatuses {
+// 				part.Props = append(part.Props, Prop{
+// 					OptionalClass: "status",
+// 					Value:         ocStatus,
+// 				})
+// 			}
 
-			for _, ocParameter := range ocSatisfy.Parameters {
-				ocOSCAL.Params.SetParams = append(ocOSCAL.Params.SetParams, ImplementationParam{
-					ID: ocParameter.Key,
-					Desc: Desc{
-						Raw: ocParameter.Text,
-					},
-				})
-			}
+// 			if ocSatisfy.ImplementationStatus != "" {
+// 				part.Props = append(part.Props, Prop{
+// 					OptionalClass: "status",
+// 					Value:         ocSatisfy.ImplementationStatus,
+// 				})
+// 			}
 
-			for _, ocStatus := range ocSatisfy.ImplementationStatuses {
-				part.Props = append(part.Props, Prop{
-					OptionalClass: "status",
-					Value:         ocStatus,
-				})
-			}
+// 			item.Parts = append(item.Parts, part)
+// 		}
 
-			if ocSatisfy.ImplementationStatus != "" {
-				part.Props = append(part.Props, Prop{
-					OptionalClass: "status",
-					Value:         ocSatisfy.ImplementationStatus,
-				})
-			}
+// 		for _, ocReference := range ocComponent.References {
+// 			part := Part{
+// 				OptionalClass: "reference",
+// 				Title:         &Raw{Value: ocReference.Name},
+// 			}
 
-			item.Parts = append(item.Parts, part)
-		}
+// 			part.Prose = &Prose{}
+// 			part.Prose.P = append(part.Prose.P, P{
+// 				// OptionalClass: "description",
+// 			})
 
-		for _, ocReference := range ocComponent.References {
-			part := Part{
-				OptionalClass: "reference",
-				Title:         &Raw{Value: ocReference.Name},
-			}
+// 			part.Links = append(part.Links, Link{
+// 				Value: ocReference.Path,
+// 			})
 
-			part.Prose = &Prose{}
-			part.Prose.P = append(part.Prose.P, P{
-				OptionalClass: "description",
-			})
+// 			item.Parts = append(item.Parts, part)
+// 		}
 
-			part.Links = append(part.Links, Link{
-				Value: ocReference.Path,
-			})
+// 		ocOSCAL.Components.Items = append(ocOSCAL.Components.Items, item)
+// 	}
 
-			item.Parts = append(item.Parts, part)
-		}
+// 	ocOSCAL.Profiles = implementationProfiles
 
-		ocOSCAL.Components.Items = append(ocOSCAL.Components.Items, item)
-	}
+// 	return &OSCAL{Implementation: &ocOSCAL}, nil
+// }
 
-	ocOSCAL.Profiles = implementationProfiles
+// // Temporary mechanism for converting https://github.com/opencontrol/FedRAMP-Certifications
+// // to path to OSCAL JSON
+// func parseOCCert(url string) string {
+// 	if path.Base(url) == "FedRAMP-Certifications" {
+// 		return "FedRAMP MODERATE Baseline PROFILE"
+// 	}
 
-	return &OSCAL{Implementation: &ocOSCAL}, nil
-}
-
-// Temporary mechanism for converting https://github.com/opencontrol/FedRAMP-Certifications
-// to path to OSCAL JSON
-func parseOCCert(url string) string {
-	if path.Base(url) == "FedRAMP-Certifications" {
-		return "FedRAMP MODERATE Baseline PROFILE"
-	}
-
-	return ""
-}
+// 	return ""
+// }

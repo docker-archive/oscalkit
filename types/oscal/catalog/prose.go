@@ -8,7 +8,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-package oscal
+package catalog
 
 import (
 	"encoding/json"
@@ -199,52 +199,6 @@ func (p *Prose) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &p.raw)
 }
 
-// Calc ...
-type Calc struct {
-	Inherit []Inherit `xml:"inherit,omitempty" json:"inheritances,omitempty" yaml:"inheritances,omitempty"`
-	Autonum []string  `xml:"autonum,omitempty" json:"autonum,omitempty" yaml:"autonum,omitempty"`
-	Value   string    `xml:",chardata" json:"value,omitempty" yaml:"value,omitempty"`
-}
-
-// Inherit ...
-type Inherit struct {
-	From string `xml:"from,attr,omitempty" json:"from,omitempty" yaml:"from,omitempty"`
-}
-
-// MarshalJSON ...
-func (i *Inherit) MarshalJSON() ([]byte, error) {
-	if i.From == "" {
-		return json.Marshal(true)
-	}
-
-	return json.Marshal(*i)
-}
-
-// MarshalYAML ...
-func (i *Inherit) MarshalYAML() (interface{}, error) {
-	if i.From == "" {
-		return true, nil
-	}
-
-	return *i, nil
-}
-
-// UnmarshalJSON ...
-func (i *Inherit) UnmarshalJSON(data []byte) error {
-	var inheritBool bool
-	if err := json.Unmarshal(data, &inheritBool); err != nil {
-		var inherit Inherit
-		if err := json.Unmarshal(data, &inherit); err != nil {
-			return err
-		}
-		*i = inherit
-		return nil
-	}
-
-	*i = Inherit{}
-	return nil
-}
-
 // Raw ...
 type Raw struct {
 	Value string `xml:",innerxml"`
@@ -274,13 +228,19 @@ func (r *Raw) UnmarshalJSON(data []byte) error {
 
 // P ...
 type P struct {
-	XMLName       xml.Name    `xml:"p" json:"-" yaml:"-"`
-	ID            string      `xml:"id,attr,omitempty" json:"id,omitempty" yaml:"id,omitempty"`
-	OptionalClass string      `xml:"class,attr,omitempty" json:"class,omitempty" yaml:"class,omitempty"`
-	Withdrawn     []Withdrawn `xml:"withdrawn,omitempty" json:"withdrawn,omitempty" yaml:"withdrawn,omitempty"`
-	Assign        []Assign    `xml:"insert,omitempty" json:"insert,omitempty" yaml:"insert,omitempty"`
-	Select        []Select    `xml:"select,omitempty" json:"select,omitempty" yaml:"select,omitempty"`
-	Raw           string      `xml:",innerxml" json:"raw,omitempty" yaml:"raw,omitempty"`
+	XMLName     xml.Name `xml:"p" json:"-" yaml:"-"`
+	Q           []Q      `xml:"q" json:"-" yaml:"-"`
+	Code        []Code   `xml:"code" json:"-" yaml:"-"`
+	EM          []EM     `xml:"em" json:"-" yaml:"-"`
+	Strong      []Strong `xml:"strong" json:"-" yaml:"-"`
+	B           []B      `xml:"b" json:"-" yaml:"-"`
+	I           []I      `xml:"i" json:"-" yaml:"-"`
+	Sub         []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup         []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Xref        []Xref   `xml:"a" json:"-" yaml:"-"`
+	Assignments []Assign `xml:"-" json:"-" yaml:"-"`
+	Selection   []Select `xml:"-" json:"-" yaml:"-"`
+	Raw         string   `xml:",innerxml" json:"raw,omitempty" yaml:"raw,omitempty"`
 }
 
 // Pre ...
@@ -294,109 +254,92 @@ type Pre struct {
 type OL struct {
 	XMLName xml.Name `xml:"ol"`
 	Raw     string   `xml:",innerxml"`
-	// LI      []LI  `xml:"li"`
 }
 
 // UL ...
 type UL struct {
 	XMLName xml.Name `xml:"ul"`
 	Raw     string   `xml:",innerxml"`
-	// LI      []LI  `xml:"li"`
-}
-
-// LI ...
-type LI struct {
-	ID            string `xml:"id,attr"`
-	OptionalClass string `xml:"class,attr"`
-
-	// rnc:semantical
-	Withdrawn []Withdrawn `xml:"withdrawn"`
-	Assign    []Assign    `xml:"insert"`
-	Select    []Select    `xml:"select"`
-
-	// rnc:mix
-	Q     []Q    `xml:"q"`
-	Code  []Code `xml:"code"`
-	EM    []EM   `xml:"em"`
-	I     []I    `xml:"i"`
-	B     []B    `xml:"b"`
-	Sub   []Sub  `xml:"sub"`
-	Sup   []Sup  `xml:"sup"`
-	Span  []Span `xml:"span"`
-	Value string `xml:",chardata"`
-
-	Xref []Xref `xml:"a"`
-
-	OL []OL `xml:"ol"`
-	UL []UL `xml:"ul"`
 }
 
 // Q ...
 type Q struct {
-	I     []I    `xml:"i"`
-	B     []B    `xml:"b"`
-	Sub   []Sub  `xml:"sub"`
-	Sup   []Sup  `xml:"sup"`
-	Value string `xml:",chardata"`
+	Code   []Code   `xml:"code" json:"-" yaml:"-"`
+	EM     []EM     `xml:"em" json:"-" yaml:"-"`
+	I      []I      `xml:"i" json:"-" yaml:"-"`
+	Strong []Strong `xml:"strong" json:"-" yaml:"-"`
+	Sub    []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup    []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Value  string   `xml:",chardata" json:"-" yaml:"-"`
 }
 
 // Code ...
 type Code struct {
-	OptionalClass string `xml:"class,attr"`
-	Q             []Q    `xml:"q"`
-	Code          []Code `xml:"code"`
-	EM            []EM   `xml:"em"`
-	I             []I    `xml:"i"`
-	B             []B    `xml:"b"`
-	Sub           []Sub  `xml:"sub"`
-	Sup           []Sup  `xml:"sup"`
-	Span          []Span `xml:"span"`
-	Value         string `xml:",chardata"`
+	Q      []Q      `xml:"q" json:"-" yaml:"-"`
+	Code   []Code   `xml:"code" json:"-" yaml:"-"`
+	EM     []EM     `xml:"em" json:"-" yaml:"-"`
+	Strong []Strong `xml:"strong" json:"-" yaml:"-"`
+	B      []B      `xml:"b" json:"-" yaml:"-"`
+	I      []I      `xml:"i" json:"-" yaml:"-"`
+	Sub    []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup    []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Value  string   `xml:",chardata" json:"-" yaml:"-"`
 }
 
 // EM ...
 type EM struct {
-	OptionalClass string `xml:"class,attr"`
-	Q             []Q    `xml:"q"`
-	Code          []Code `xml:"code"`
-	EM            []EM   `xml:"em"`
-	I             []I    `xml:"i"`
-	B             []B    `xml:"b"`
-	Sub           []Sub  `xml:"sub"`
-	Sup           []Sup  `xml:"sup"`
-	Span          []Span `xml:"span"`
-	Value         string `xml:",chardata"`
-	Xref          []Xref `xml:"a"`
+	Q      []Q      `xml:"q" json:"-" yaml:"-"`
+	Code   []Code   `xml:"code" json:"-" yaml:"-"`
+	EM     []EM     `xml:"em" json:"-" yaml:"-"`
+	Strong []Strong `xml:"strong" json:"-" yaml:"-"`
+	B      []B      `xml:"b" json:"-" yaml:"-"`
+	I      []I      `xml:"i" json:"-" yaml:"-"`
+	Sub    []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup    []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Value  string   `xml:",chardata" json:"-" yaml:"-"`
+	Xref   []Xref   `xml:"a" json:"-" yaml:"-"`
+}
+
+// Strong ...
+type Strong struct {
+	Q      []Q      `xml:"q" json:"-" yaml:"-"`
+	Code   []Code   `xml:"code" json:"-" yaml:"-"`
+	EM     []EM     `xml:"em" json:"-" yaml:"-"`
+	Strong []Strong `xml:"strong" json:"-" yaml:"-"`
+	B      []B      `xml:"b" json:"-" yaml:"-"`
+	I      []I      `xml:"i" json:"-" yaml:"-"`
+	Sub    []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup    []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Value  string   `xml:",chardata" json:"-" yaml:"-"`
+	Xref   []Xref   `xml:"a" json:"-" yaml:"-"`
 }
 
 // I ...
 type I struct {
-	OptionalClass string `xml:"class,attr"`
-	Q             []Q    `xml:"q"`
-	Code          []Code `xml:"code"`
-	EM            []EM   `xml:"em"`
-	I             []I    `xml:"i"`
-	B             []B    `xml:"b"`
-	Sub           []Sub  `xml:"sub"`
-	Sup           []Sup  `xml:"sup"`
-	Span          []Span `xml:"span"`
-	Value         string `xml:",chardata"`
-	Xref          []Xref `xml:"a"`
+	Q      []Q      `xml:"q" json:"-" yaml:"-"`
+	Code   []Code   `xml:"code" json:"-" yaml:"-"`
+	EM     []EM     `xml:"em" json:"-" yaml:"-"`
+	Strong []Strong `xml:"strong" json:"-" yaml:"-"`
+	B      []B      `xml:"b" json:"-" yaml:"-"`
+	I      []I      `xml:"i" json:"-" yaml:"-"`
+	Sub    []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup    []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Value  string   `xml:",chardata" json:"-" yaml:"-"`
+	Xref   []Xref   `xml:"a" json:"-" yaml:"-"`
 }
 
 // B ...
 type B struct {
-	OptionalClass string `xml:"class,attr"`
-	Q             []Q    `xml:"q"`
-	Code          []Code `xml:"code"`
-	EM            []EM   `xml:"em"`
-	I             []I    `xml:"i"`
-	B             []B    `xml:"b"`
-	Sub           []Sub  `xml:"sub"`
-	Sup           []Sup  `xml:"sup"`
-	Span          []Span `xml:"span"`
-	Value         string `xml:",chardata"`
-	Xref          []Xref `xml:"a"`
+	Q      []Q      `xml:"q" json:"-" yaml:"-"`
+	Code   []Code   `xml:"code" json:"-" yaml:"-"`
+	EM     []EM     `xml:"em" json:"-" yaml:"-"`
+	Strong []Strong `xml:"strong" json:"-" yaml:"-"`
+	B      []B      `xml:"b" json:"-" yaml:"-"`
+	I      []I      `xml:"i" json:"-" yaml:"-"`
+	Sub    []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup    []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Value  string   `xml:",chardata" json:"-" yaml:"-"`
+	Xref   []Xref   `xml:"a" json:"-" yaml:"-"`
 }
 
 // Sub ...
@@ -413,42 +356,29 @@ type Sup struct {
 
 // Span ...
 type Span struct {
-	OptionalClass string `xml:"class,attr"`
-	Q             []Q    `xml:"q"`
-	Code          []Code `xml:"code"`
-	EM            []EM   `xml:"em"`
-	I             []I    `xml:"i"`
-	B             []B    `xml:"b"`
-	Sub           []Sub  `xml:"sub"`
-	Sup           []Sup  `xml:"sup"`
-	Span          []Span `xml:"span"`
-	Value         string `xml:",chardata"`
-	Xref          []Xref `xml:"a"`
+	OptionalClass string   `xml:"class,attr"`
+	Q             []Q      `xml:"q" json:"-" yaml:"-"`
+	Code          []Code   `xml:"code" json:"-" yaml:"-"`
+	EM            []EM     `xml:"em" json:"-" yaml:"-"`
+	Strong        []Strong `xml:"strong" json:"-" yaml:"-"`
+	B             []B      `xml:"b" json:"-" yaml:"-"`
+	I             []I      `xml:"i" json:"-" yaml:"-"`
+	Sub           []Sub    `xml:"sub" json:"-" yaml:"-"`
+	Sup           []Sup    `xml:"sup" json:"-" yaml:"-"`
+	Value         string   `xml:",chardata"`
+	Xref          []Xref   `xml:"a" json:"xrefs" yaml:"xrefs"`
 }
 
 // Xref ...
 type Xref struct {
-	Href string `xml:"href,attr"`
-	Q    []Q    `xml:"q"`
-	Code []Code `xml:"code"`
+	Href *Href  `xml:"href,attr" json:"href" yaml:"href"`
+	Q    []Q    `xml:"q" json:"-" yaml:"-"`
+	Code []Code `xml:"code" json:"-" yaml:"-"`
 	EM   []struct {
 		OptionalClass string `xml:"class,attr"`
 		Value         string `xml:",chardata"`
-	} `xml:"em"`
-	Value string `xml:",chardata"`
-}
-
-// Withdrawn ...
-type Withdrawn struct {
-	Q     []Q    `xml:"q"`
-	Code  []Code `xml:"code"`
-	EM    []EM   `xml:"em"`
-	I     []I    `xml:"i"`
-	B     []B    `xml:"b"`
-	Sub   []Sub  `xml:"sub"`
-	Sup   []Sup  `xml:"sup"`
-	Span  []Span `xml:"span"`
-	Value string `xml:",chardata"`
+	} `xml:"em" json:"-" yaml:"-"`
+	Value string `xml:",chardata" json:"value" yaml:"value"`
 }
 
 // Assign ...
@@ -456,9 +386,6 @@ type Assign struct {
 	ID      string `xml:"id,attr"`
 	ParamID string `xml:"param-id"`
 }
-
-// Select ...
-type Select struct{}
 
 func formatRawProse(raw string) string {
 	lines := strings.Split(raw, "\n")
