@@ -8,7 +8,7 @@
 # You should have received a copy of the CC0 Public Domain Dedication along with this software.
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-FROM golang:1.10-alpine AS builder
+FROM golang:1.11-alpine AS builder
 WORKDIR /go/src/github.com/opencontrol/oscalkit
 COPY . .
 WORKDIR /go/src/github.com/opencontrol/oscalkit/cli

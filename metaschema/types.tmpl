@@ -1,0 +1,90 @@
+package {{toLower .Use}}
+
+{{getImports .}}
+
+{{$m := . -}}
+{{range .DefineAssembly}}
+{{$x := wrapString .Description -}}
+{{- range $x -}}
+// {{ . }}
+{{end -}}
+type {{toCamel .Name}} struct {
+  {{- if or (eq "catalog" .Name) (eq "profile" .Name) (eq "declarations" .Name) -}}
+  XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 {{ .Name }}" json:"-"`
+  {{end -}}
+  {{range .Flags}}
+  {{- $cf := commentFlag .Name $m.DefineFlag -}}
+  {{range $cf}}
+  // {{ . }}
+  {{end -}}
+  {{- $dt := parseDatatype .Datatype -}}
+  {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+  {{end}}
+
+  {{- range .Model.Field}}
+  {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  {{- end}}
+
+  {{- range .Model.Fields}}
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{- end}}
+
+  {{- range .Model.Assembly}}
+  {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  {{- end}}
+
+  {{- range .Model.Assemblies}}
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{- end}}
+
+  {{- range .Model.Choice}}
+    {{- range .Field}}
+    {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+    {{- end}}
+
+    {{- range .Fields}}
+    {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+    {{- end}}
+
+    {{- range .Assembly}}
+    {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+    {{- end}}
+
+    {{- range .Assemblies}}
+    {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+    {{- end}}
+  {{- end}}
+
+  {{- if .Model.Prose}}
+  Prose *Prose `xml:",any" json:"prose,omitempty"`
+  {{- end}}
+}
+{{end}}
+
+{{range .DefineField}}
+{{$l := len .Flags -}}
+{{if gt $l 0 -}}
+{{$x := wrapString .Description -}}
+{{- range $x -}}
+// {{ . }}
+{{- end}}
+type {{toCamel .Name}} struct {
+  {{- range .Flags}}
+  {{- $cf := commentFlag .Name $m.DefineFlag -}}
+  {{range $cf}}
+  // {{ . }}
+  {{end -}}
+  {{- $dt := parseDatatype .Datatype -}}
+  {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+  {{end -}}
+
+  Value string `xml:",chardata" json:"value,omitempty"`
+}
+{{- else}}
+{{$x := wrapString .Description -}}
+{{- range $x -}}
+// {{ . }}
+{{end -}}
+type {{toCamel .Name}} string
+{{- end}}
+{{- end}}
