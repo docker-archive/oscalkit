@@ -35,12 +35,10 @@ NAME:
 USAGE:
    oscalkit [global options] command [command options] [arguments...]
 
-VERSION:
-   0.0.0
-
 COMMANDS:
-     convert   convert between one or more OSCAL file formats
+     convert   convert between one or more OSCAL file formats and from OpenControl format
      validate  validate files against OSCAL XML and JSON schemas
+     sign      sign OSCAL JSON artifacts
      help, h   Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -54,6 +52,7 @@ GLOBAL OPTIONS:
 `oscalkit` can be used to convert one or more source files between OSCAL-formatted XML and JSON.
 
 ```
+NAME:
    oscalkit convert oscal - convert between one or more OSCAL file formats
 
 USAGE:
@@ -66,8 +65,8 @@ DESCRIPTION:
 
 OPTIONS:
    --output-path value, -o value  Output path for converted file(s). Defaults to current working directory
-   --output-file value, -f value  file name for converted output from STDIN. Defaults to "stdin.<json|xml|yaml>"
-   --include-yaml                 If source file format is XML or JSON, also generate equivalent YAML output
+   --output-file value, -f value  File name for converted output from STDIN. Defaults to "stdin.<json|xml|yaml>"
+   --yaml                         If source file format is XML or JSON, also generate equivalent YAML output
 ```
 
 #### Examples
@@ -80,9 +79,41 @@ Convert OSCAL-formatted NIST 800-53 declarations from XML to JSON via STDIN (not
 
     $ cat SP800-53-declarations.xml | oscalkit convert oscal -
 
+### Signing OSCAL JSON with JWS
+
+`oscalkit` can be used to sign OSCAL-formatted JSON artifacts using JSON Web Signature (JWS)
+
+```
+NAME:
+   oscalkit sign - sign OSCAL JSON artifacts
+
+USAGE:
+   oscalkit sign [command options] [files...]
+
+OPTIONS:
+   --key value, -k value  private key file for signing. Must be in PEM or DER formats. Supports RSA/EC keys and X.509 certificats with embedded RSA/EC keys
+   --alg value, -a value  algorithm for signing. Supports RSASSA-PKCS#1v1.5, RSASSA-PSS, HMAC, ECDSA and Ed25519
+```
+
+The following signing algorithms are supported:
+
+ Signing / MAC              | Algorithm identifier(s)
+ :------------------------- | :------------------------------
+ RSASSA-PKCS#1v1.5          | RS256, RS384, RS512
+ RSASSA-PSS                 | PS256, PS384, PS512
+ HMAC                       | HS256, HS384, HS512
+ ECDSA                      | ES256, ES384, ES512
+ Ed25519                    | EdDSA
+
+#### Examples
+
+Sign OSCAL-formatted JSON using a PEM-encoded private key file and the PS256 signing algorithm:
+
+    $ oscalkit sign --key jws-example-key.pem --alg PS256 NIST_SP-800-53_rev4_catalog.json
+
 ### Convert from OpenControl project to OSCAL [Experimental]
 
-> Depends on usnistgov/OSCAL [#92](https://github.com/usnistgov/OSCAL/issues/92)
+> This feature has been temporarily disabled pending https://github.com/usnistgov/OSCAL/issues/216 and https://github.com/usnistgov/OSCAL/issues/215
 
 `oscalkit` also supports converting OpenControl projects to OSCAL-formatted JSON. You will need both the path to the `opencontrol.yaml` file and the `opencontrols/` directory which is created when you run a `compliance-masonry get` command.
 
