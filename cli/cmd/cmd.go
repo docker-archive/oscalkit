@@ -46,6 +46,7 @@ func Execute() error {
 	app.Commands = []cli.Command{
 		convert.Convert,
 		Validate,
+		Sign,
 	}
 
 	return app.Run(os.Args)
