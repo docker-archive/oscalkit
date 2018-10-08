@@ -49,7 +49,12 @@
   branch = "master"
   digest = "1:c3415eeb330bf30a2d8181e516ec79804c198f3d171ab9c9364f29dbe76c05d9"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = [
+    "ed25519",
+    "ed25519/internal/edwards25519",
+    "pbkdf2",
+    "ssh/terminal",
+  ]
   pruneopts = ""
   revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
 
@@ -63,6 +68,18 @@
   ]
   pruneopts = ""
   revision = "9167dbfd0f8e88b731dd88cbf73a270701a37bb4"
+
+[[projects]]
+  digest = "1:ddc5fa8f9159bea7d1ce58143e6d8fd8054018f7bc3709940aa7f7bc92855ed9"
+  name = "gopkg.in/square/go-jose.v2"
+  packages = [
+    ".",
+    "cipher",
+    "json",
+  ]
+  pruneopts = ""
+  revision = "ef984e69dd356202fd4e4910d4d9c24468bdf0b8"
+  version = "v2.1.9"
 
 [[projects]]
   branch = "v2"
@@ -82,6 +99,7 @@
     "github.com/santhosh-tekuri/jsonschema",
     "github.com/santhosh-tekuri/jsonschema/loader",
     "github.com/urfave/cli",
+    "gopkg.in/square/go-jose.v2",
     "gopkg.in/yaml.v2",
   ]
   solver-name = "gps-cdcl"
