@@ -7,13 +7,10 @@ import (
 // A collection of controls
 type Catalog struct {
 	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 catalog" json:"-"`
-
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
 	// Declares a major/minor version for this metaschema
-	ModelVersion string `xml:"model-version,attr,omitempty" json:"modelVersion,omitempty"`
-
+	ModelVersion string        `xml:"model-version,attr,omitempty" json:"modelVersion,omitempty"`
 	Title        *Title        `xml:"title,omitempty" json:"title,omitempty"`
 	Declarations *Declarations `xml:"declarations,omitempty" json:"declarations,omitempty"`
 	References   *References   `xml:"references,omitempty" json:"references,omitempty"`
@@ -24,12 +21,11 @@ type Catalog struct {
 
 // Allows the inclusion of prose content within a Catalog.
 type Section struct {
+
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
 	// Identifies the property or object within the control; a semantic hint
-	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
-
+	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
 	Title      *Title      `xml:"title,omitempty" json:"title,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
 	Sections   []Section   `xml:"section,omitempty" json:"sections,omitempty"`
@@ -38,12 +34,11 @@ type Section struct {
 
 // A group of controls, or of groups of controls.
 type Group struct {
+
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
 	// Identifies the property or object within the control; a semantic hint
-	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
-
+	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
 	Title      *Title      `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
@@ -57,12 +52,11 @@ type Group struct {
 // security or privacy control within the Catalog is defined by a distinct control
 // instance.
 type Control struct {
+
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
 	// Identifies the property or object within the control; a semantic hint
-	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
-
+	Class       string       `xml:"class,attr,omitempty" json:"class,omitempty"`
 	Title       *Title       `xml:"title,omitempty" json:"title,omitempty"`
 	Props       []Prop       `xml:"prop,omitempty" json:"props,omitempty"`
 	Links       []Link       `xml:"link,omitempty" json:"links,omitempty"`
@@ -74,12 +68,11 @@ type Control struct {
 
 // A control extension or enhancement
 type Subcontrol struct {
+
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
 	// Identifies the property or object within the control; a semantic hint
-	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
-
+	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
 	Title      *Title      `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	Links      []Link      `xml:"link,omitempty" json:"links,omitempty"`
@@ -91,15 +84,13 @@ type Subcontrol struct {
 // Parameters provide a mechanism for the dynamic assignment of value(s) in a
 // control.
 type Param struct {
+
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
 	// Identifies the property or object within the control; a semantic hint
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
-
 	// Another parameter invoking this one
-	DependsOn string `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
-
+	DependsOn    string       `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
 	Label        *Label       `xml:"label,omitempty" json:"label,omitempty"`
 	Descriptions []Desc       `xml:"desc,omitempty" json:"descriptions,omitempty"`
 	Constraints  []Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
@@ -116,20 +107,19 @@ type Guideline struct {
 
 // Presenting a choice among alternatives
 type Select struct {
-	// When selecting, a requirement such as one or more
-	HowMany string `xml:"how-many,attr,omitempty" json:"howMany,omitempty"`
 
+	// When selecting, a requirement such as one or more
+	HowMany      string   `xml:"how-many,attr,omitempty" json:"howMany,omitempty"`
 	Alternatives []Choice `xml:"choice,omitempty" json:"alternatives,omitempty"`
 }
 
 // A partition or component of a control, subcontrol or part
 type Part struct {
+
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
 	// Identifies the property or object within the control; a semantic hint
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
-
 	Title *Title `xml:"title,omitempty" json:"title,omitempty"`
 	Props []Prop `xml:"prop,omitempty" json:"props,omitempty"`
 	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
@@ -139,9 +129,9 @@ type Part struct {
 
 // A group of reference descriptions
 type References struct {
-	// Unique identifier
-	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
+	// Unique identifier
+	Id    string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	Refs  []Ref  `xml:"ref,omitempty" json:"refs,omitempty"`
 }
@@ -149,9 +139,9 @@ type References struct {
 // A reference, with one or more citations to standards, related documents, or
 // other resources
 type Ref struct {
-	// Unique identifier
-	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
+	// Unique identifier
+	Id        string     `xml:"id,attr,omitempty" json:"id,omitempty"`
 	Citations []Citation `xml:"citation,omitempty" json:"citations,omitempty"`
 	Prose     *Prose     `xml:",any" json:"prose,omitempty"`
 }
@@ -159,7 +149,7 @@ type Ref struct {
 // Either a reference to a declarations file, or a set of declarations
 type Declarations struct {
 	// A link to a document or document fragment (actual, nominal or projected)
-	Href  *Href  `xml:"href,attr,omitempty" json:"href,omitempty"`
+	Href  Href   `xml:"href,attr,omitempty" json:"href,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 
@@ -202,7 +192,7 @@ type Choice string
 // A line or paragraph with a hypertext link
 type Link struct {
 	// A link to a document or document fragment (actual, nominal or projected)
-	Href *Href `xml:"href,attr,omitempty" json:"href,omitempty"`
+	Href Href `xml:"href,attr,omitempty" json:"href,omitempty"`
 
 	// Purpose of the link
 	Rel   string `xml:"rel,attr,omitempty" json:"rel,omitempty"`
@@ -215,6 +205,6 @@ type Citation struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// A link to a document or document fragment (actual, nominal or projected)
-	Href  *Href  `xml:"href,attr,omitempty" json:"href,omitempty"`
+	Href  Href   `xml:"href,attr,omitempty" json:"href,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }

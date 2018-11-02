@@ -1,4 +1,5 @@
-package {{toLower .Use}}
+{{$packageName := toLower .Use -}}
+package {{ $packageName }}
 
 {{getImports .}}
 
@@ -9,17 +10,17 @@ package {{toLower .Use}}
 // {{ . }}
 {{end -}}
 type {{toCamel .Name}} struct {
-  {{- if or (eq "catalog" .Name) (eq "profile" .Name) (eq "declarations" .Name) -}}
+  {{if or (eq "catalog" .Name) (eq "profile" .Name) (eq "declarations" .Name)}}
   XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 {{ .Name }}" json:"-"`
-  {{end -}}
-  {{range .Flags}}
-  {{- $cf := commentFlag .Name $m.DefineFlag -}}
-  {{range $cf}}
+  {{- end}}
+  {{- range .Flags}}
+  {{- $cf := commentFlag .Name $m.DefineFlag}}
+  {{- range $cf}}
   // {{ . }}
-  {{end -}}
-  {{- $dt := parseDatatype .Datatype -}}
+  {{- end}}
+  {{- $dt := parseDatatype .Datatype $packageName}}
   {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
-  {{end}}
+  {{- end}}
 
   {{- range .Model.Field}}
   {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
@@ -38,21 +39,21 @@ type {{toCamel .Name}} struct {
   {{- end}}
 
   {{- range .Model.Choice}}
-    {{- range .Field}}
-    {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
-    {{- end}}
+  {{- range .Field}}
+  {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  {{- end}}
 
-    {{- range .Fields}}
-    {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
-    {{- end}}
+  {{- range .Fields}}
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{- end}}
 
-    {{- range .Assembly}}
-    {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
-    {{- end}}
+  {{- range .Assembly}}
+  {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  {{- end}}
 
-    {{- range .Assemblies}}
-    {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
-    {{- end}}
+  {{- range .Assemblies}}
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{- end}}
   {{- end}}
 
   {{- if .Model.Prose}}
@@ -74,7 +75,7 @@ type {{toCamel .Name}} struct {
   {{range $cf}}
   // {{ . }}
   {{end -}}
-  {{- $dt := parseDatatype .Datatype -}}
+  {{- $dt := parseDatatype .Datatype $packageName -}}
   {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
   {{end -}}
 
@@ -86,5 +87,5 @@ type {{toCamel .Name}} struct {
 // {{ . }}
 {{end -}}
 type {{toCamel .Name}} string
-{{- end}}
-{{- end}}
+{{end -}}
+{{end}}

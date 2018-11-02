@@ -29,7 +29,7 @@ var datatypes = map[Datatype]string{
 	DatatypeNCName:  "string",
 	DatatypeNMToken: "string",
 	DatatypeID:      "string",
-	DatatypeAnyURI:  "*Href",
+	DatatypeAnyURI:  "Href",
 }
 
 func GenerateTypes(metaschema *Metaschema) error {
@@ -77,7 +77,12 @@ func wrapString(text string) []string {
 	return strings.Split(wordwrap.WrapString(text, 80), "\n")
 }
 
-func parseDatatype(datatype string) string {
+func parseDatatype(datatype string, packageName string) string {
+	if packageName != "catalog" {
+		if dt, ok := datatypes[Datatype(datatype)]; ok && dt != "string" {
+			return fmt.Sprintf("*catalog.%s", dt)
+		}
+	}
 	return datatypes[Datatype(datatype)]
 }
 
@@ -123,7 +128,7 @@ func getImports(metaschema Metaschema) string {
 	imports.WriteString("\t\"encoding/xml\"\n")
 
 	if im := metaschema.ImportedMetaschema; im != nil {
-		imports.WriteString(fmt.Sprintf("\n\"github.com/opencontrol/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Use)))
+		imports.WriteString(fmt.Sprintf("\n\t\"github.com/opencontrol/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Use)))
 	}
 
 	imports.WriteString(")")

@@ -9,7 +9,6 @@ import (
 // Each OSCAL profile is defined by a Profile element
 type Profile struct {
 	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 profile" json:"-"`
-
 	Merge   *Merge   `xml:"merge,omitempty" json:"merge,omitempty"`
 	Modify  *Modify  `xml:"modify,omitempty" json:"modify,omitempty"`
 	Imports []Import `xml:"import,omitempty" json:"imports,omitempty"`
@@ -18,8 +17,9 @@ type Profile struct {
 // An Import element designates a catalog, profile, or other resource to be
 // included (referenced and potentially modified) by this profile.
 type Import struct {
-	Include *Include `xml:"include,omitempty" json:"include,omitempty"`
-	Exclude *Exclude `xml:"exclude,omitempty" json:"exclude,omitempty"`
+	Href    *catalog.Href `xml:"href,attr,omitempty" json:"href,omitempty"`
+	Include *Include      `xml:"include,omitempty" json:"include,omitempty"`
+	Exclude *Exclude      `xml:"exclude,omitempty" json:"exclude,omitempty"`
 }
 
 // A Merge element merges controls in resolution.
@@ -67,10 +67,9 @@ type Exclude struct {
 
 // A parameter setting, to be propagated to points of insertion
 type SetParam struct {
-	Id        string `xml:"id,attr,omitempty" json:"id,omitempty"`
-	Class     string `xml:"class,attr,omitempty" json:"class,omitempty"`
-	DependsOn string `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
-
+	Id           string               `xml:"id,attr,omitempty" json:"id,omitempty"`
+	Class        string               `xml:"class,attr,omitempty" json:"class,omitempty"`
+	DependsOn    string               `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
 	Label        *catalog.Label       `xml:"label,omitempty" json:"label,omitempty"`
 	Descriptions []catalog.Desc       `xml:"desc,omitempty" json:"descriptions,omitempty"`
 	Constraints  []catalog.Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
@@ -83,23 +82,21 @@ type SetParam struct {
 // An Alter element specifies changes to be made to an included control or
 // subcontrol when a profile is resolved.
 type Alter struct {
+
 	// Value of the 'id' flag on a target control
 	ControlId string `xml:"control-id,attr,omitempty" json:"controlId,omitempty"`
-
 	// Value of the 'id' flag on a target subcontrol
-	SubcontrolId string `xml:"subcontrol-id,attr,omitempty" json:"subcontrolId,omitempty"`
-
-	Removals  []Remove `xml:"remove,omitempty" json:"removals,omitempty"`
-	Additions []Add    `xml:"add,omitempty" json:"additions,omitempty"`
+	SubcontrolId string   `xml:"subcontrol-id,attr,omitempty" json:"subcontrolId,omitempty"`
+	Removals     []Remove `xml:"remove,omitempty" json:"removals,omitempty"`
+	Additions    []Add    `xml:"add,omitempty" json:"additions,omitempty"`
 }
 
 // Specifies contents to be added into controls or subcontrols, in resolution
 type Add struct {
+
 	// Where to add the new content with respect to the targeted element (beside it or
-
 	// inside it)
-	Position string `xml:"position,attr,omitempty" json:"position,omitempty"`
-
+	Position   string              `xml:"position,attr,omitempty" json:"position,omitempty"`
 	Title      *catalog.Title      `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []catalog.Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	Links      []catalog.Link      `xml:"link,omitempty" json:"links,omitempty"`
