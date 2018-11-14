@@ -23,7 +23,7 @@ type {{toCamel .Name}} struct {
   {{- end}}
 
   {{- range .Model.Field}}
-  {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  {{toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
   {{- end}}
 
   {{- range .Model.Fields}}
@@ -40,7 +40,7 @@ type {{toCamel .Name}} struct {
 
   {{- range .Model.Choice}}
   {{- range .Field}}
-  {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  {{toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
   {{- end}}
 
   {{- range .Fields}}

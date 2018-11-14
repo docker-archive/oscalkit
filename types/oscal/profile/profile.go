@@ -25,7 +25,7 @@ type Import struct {
 // A Merge element merges controls in resolution.
 type Merge struct {
 	Combine *Combine `xml:"combine,omitempty" json:"combine,omitempty"`
-	AsIs    *AsIs    `xml:"as-is,omitempty" json:"asIs,omitempty"`
+	AsIs    AsIs     `xml:"as-is,omitempty" json:"asIs,omitempty"`
 	Custom  *Custom  `xml:"custom,omitempty" json:"custom,omitempty"`
 }
 
@@ -70,12 +70,12 @@ type SetParam struct {
 	Id           string               `xml:"id,attr,omitempty" json:"id,omitempty"`
 	Class        string               `xml:"class,attr,omitempty" json:"class,omitempty"`
 	DependsOn    string               `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
-	Label        *catalog.Label       `xml:"label,omitempty" json:"label,omitempty"`
+	Label        catalog.Label        `xml:"label,omitempty" json:"label,omitempty"`
 	Descriptions []catalog.Desc       `xml:"desc,omitempty" json:"descriptions,omitempty"`
 	Constraints  []catalog.Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
 	Links        []catalog.Link       `xml:"link,omitempty" json:"links,omitempty"`
 	Parts        []catalog.Part       `xml:"part,omitempty" json:"parts,omitempty"`
-	Value        *catalog.Value       `xml:"value,omitempty" json:"value,omitempty"`
+	Value        catalog.Value        `xml:"value,omitempty" json:"value,omitempty"`
 	Select       *catalog.Select      `xml:"select,omitempty" json:"select,omitempty"`
 }
 
@@ -97,7 +97,7 @@ type Add struct {
 	// Where to add the new content with respect to the targeted element (beside it or
 	// inside it)
 	Position   string              `xml:"position,attr,omitempty" json:"position,omitempty"`
-	Title      *catalog.Title      `xml:"title,omitempty" json:"title,omitempty"`
+	Title      catalog.Title       `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []catalog.Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	Links      []catalog.Link      `xml:"link,omitempty" json:"links,omitempty"`
 	References *catalog.References `xml:"references,omitempty" json:"references,omitempty"`

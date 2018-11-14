@@ -11,7 +11,7 @@ type Catalog struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Declares a major/minor version for this metaschema
 	ModelVersion string        `xml:"model-version,attr,omitempty" json:"modelVersion,omitempty"`
-	Title        *Title        `xml:"title,omitempty" json:"title,omitempty"`
+	Title        Title         `xml:"title,omitempty" json:"title,omitempty"`
 	Declarations *Declarations `xml:"declarations,omitempty" json:"declarations,omitempty"`
 	References   *References   `xml:"references,omitempty" json:"references,omitempty"`
 	Sections     []Section     `xml:"section,omitempty" json:"sections,omitempty"`
@@ -26,7 +26,7 @@ type Section struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
 	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
-	Title      *Title      `xml:"title,omitempty" json:"title,omitempty"`
+	Title      Title       `xml:"title,omitempty" json:"title,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
 	Sections   []Section   `xml:"section,omitempty" json:"sections,omitempty"`
 	Prose      *Prose      `xml:",any" json:"prose,omitempty"`
@@ -39,7 +39,7 @@ type Group struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
 	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
-	Title      *Title      `xml:"title,omitempty" json:"title,omitempty"`
+	Title      Title       `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
 	Params     []Param     `xml:"param,omitempty" json:"params,omitempty"`
@@ -57,7 +57,7 @@ type Control struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
 	Class       string       `xml:"class,attr,omitempty" json:"class,omitempty"`
-	Title       *Title       `xml:"title,omitempty" json:"title,omitempty"`
+	Title       Title        `xml:"title,omitempty" json:"title,omitempty"`
 	Props       []Prop       `xml:"prop,omitempty" json:"props,omitempty"`
 	Links       []Link       `xml:"link,omitempty" json:"links,omitempty"`
 	References  *References  `xml:"references,omitempty" json:"references,omitempty"`
@@ -73,7 +73,7 @@ type Subcontrol struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
 	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
-	Title      *Title      `xml:"title,omitempty" json:"title,omitempty"`
+	Title      Title       `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	Links      []Link      `xml:"link,omitempty" json:"links,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
@@ -91,12 +91,12 @@ type Param struct {
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 	// Another parameter invoking this one
 	DependsOn    string       `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
-	Label        *Label       `xml:"label,omitempty" json:"label,omitempty"`
+	Label        Label        `xml:"label,omitempty" json:"label,omitempty"`
 	Descriptions []Desc       `xml:"desc,omitempty" json:"descriptions,omitempty"`
 	Constraints  []Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
 	Links        []Link       `xml:"link,omitempty" json:"links,omitempty"`
 	Guidance     []Guideline  `xml:"guideline,omitempty" json:"guidance,omitempty"`
-	Value        *Value       `xml:"value,omitempty" json:"value,omitempty"`
+	Value        Value        `xml:"value,omitempty" json:"value,omitempty"`
 	Select       *Select      `xml:"select,omitempty" json:"select,omitempty"`
 }
 
@@ -120,7 +120,7 @@ type Part struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
-	Title *Title `xml:"title,omitempty" json:"title,omitempty"`
+	Title Title  `xml:"title,omitempty" json:"title,omitempty"`
 	Props []Prop `xml:"prop,omitempty" json:"props,omitempty"`
 	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	Parts []Part `xml:"part,omitempty" json:"parts,omitempty"`

@@ -34,14 +34,15 @@ var datatypes = map[Datatype]string{
 
 func GenerateTypes(metaschema *Metaschema) error {
 	t, err := template.New("types.tmpl").Funcs(template.FuncMap{
-		"toLower":       strings.ToLower,
-		"toCamel":       strcase.ToCamel,
-		"toLowerCamel":  strcase.ToLowerCamel,
-		"wrapString":    wrapString,
-		"parseDatatype": parseDatatype,
-		"commentFlag":   commentFlag,
-		"packageImport": packageImport,
-		"getImports":    getImports,
+		"toLower":         strings.ToLower,
+		"toCamel":         strcase.ToCamel,
+		"toLowerCamel":    strcase.ToLowerCamel,
+		"wrapString":      wrapString,
+		"parseDatatype":   parseDatatype,
+		"commentFlag":     commentFlag,
+		"packageImport":   packageImport,
+		"getImports":      getImports,
+		"requiresPointer": requiresPointer,
 	}).ParseFiles("types.tmpl")
 	if err != nil {
 		return err
@@ -134,4 +135,18 @@ func getImports(metaschema Metaschema) string {
 	imports.WriteString(")")
 
 	return imports.String()
+}
+
+func requiresPointer(fieldName string, metaschema Metaschema) bool {
+	for _, df := range metaschema.DefineField {
+		if df.Name == fieldName {
+			if len(df.Flags) > 0 {
+				return true
+			}
+
+			return false
+		}
+	}
+
+	return false
 }
