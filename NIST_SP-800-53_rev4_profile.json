@@ -1,0 +1,139 @@
+{
+    "profile": {
+      "id": "uuid-599a7728-a154-4035-a556-1f03223120eb",
+      "title": "SP800-53 HIGH BASELINE IMPACT",
+      "imports": [
+        {
+          "href": "NIST_SP-800-53_rev4_catalog.json",
+          "include": {
+            "calls": [
+              {
+                "controlId": "ac-1"
+              },
+              {
+                "controlId": "ac-2"
+              },
+              {
+                "subcontrolId": "ac-2.1"
+              },
+              {
+                "subcontrolId": "ac-2.2"
+              },
+              {
+                "subcontrolId": "ac-2.3"
+              },
+              {
+                "subcontrolId": "ac-2.4"
+              },
+              {
+                "subcontrolId": "ac-2.5"
+              },
+              {
+                "subcontrolId": "ac-2.11"
+              },
+              {
+                "subcontrolId": "ac-2.12"
+              },
+              {
+                "subcontrolId": "ac-2.13"
+              },
+              {
+                "controlId": "ac-3"
+              },
+              {
+                "controlId": "ac-4"
+              },
+              {
+                "controlId": "ac-5"
+              },
+              {
+                "controlId": "ac-6"
+              },
+              {
+                "subcontrolId": "ac-6.1"
+              },
+              {
+                "subcontrolId": "ac-6.2"
+              },
+              {
+                "subcontrolId": "ac-6.3"
+              },
+              {
+                "subcontrolId": "ac-6.5"
+              },
+              {
+                "subcontrolId": "ac-6.9"
+              },
+              {
+                "subcontrolId": "ac-6.10"
+              },
+              {
+                "controlId": "ac-7"
+              },
+              {
+                "controlId": "ac-8"
+              },
+              {
+                "controlId": "ac-10"
+              },
+              {
+                "controlId": "ac-11"
+              },
+              {
+                "subcontrolId": "ac-11.1"
+              }              
+            ]
+          }
+        }
+      ],
+      "merge": {
+        "asIs": true
+      },
+      "modify": {
+        "alterations": [
+          {
+            "controlId": "ac-1",
+            "additions": [
+              {
+                "position": "starting",
+                "props": [
+                  {
+                    "class": "priority",
+                    "value": "P1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "controlId": "ac-2",
+            "additions": [
+              {
+                "position": "starting",
+                "props": [
+                  {
+                    "class": "priority",
+                    "value": "P1"
+                  }
+                ]
+              }
+            ]
+          },          
+          {
+            "controlId": "si-16",
+            "additions": [
+              {
+                "position": "starting",
+                "props": [
+                  {
+                    "class": "priority",
+                    "value": "P1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
