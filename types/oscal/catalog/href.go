@@ -26,17 +26,6 @@ func (h *Href) MarshalJSON() ([]byte, error) {
 	return json.Marshal(h.String())
 }
 
-func (h *Href) UnmarshalJSON(b []byte) error {
-	s := string(b)
-	s = s[1 : len(s)-1]
-	url, err := url.Parse(s)
-	if err != nil {
-		return err
-	}
-	h.URL = url
-	return nil
-}
-
 func (h *Href) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
 	if h.URL != nil {
 		rawURI := h.URL.String()
