@@ -22,6 +22,17 @@ func (h *Href) UnmarshalXMLAttr(attr xml.Attr) error {
 	return nil
 }
 
+func (h *Href) UnmarshalJSON(b []byte) error {
+	s := string(b)
+	s = s[1 : len(s)-1]
+	url, err := url.Parse(s)
+	if err != nil {
+		return err
+	}
+	h.URL = url
+	return nil
+}
+
 func (h *Href) MarshalJSON() ([]byte, error) {
 	return json.Marshal(h.String())
 }
