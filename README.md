@@ -2,13 +2,22 @@
 
 [![CircleCI](https://circleci.com/gh/opencontrol/oscalkit.svg?style=svg)](https://circleci.com/gh/opencontrol/oscalkit) [![GoDoc](https://godoc.org/github.com/opencontrol/oscalkit?status.svg)](https://godoc.org/github.com/opencontrol/oscalkit)
 
-> In development
+> In development. Since the OSCAL schemas are still under active development, parsing errors may occur if running the tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/opencontrol/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
 
-Barebones Go SDK and CLI tool for parsing OSCAL, translating between OSCAL-formatted XML and JSON and for converting from OpenControl projects in to OSCAL.
+Barebones Go SDK and CLI tool for parsing OSCAL, converting between OSCAL-formatted XML, JSON and YAML and for converting from [OpenControl](http://opencontrol.cfapps.io/) projects in to OSCAL.
+
+## Supported OSCAL Components
+
+The following OSCAL components are currently supported:
+
+|Component|Schemas|
+|---------|-------|
+|[Catalog](https://pages.nist.gov/OSCAL/concepts/#oscal-catalogs)|[XSD](https://github.com/usnistgov/OSCAL/blob/master/schema/xml/oscal-catalog-schema.xsd) \| [JSON schema](https://github.com/usnistgov/OSCAL/blob/master/schema/json/oscal-catalog-schema.json) \| [metaschema](https://github.com/usnistgov/OSCAL/blob/master/schema/metaschema/oscal-catalog-metaschema.xml)|
+|[Profile](https://pages.nist.gov/OSCAL/concepts/#oscal-profiles)|[XSD](https://github.com/usnistgov/OSCAL/blob/master/schema/xml/oscal-profile-schema.xsd) \| [JSON schema](https://github.com/usnistgov/OSCAL/blob/master/schema/json/oscal-profile-schema.json) \| [metaschema](https://github.com/usnistgov/OSCAL/blob/master/schema/metaschema/oscal-profile-metaschema.xml)|
 
 ## Installing
 
-You can download the appropriate oscalkit command-line utility for your system from the [GitHub Releases](https://github.com/opencontrol/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can include it in your `$PATH` environment variable. If you prefer, you can download and install via the included RPM/Deb packages on Linux or Homebrew recipe on macOS. A [Docker image](https://hub.docker.com/r/opencontrolorg/oscalkit/) is also made available on Docker Hub.
+You can download the appropriate `oscalkit` command-line utility for your system from the [GitHub Releases](https://github.com/opencontrol/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can move it to an appropriate directory listed in your `$PATH` environment variable. If you prefer, you can download and install via the included RPM/Deb packages on Linux or Homebrew recipe on macOS. A [Docker image](https://hub.docker.com/r/opencontrolorg/oscalkit/) is also made available on Docker Hub.
 
 ### Homebrew
 
@@ -17,12 +26,12 @@ You can download the appropriate oscalkit command-line utility for your system f
 
 ### Docker
 
-> Running the oscalkit Docker container requires either bind-mounting the directory containing your source files or passing file contents in to the command via stdin.
+> Running the `oscalkit` Docker container requires either bind-mounting the directory containing your source files or passing file contents in to the command via stdin.
 
     $ docker pull opencontrolorg/oscalkit:<version>
     $ docker run -it --rm -v $PWD:/data -w /data opencontrolorg/oscalkit convert oscal-core.xml
 
-or via stdin:
+via stdin:
 
     $ docker run -it --rm opencontrolorg/oscalkit convert < oscal-core.xml
 
