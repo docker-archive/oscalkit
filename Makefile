@@ -8,12 +8,14 @@
 # You should have received a copy of the CC0 Public Domain Dedication along with this software.
 # If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-GOOS ?= darwin
-GOARCH ?= amd64
-LDFLAGS=-ldflags "-s -w"
-NAMESPACE ?= opencontrolorg
-REPO ?= oscalkit
-BUILD ?= dev
+GOOS := darwin
+GOARCH := amd64
+VERSION := 0.1.0
+BUILD := $(shell git rev-parse --short HEAD)-dev
+DATE := $(shell date "+%Y-%m-%d")
+LDFLAGS=-ldflags "-s -w -X github.com/opencontrol/oscalkit/cli/version.Version=$(VERSION) -X github.com/opencontrol/oscalkit/cli/version.Build=$(BUILD) -X github.com/opencontrol/oscalkit/cli/version.Date=$(DATE)"
+NAMESPACE := opencontrolorg
+REPO := oscalkit
 BINARY=oscalkit_$(GOOS)_$(GOARCH)
 
 .DEFAULT_GOAL := $(BINARY)
@@ -27,6 +29,7 @@ generate:
 		sh -c "go generate"
 
 test: generate
+	
 	docker container run \
 		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
 		-w /go/src/github.com/opencontrol/oscalkit \
@@ -34,7 +37,7 @@ test: generate
 		sh -c "go test \$$(go list ./... | grep -v /vendor/)"
 
 build-docker:
-	docker image build -t $(NAMESPACE)/$(REPO):$(BUILD) .
+	docker image build --build-arg VERSION=$(VERSION) --build-arg BUILD=$(BUILD) --build-arg DATE=$(DATE) -t $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD) .
 
 push: build-docker
 	docker image push $(NAMESPACE)/$(REPO):$(BUILD)

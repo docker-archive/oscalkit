@@ -10,9 +10,12 @@
 
 FROM golang:1.11-alpine AS builder
 WORKDIR /go/src/github.com/opencontrol/oscalkit
+ARG VERSION
+ARG BUILD
+ARG DATE
 COPY . .
 WORKDIR /go/src/github.com/opencontrol/oscalkit/cli
-RUN CGO_ENABLED=0 go build -o oscalkit -v -ldflags="-s -w"
+RUN CGO_ENABLED=0 go build -o oscalkit -v -ldflags "-s -w -X github.com/opencontrol/oscalkit/cli/version.Version=${VERSION} -X github.com/opencontrol/oscalkit/cli/version.Build=${BUILD} -X github.com/opencontrol/oscalkit/cli/version.Date=${DATE}"
 
 FROM alpine:3.7
 RUN apk --no-cache add ca-certificates libxml2-utils

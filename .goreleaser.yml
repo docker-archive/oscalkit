@@ -1,7 +1,7 @@
 builds:
   - binary: oscalkit
     main: ./cli/main.go
-    ldflags: -s -w -X github.com/opencontrol/oscalkit/cli/version.Version={{.Version}} -X github.com/opencontrol/oscalkit/cli/version.Commit={{.Commit}} -X github.com/opencontrol/oscalkit/cli/version.Date={{.Date}}
+    ldflags: -s -w -X github.com/opencontrol/oscalkit/cli/version.Version={{.Version}} -X github.com/opencontrol/oscalkit/cli/version.Build={{.ShortCommit}} -X github.com/opencontrol/oscalkit/cli/version.Date={{.Date}}
     env:
       - CGO_ENABLED=0
     goos:

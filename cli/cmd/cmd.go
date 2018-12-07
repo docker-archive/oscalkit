@@ -22,13 +22,15 @@ import (
 
 // Execute ...
 func Execute() error {
+	appVersion := fmt.Sprintf("%s-%s (Built: %s)\n", version.Version, version.Build, version.Date)
+
 	cli.VersionPrinter = func(c *cli.Context) {
-		fmt.Printf("oscal-proxy version %s, build %s, date %s\n", c.App.Version, version.Version, version.Date)
+		fmt.Println(appVersion)
 	}
 
 	app := cli.NewApp()
 	app.Name = "oscalkit"
-	app.Version = version.Version
+	app.Version = appVersion
 	app.Usage = "OSCAL toolkit"
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{

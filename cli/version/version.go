@@ -3,6 +3,6 @@ package version
 // Build details
 var (
 	Version string
-	Commit  string
+	Build   string
 	Date    string
 )
