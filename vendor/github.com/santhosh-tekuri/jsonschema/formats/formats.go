@@ -23,18 +23,23 @@ import (
 type Format func(string) bool
 
 var formats = map[string]Format{
-	"date-time":     IsDateTime,
-	"hostname":      IsHostname,
-	"email":         IsEmail,
-	"ip-address":    IsIPV4,
-	"ipv4":          IsIPV4,
-	"ipv6":          IsIPV6,
-	"uri":           IsURI,
-	"uri-reference": IsURIReference,
-	"uriref":        IsURIReference,
-	"uri-template":  IsURIReference,
-	"regex":         IsRegex,
-	"json-pointer":  IsJSONPointer,
+	"date-time":             IsDateTime,
+	"date":                  IsDate,
+	"time":                  IsTime,
+	"hostname":              IsHostname,
+	"email":                 IsEmail,
+	"ip-address":            IsIPV4,
+	"ipv4":                  IsIPV4,
+	"ipv6":                  IsIPV6,
+	"uri":                   IsURI,
+	"iri":                   IsURI,
+	"uri-reference":         IsURIReference,
+	"uriref":                IsURIReference,
+	"iri-reference":         IsURIReference,
+	"uri-template":          IsURITemplate,
+	"regex":                 IsRegex,
+	"json-pointer":          IsJSONPointer,
+	"relative-json-pointer": IsRelativeJSONPointer,
 }
 
 func init() {
@@ -46,13 +51,13 @@ func Register(name string, f Format) {
 	formats[name] = f
 }
 
-// Get returns Format object for given format name, if found
+// Get returns Format object for given format name, if found.
 func Get(name string) (Format, bool) {
 	f, ok := formats[name]
 	return f, ok
 }
 
-// IsFormat tells whether given string is a valid format that is registered
+// IsFormat tells whether given string is a valid format that is registered.
 func IsFormat(s string) bool {
 	_, ok := formats[s]
 	return ok
@@ -67,6 +72,25 @@ func IsDateTime(s string) bool {
 		return true
 	}
 	if _, err := time.Parse(time.RFC3339Nano, s); err == nil {
+		return true
+	}
+	return false
+}
+
+// IsDate tells whether given string is a valid full-date production
+// as defined by RFC 3339, section 5.6.
+func IsDate(s string) bool {
+	_, err := time.Parse("2006-01-02", s)
+	return err == nil
+}
+
+// IsTime tells whether given string is a valid full-time production
+// as defined by RFC 3339, section 5.6.
+func IsTime(s string) bool {
+	if _, err := time.Parse("15:04:05Z07:00", s); err == nil {
+		return true
+	}
+	if _, err := time.Parse("15:04:05.999999999Z07:00", s); err == nil {
 		return true
 	}
 	return false
@@ -185,6 +209,38 @@ func IsURIReference(s string) bool {
 	return err == nil
 }
 
+// IsURITemplate tells whether given string is a valid URI Template
+// according to RFC6570.
+//
+// Current implementation does minimal validation.
+func IsURITemplate(s string) bool {
+	u, err := url.Parse(s)
+	if err != nil {
+		return false
+	}
+	for _, item := range strings.Split(u.RawPath, "/") {
+		depth := 0
+		for _, ch := range item {
+			switch ch {
+			case '{':
+				depth++
+				if depth != 1 {
+					return false
+				}
+			case '}':
+				depth--
+				if depth != 0 {
+					return false
+				}
+			}
+		}
+		if depth != 0 {
+			return false
+		}
+	}
+	return true
+}
+
 // IsRegex tells whether given string is a valid regular expression,
 // according to the ECMA 262 regular expression dialect.
 //
@@ -198,6 +254,9 @@ func IsRegex(s string) bool {
 //
 // Note: It returns false for JSON Pointer URI fragments.
 func IsJSONPointer(s string) bool {
+	if s != "" && !strings.HasPrefix(s, "/") {
+		return false
+	}
 	for _, item := range strings.Split(s, "/") {
 		for i := 0; i < len(item); i++ {
 			if item[i] == '~' {
@@ -214,4 +273,23 @@ func IsJSONPointer(s string) bool {
 		}
 	}
 	return true
+}
+
+// IsRelativeJSONPointer tells whether given string is a valid Relative JSON Pointer.
+//
+// see https://tools.ietf.org/html/draft-handrews-relative-json-pointer-01#section-3
+func IsRelativeJSONPointer(s string) bool {
+	if s == "" {
+		return false
+	}
+	if s[0] == '0' {
+		s = s[1:]
+	} else if s[0] >= '0' && s[0] <= '9' {
+		for s != "" && s[0] >= '0' && s[0] <= '9' {
+			s = s[1:]
+		}
+	} else {
+		return false
+	}
+	return s == "#" || IsJSONPointer(s)
 }

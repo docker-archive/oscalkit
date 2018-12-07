@@ -35,11 +35,38 @@ func TestIsDateTime(t *testing.T) {
 		{"1990-12-31T23:59:59Z", true},
 		{"1990-12-31T15:59:59-08:00", true},
 		{"1937-01-01T12:00:27.87+00:20", true},
+		{"1963-06-19T08:30:06.283185Z", true},
 		{"06/19/1963 08:30:06 PST", false},
 		{"2013-350T01:01:01", false},
 	}
 	for i, test := range tests {
 		if test.valid != formats.IsDateTime(test.str) {
+			t.Errorf("#%d: %q, valid %t, got valid %t", i, test.str, test.valid, !test.valid)
+		}
+	}
+}
+
+func TestIsDate(t *testing.T) {
+	tests := []test{
+		{"1963-06-19", true},
+		{"06/19/1963", false},
+		{"2013-350", false}, // only RFC3339 not all of ISO 8601 are valid
+	}
+	for i, test := range tests {
+		if test.valid != formats.IsDate(test.str) {
+			t.Errorf("#%d: %q, valid %t, got valid %t", i, test.str, test.valid, !test.valid)
+		}
+	}
+}
+
+func TestIsTime(t *testing.T) {
+	tests := []test{
+		{"08:30:06.283185Z", true},
+		{"08:30:06 PST", false},
+		{"01:01:01,1111", false}, // only RFC3339 not all of ISO 8601 are valid
+	}
+	for i, test := range tests {
+		if test.valid != formats.IsTime(test.str) {
 			t.Errorf("#%d: %q, valid %t, got valid %t", i, test.str, test.valid, !test.valid)
 		}
 	}
@@ -124,13 +151,82 @@ func TestIsURI(t *testing.T) {
 	}
 }
 
+func TestIsURITemplate(t *testing.T) {
+	tests := []test{
+		{"http://example.com/dictionary/{term:1}/{term}", true},
+		{"http://example.com/dictionary/{term:1}/{term", false},
+		{"http://example.com/dictionary", true}, // without variables
+		{"dictionary/{term:1}/{term}", true},    // relative url-template
+	}
+	for i, test := range tests {
+		if test.valid != formats.IsURITemplate(test.str) {
+			t.Errorf("#%d: %q, valid %t, got valid %t", i, test.str, test.valid, !test.valid)
+		}
+	}
+}
+
+func TestIsRegex(t *testing.T) {
+	tests := []test{
+		{"([abc])+\\s+$", true},
+		{"^(abc]", false}, // unclosed parenthesis
+	}
+	for i, test := range tests {
+		if test.valid != formats.IsRegex(test.str) {
+			t.Errorf("#%d: %q, valid %t, got valid %t", i, test.str, test.valid, !test.valid)
+		}
+	}
+}
+
 func TestIsJSONPointer(t *testing.T) {
 	tests := []test{
+		{"", true}, // empty
+		{"/ ", true},
 		{"/foo/baz", true},
-		{"/foo/baz~", false}, // ~ not escaped
+		{"/foo/bar~0/baz~1/%a", true},
+		{"/g|h", true},
+		{"/i\\j", true},
+		{"/k\"l", true},
+		{"/foo//bar", true},   // empty segment
+		{"/foo/bar/", true},   // last empty segment
+		{"/foo/-", true},      // last array position
+		{"/foo/-/bar", true},  // - used as object member
+		{"/~1~0~0~1~1", true}, // multiple escape characters
+		{"/foo/baz~", false},  // ~ not escaped
+		{"/~-1", false},       // wrong escape character
+		{"/~~", false},        // multiple characters not escaped
+		// escaped with fractional part
+		{"/~1.1", true},
+		{"/~0.1", true},
+		// uri fragment identifier
+		{"#", false},
+		{"#/", false},
+		{"#a", false},
+		// some escaped, but not all
+		{"/~0~", false},
+		{"/~0/~", false},
+		{"/~0/~", false},
+		// isn't empty nor starts with /
+		{"a", false},
+		{"0", false},
+		{"a/a", false},
 	}
 	for i, test := range tests {
 		if test.valid != formats.IsJSONPointer(test.str) {
+			t.Errorf("#%d: %q, valid %t, got valid %t", i, test.str, test.valid, !test.valid)
+		}
+	}
+}
+
+func TestRelativeJSONPointer(t *testing.T) {
+	tests := []test{
+		{"1", true},             // upwards RJP
+		{"0/foo/bar", true},     // downwards RJP
+		{"2/0/baz/1/zip", true}, // up and then down RJP, with array index
+		{"0#", true},            // taking the member or index name
+		{"/foo/bar", false},     // valid json-pointer, but invalid RJP
+	}
+	for i, test := range tests {
+		if test.valid != formats.IsRelativeJSONPointer(test.str) {
 			t.Errorf("#%d: %q, valid %t, got valid %t", i, test.str, test.valid, !test.valid)
 		}
 	}

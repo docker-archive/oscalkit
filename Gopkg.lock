@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:8cf46b6c18a91068d446e26b67512cf16f1540b45d90b28b9533706a127f0ca6"
+  digest = "1:9d57e200ef5ccc4217fe0a34287308bac652435e7c6513f6263e0493d2245c56"
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   pruneopts = ""
-  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
-  version = "v1.0.5"
+  revision = "bcd833dfe83d3cebad139e4a29ed79cb2318bf95"
+  version = "v1.2.0"
 
 [[projects]]
   branch = "master"
@@ -16,6 +16,14 @@
   packages = ["."]
   pruneopts = ""
   revision = "3605ed457bf7f8caa1371b4fafadadc026673479"
+
+[[projects]]
+  digest = "1:6a874e3ddfb9db2b42bd8c85b6875407c702fa868eed20634ff489bc896ccfd3"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  pruneopts = ""
+  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
+  version = "v1.0.1"
 
 [[projects]]
   digest = "1:713b341855f1480e4baca1e7c5434e1d266441340685ecbde32d59bdc065fb3f"
@@ -27,23 +35,25 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:eb6fa398c7a10d3a4a34e52cb5dca190c288416f9ef59ef4759c2725a756d90e"
+  digest = "1:1579a4a5fa94805f30a0dbe82e6c235a158a78c678969f84a04f402af824f8f8"
   name = "github.com/santhosh-tekuri/jsonschema"
   packages = [
     ".",
+    "decoders",
     "formats",
     "loader",
+    "mediatypes",
   ]
   pruneopts = ""
-  revision = "63accc9deedeee33b7caf4e241f8a9ebdf031069"
+  revision = "5d49c9dfc7836f0552e532b4b20caebf51b944e3"
 
 [[projects]]
   branch = "master"
-  digest = "1:2c3cdaaa7ac9f06021636d163884979d008b3c5148203923c3448a0c974d608c"
+  digest = "1:438d5957cf1c26ca62975dc4b1b59242acc9e527f39ed3f6cda57ee6d3653daf"
   name = "github.com/urfave/cli"
   packages = ["."]
   pruneopts = ""
-  revision = "8e01ec4cd3e2d84ab2fe90d8210528ffbb06d8ff"
+  revision = "b67dcf995b6a7b7f14fad5fcb7cc5441b05e814b"
 
 [[projects]]
   branch = "master"
@@ -70,7 +80,7 @@
   revision = "9167dbfd0f8e88b731dd88cbf73a270701a37bb4"
 
 [[projects]]
-  digest = "1:ddc5fa8f9159bea7d1ce58143e6d8fd8054018f7bc3709940aa7f7bc92855ed9"
+  digest = "1:a3532282671b21e7d256f849866ff95addf15e0090f27a9c5c98196953c3cdef"
   name = "gopkg.in/square/go-jose.v2"
   packages = [
     ".",
@@ -78,16 +88,16 @@
     "json",
   ]
   pruneopts = ""
-  revision = "ef984e69dd356202fd4e4910d4d9c24468bdf0b8"
-  version = "v2.1.9"
+  revision = "72415094398e2f013bf50b76fd6de36df47938ea"
+  version = "v2.2.1"
 
 [[projects]]
   branch = "v2"
-  digest = "1:f769ed60e075e4221612c2f4162fccc9d3795ef358fa463425e3b3d7a5debb27"
+  digest = "1:cedccf16b71e86db87a24f8d4c70b0a855872eb967cb906a66b95de56aefbd0d"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   pruneopts = ""
-  revision = "287cf08546ab5e7e37d55a84f7ed3fd1db036de5"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
 
 [solve-meta]
   analyzer-name = "dep"

@@ -11,7 +11,7 @@
 
 [[constraint]]
   name = "github.com/Sirupsen/logrus"
-  version = "1.0.5"
+  version = "1.2.0"
 
 [[constraint]]
   branch = "master"
@@ -35,4 +35,4 @@
 
 [[constraint]]
   name = "gopkg.in/square/go-jose.v2"
-  version = "2.1.9"
+  version = "2.2.1"

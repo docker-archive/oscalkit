@@ -11,8 +11,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -20,7 +22,7 @@ import (
 	_ "github.com/santhosh-tekuri/jsonschema/httploader"
 )
 
-var draft4, draft6 []byte
+var draft4, draft6, draft7 []byte
 
 func init() {
 	var err error
@@ -29,6 +31,10 @@ func init() {
 		panic(err)
 	}
 	draft6, err = ioutil.ReadFile("testdata/draft6.json")
+	if err != nil {
+		panic(err)
+	}
+	draft7, err = ioutil.ReadFile("testdata/draft7.json")
 	if err != nil {
 		panic(err)
 	}
@@ -41,6 +47,10 @@ func TestDraft6(t *testing.T) {
 	testFolder(t, "testdata/draft6", jsonschema.Draft6)
 }
 
+func TestDraft7(t *testing.T) {
+	testFolder(t, "testdata/draft7", jsonschema.Draft7)
+}
+
 type testGroup struct {
 	Description string
 	Schema      json.RawMessage
@@ -48,11 +58,12 @@ type testGroup struct {
 		Description string
 		Data        json.RawMessage
 		Valid       bool
+		Skip        *string
 	}
 }
 
 func testFolder(t *testing.T, folder string, draft *jsonschema.Draft) {
-	server := &http.Server{Addr: ":1234", Handler: http.FileServer(http.Dir("testdata/remotes"))}
+	server := &http.Server{Addr: "localhost:1234", Handler: http.FileServer(http.Dir("testdata/remotes"))}
 	go func() {
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
 			t.Fatal(err)
@@ -94,6 +105,10 @@ func testFolder(t *testing.T, folder string, draft *jsonschema.Draft) {
 				t.Errorf("    FAIL: add resource failed, reason: %v\n", err)
 				continue
 			}
+			if err := c.AddResource("http://json-schema.org/draft-07/schema", bytes.NewReader(draft7)); err != nil {
+				t.Errorf("    FAIL: add resource failed, reason: %v\n", err)
+				continue
+			}
 			c.Draft = draft
 			if err := c.AddResource("test.json", bytes.NewReader(group.Schema)); err != nil {
 				t.Errorf("    FAIL: add resource failed, reason: %v\n", err)
@@ -106,6 +121,10 @@ func testFolder(t *testing.T, folder string, draft *jsonschema.Draft) {
 			}
 			for _, test := range group.Tests {
 				t.Logf("      %s\n", test.Description)
+				if test.Skip != nil {
+					t.Logf("        skipping: %s\n", *test.Skip)
+					continue
+				}
 				err = schema.Validate(bytes.NewReader(test.Data))
 				valid := err == nil
 				if !valid {
@@ -230,18 +249,14 @@ func TestCompileURL(t *testing.T) {
 	httpsServer := httptest.NewTLSServer(handler)
 	defer httpsServer.Close()
 
-	abs, err := filepath.Abs("testdata")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 	validTests := []struct {
 		schema, doc string
 	}{
 		{"testdata/customer_schema.json#/0", "testdata/customer.json"},
-		{"file://" + abs + "/customer_schema.json#/0", "testdata/customer.json"},
+		{toFileURL("testdata/customer_schema.json") + "#/0", "testdata/customer.json"},
 		{httpServer.URL + "/customer_schema.json#/0", "testdata/customer.json"},
 		{httpsServer.URL + "/customer_schema.json#/0", "testdata/customer.json"},
+		{toFileURL("testdata/empty schema.json"), "testdata/empty schema.json"},
 	}
 	for i, test := range validTests {
 		t.Logf("valid #%d: %+v", i, test)
@@ -265,7 +280,7 @@ func TestCompileURL(t *testing.T) {
 	invalidTests := []string{
 		"testdata/syntax_error.json",
 		"testdata/missing.json",
-		"file://" + abs + "/missing.json",
+		toFileURL("testdata/missing.json"),
 		httpServer.URL + "/missing.json",
 		httpsServer.URL + "/missing.json",
 	}
@@ -332,5 +347,118 @@ func TestValidateInterface(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestInvalidJsonTypeError(t *testing.T) {
+	compiler := jsonschema.NewCompiler()
+	err := compiler.AddResource("test.json", strings.NewReader(`{ "type": "string"}`))
+	if err != nil {
+		t.Fatalf("addResource failed. reason: %v\n", err)
+	}
+	schema, err := compiler.Compile("test.json")
+	if err != nil {
+		t.Fatalf("schema compilation failed. reason: %v\n", err)
+	}
+	v := struct{ name string }{"hello world"}
+	err = schema.ValidateInterface(v)
+	switch err.(type) {
+	case jsonschema.InvalidJSONTypeError:
+		// passed
+	default:
+		t.Fatalf("got %v. want InvalidJSONTypeErr", err)
+	}
+}
+
+func TestExtractAnnotations(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		compiler := jsonschema.NewCompiler()
+
+		err := compiler.AddResource("test.json", strings.NewReader(`{
+			"title": "this is title"
+		}`))
+		if err != nil {
+			t.Fatalf("addResource failed. reason: %v\n", err)
+		}
+
+		schema, err := compiler.Compile("test.json")
+		if err != nil {
+			t.Fatalf("schema compilation failed. reason: %v\n", err)
+		}
+
+		if schema.Title != "" {
+			t.Error("title should not be extracted")
+		}
+	})
+
+	t.Run("true", func(t *testing.T) {
+		compiler := jsonschema.NewCompiler()
+		compiler.ExtractAnnotations = true
+
+		err := compiler.AddResource("test.json", strings.NewReader(`{
+			"title": "this is title"
+		}`))
+		if err != nil {
+			t.Fatalf("addResource failed. reason: %v\n", err)
+		}
+
+		schema, err := compiler.Compile("test.json")
+		if err != nil {
+			t.Fatalf("schema compilation failed. reason: %v\n", err)
+		}
+
+		if schema.Title != "this is title" {
+			t.Errorf("title: got %q, want %q", schema.Title, "this is title")
+		}
+	})
+}
+
+func toFileURL(path string) string {
+	path, err := filepath.Abs(path)
+	if err != nil {
+		panic(err)
+	}
+	path = filepath.ToSlash(path)
+	if runtime.GOOS == "windows" {
+		path = "/" + path
+	}
+	u, err := url.Parse("file://" + path)
+	if err != nil {
+		panic(err)
+	}
+	return u.String()
+}
+
+// TestPanic tests https://github.com/santhosh-tekuri/jsonschema/issues/18
+func TestPanic(t *testing.T) {
+	schema_d := `
+	{
+		"type": "object",
+		"properties": {
+		"myid": { "type": "integer" },
+		"otype": { "$ref": "defs.json#someid" }
+		}
+	}
+	`
+	defs_d := `
+	{
+		"definitions": {
+		"stt": {
+			"$schema": "http://json-schema.org/draft-07/schema#",
+			"$id": "#someid",
+				"type": "object",
+			"enum": [ { "name": "stainless" }, { "name": "zinc" } ]
+		}
+		}
+	}
+	`
+	c := jsonschema.NewCompiler()
+	c.Draft = jsonschema.Draft7
+	c.AddResource("schema.json", strings.NewReader(schema_d))
+	c.AddResource("defs.json", strings.NewReader(defs_d))
+
+	if _, err := c.Compile("schema.json"); err != nil {
+		t.Error("no error expected")
+		return
 	}
 }

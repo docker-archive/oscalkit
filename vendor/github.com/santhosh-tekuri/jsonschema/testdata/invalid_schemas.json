@@ -42,6 +42,15 @@
     }
   },
   {
+    "description": "patternProperties keys must be regex",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "patternProperties": {
+        "(": {}
+      }
+    }
+  },
+  {
     "description": "invalid $ref json-pointer",
     "schema": {
       "$ref": "#/definition/employee%1"
@@ -244,11 +253,6 @@
         "$ref": "#/refs/5"
       }
     }
-  },
-  {
-    "description": "schemaRef with invalid $schema",
-    "schema": [{"$schema":"http://json-schema.org/draft-03/schema"}],
-    "fragment": "#/0"
   },
   {
     "description": "schemaRef with wrong jsonpointer",

@@ -18,6 +18,7 @@ import (
 type resource struct {
 	url     string
 	doc     interface{}
+	draft   *Draft
 	schemas map[string]*Schema
 }
 
@@ -45,7 +46,10 @@ func newResource(base string, r io.Reader) (*resource, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parsing %q failed. Reason: %v", base, err)
 	}
-	return &resource{base, doc, make(map[string]*Schema)}, nil
+	return &resource{
+		url:     base,
+		doc:     doc,
+		schemas: make(map[string]*Schema)}, nil
 }
 
 func resolveURL(base, ref string) (string, error) {
@@ -79,7 +83,7 @@ func resolveURL(base, ref string) (string, error) {
 	return filepath.Join(dir, ref) + fragment, nil
 }
 
-func (r *resource) resolvePtr(draft *Draft, ptr string) (string, interface{}, error) {
+func (r *resource) resolvePtr(ptr string) (string, interface{}, error) {
 	if !strings.HasPrefix(ptr, "#/") {
 		panic(fmt.Sprintf("BUG: resolvePtr(%q)", ptr))
 	}
@@ -95,7 +99,7 @@ func (r *resource) resolvePtr(draft *Draft, ptr string) (string, interface{}, er
 		}
 		switch d := doc.(type) {
 		case map[string]interface{}:
-			if id, ok := d[draft.id]; ok {
+			if id, ok := d[r.draft.id]; ok {
 				if id, ok := id.(string); ok {
 					if base, err = resolveURL(base, id); err != nil {
 						return "", nil, err
@@ -152,9 +156,12 @@ func resolveIDs(draft *Draft, base string, v interface{}, ids map[string]map[str
 		base = b
 		ids[base] = m
 	}
-	if m, ok := m["not"]; ok {
-		if err := resolveIDs(draft, base, m, ids); err != nil {
-			return err
+
+	for _, pname := range []string{"not", "additionalProperties"} {
+		if m, ok := m[pname]; ok {
+			if err := resolveIDs(draft, base, m, ids); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -168,27 +175,9 @@ func resolveIDs(draft *Draft, base string, v interface{}, ids map[string]map[str
 		}
 	}
 
-	for _, pname := range []string{"definitions", "properties", "patternProperties"} {
+	for _, pname := range []string{"definitions", "properties", "patternProperties", "dependencies"} {
 		if props, ok := m[pname]; ok {
 			for _, m := range props.(map[string]interface{}) {
-				if err := resolveIDs(draft, base, m, ids); err != nil {
-					return err
-				}
-			}
-		}
-	}
-
-	if additionalProps, ok := m["additionalProperties"]; ok {
-		if additionalProps, ok := additionalProps.(map[string]interface{}); ok {
-			if err := resolveIDs(draft, base, additionalProps, ids); err != nil {
-				return err
-			}
-		}
-	}
-
-	if deps, ok := m["dependencies"]; ok {
-		for _, pvalue := range deps.(map[string]interface{}) {
-			if m, ok := pvalue.(map[string]interface{}); ok {
 				if err := resolveIDs(draft, base, m, ids); err != nil {
 					return err
 				}
@@ -218,15 +207,27 @@ func resolveIDs(draft *Draft, base string, v interface{}, ids map[string]map[str
 		}
 	}
 
-	if draft == Draft6 {
-		if propertyNames, ok := m["propertyNames"]; ok {
-			if err := resolveIDs(draft, base, propertyNames, ids); err != nil {
-				return err
+	if draft.version >= 6 {
+		for _, pname := range []string{"propertyNames", "contains"} {
+			if m, ok := m[pname]; ok {
+				if err := resolveIDs(draft, base, m, ids); err != nil {
+					return err
+				}
 			}
 		}
-		if contains, ok := m["contains"]; ok {
-			if err := resolveIDs(draft, base, contains, ids); err != nil {
+	}
+
+	if draft.version >= 7 {
+		if iff, ok := m["if"]; ok {
+			if err := resolveIDs(draft, base, iff, ids); err != nil {
 				return err
+			}
+			for _, pname := range []string{"then", "else"} {
+				if m, ok := m[pname]; ok {
+					if err := resolveIDs(draft, base, m, ids); err != nil {
+						return err
+					}
+				}
 			}
 		}
 	}
