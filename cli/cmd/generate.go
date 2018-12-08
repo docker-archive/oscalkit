@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sirupsen/logrus"
+
 	generator "github.com/opencontrol/oscalkit/generator"
 	"github.com/urfave/cli"
 )
@@ -48,6 +50,7 @@ var Generate = cli.Command{
 		if err != nil {
 			return cli.NewExitError("cannot write file for catalogs", 1)
 		}
+		logrus.Info("catalogs.go file created.")
 		return nil
 
 	},
