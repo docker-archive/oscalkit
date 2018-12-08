@@ -17,7 +17,11 @@ func IntersectProfile(profile *profile.Profile) []*catalog.Catalog {
 	for _, profileImport := range profile.Imports {
 
 		//ForEach Import's Href, Fetch the Catalog JSON file
-		catalogReference := profileImport.Href.String()
+		catalogReference, err := GetCatalogFilePath(profileImport.Href.String())
+		if err != nil {
+			logrus.Errorf("invalid file path: %v", err)
+			continue
+		}
 		f, err := os.Open(catalogReference)
 		if err != nil {
 			logrus.Errorf("cannot open file: %v", err)
@@ -44,7 +48,9 @@ func IntersectProfile(profile *profile.Profile) []*catalog.Catalog {
 					}
 				}
 			}
-			newCatalog.Groups = append(newCatalog.Groups, newGroup)
+			if len(newGroup.Controls) > 0 {
+				newCatalog.Groups = append(newCatalog.Groups, newGroup)
+			}
 		}
 		outputCatalogs = append(outputCatalogs, &newCatalog)
 	}
