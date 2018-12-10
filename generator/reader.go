@@ -1,7 +1,7 @@
 package generator
 
 import (
-	"bufio"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,12 +10,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/opencontrol/oscalkit/types/oscal/profile"
+
 	"github.com/opencontrol/oscalkit/types/oscal"
 	"github.com/opencontrol/oscalkit/types/oscal/catalog"
 )
 
-func readOscal(f *os.File) (*oscal.OSCAL, error) {
-	r := bufio.NewReader(f)
+func readOscal(b []byte) (*oscal.OSCAL, error) {
+	r := bytes.NewReader(b)
 	o, err := oscal.New(r)
 	if err != nil {
 		return nil, err
@@ -24,14 +26,24 @@ func readOscal(f *os.File) (*oscal.OSCAL, error) {
 }
 
 //ReadCatalog ReadCatalog
-func ReadCatalog(f *os.File) (*catalog.Catalog, error) {
+func ReadCatalog(b []byte) (*catalog.Catalog, error) {
 
-	o, err := readOscal(f)
+	o, err := readOscal(b)
 	if err != nil {
 		return nil, fmt.Errorf("cannot read oscal catalog from file %v,", err)
 	}
 	return o.Catalog, nil
 
+}
+
+//ReadProfile reads profile from byte array
+func ReadProfile(b []byte) (*profile.Profile, error) {
+
+	o, err := readOscal(b)
+	if err != nil {
+		return nil, fmt.Errorf("cannot read oscal profile from file. err: %v,", err)
+	}
+	return o.Profile, nil
 }
 
 func isHTTPResource(url *url.URL) bool {

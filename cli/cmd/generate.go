@@ -2,11 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/sirupsen/logrus"
 
 	generator "github.com/opencontrol/oscalkit/generator"
+	"github.com/opencontrol/oscalkit/templates"
+	"github.com/opencontrol/oscalkit/types/oscal/catalog"
 	"github.com/urfave/cli"
 )
 
@@ -31,12 +34,12 @@ var Generate = cli.Command{
 		return nil
 	},
 	Action: func(c *cli.Context) error {
-		f, err := os.Open(profilePath)
+
+		bytes, err := ioutil.ReadFile(profilePath)
 		if err != nil {
-			s := fmt.Sprintf("cannot open profile. path: %s ", err)
-			return cli.NewExitError(s, 1)
+			return cli.NewExitError(fmt.Sprintf("cannot read profile. path: %s, err: %v ", profilePath, err), 1)
 		}
-		profile, err := generator.ReadProfile(f)
+		profile, err := generator.ReadProfile(bytes)
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
@@ -45,8 +48,14 @@ var Generate = cli.Command{
 		if err != nil {
 			return cli.NewExitError("cannot create file for catalogs", 1)
 		}
-		catalogs := generator.IntersectProfile(profile)
-		err = generator.GenerateCatalogs(newFile, catalogs)
+		catalogs := generator.CreateCatalogsFromProfile(profile)
+		t, err := templates.GetCatalogTemplate()
+		if err != nil {
+			return cli.NewExitError("cannot fetch template", 1)
+		}
+		err = t.Execute(newFile, struct {
+			Catalogs []*catalog.Catalog
+		}{catalogs})
 		if err != nil {
 			return cli.NewExitError("cannot write file for catalogs", 1)
 		}
