@@ -24,7 +24,9 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 			for _, z := range profileImport.Include.IdSelectors {
 				if catalogControl.Id == z.ControlId {
 					newGroup.Controls = append(newGroup.Controls, catalog.Control{
-						Id: catalogControl.Id,
+						Id:    catalogControl.Id,
+						Class: catalogControl.Class,
+						Title: catalogControl.Title,
 					})
 				}
 			}

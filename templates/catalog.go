@@ -29,22 +29,6 @@ var ApplicableControls = []catalog.Catalog{
 								Id: 	"{{.Id}}",
 								Class: 	"{{.Class}}",
 								Title:	"{{.Title}}",
-								Params: []catalog.Param{
-									{{range .Params}}
-										catalog.Param{
-											Class: "{{.Id}}",
-										},
-									{{end}}
-								},
-								Props: []catalog.Prop{
-									{{range .Props}}
-										catalog.Prop{
-											Class: "{{.Class}}",
-											Id: "{{.Id}}",
-											Value: "{{.Value}}",
-										},
-									{{end}}
-								},
 							},
 						{{end}}
 					},
