@@ -11,6 +11,31 @@ import (
 	"github.com/opencontrol/oscalkit/types/oscal/profile"
 )
 
+func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import) catalog.Catalog {
+	newCatalog := catalog.Catalog{Groups: []catalog.Group{}}
+	for _, group := range importedCatalog.Groups {
+		//Prepare a new group to append matching controls into.
+		newGroup := catalog.Group{
+			Title:    group.Title,
+			Controls: []catalog.Control{},
+		}
+		//Append controls to the new group if matches
+		for _, catalogControl := range group.Controls {
+			for _, z := range profileImport.Include.IdSelectors {
+				if catalogControl.Id == z.ControlId {
+					newGroup.Controls = append(newGroup.Controls, catalog.Control{
+						Id: catalogControl.Id,
+					})
+				}
+			}
+		}
+		if len(newGroup.Controls) > 0 {
+			newCatalog.Groups = append(newCatalog.Groups, newGroup)
+		}
+	}
+	return newCatalog
+}
+
 //CreateCatalogsFromProfile maps profile controls to multiple catalogs
 func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 
@@ -41,27 +66,7 @@ func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 			logrus.Errorf("cannot parse catalog listed in import.href %v", err)
 		}
 		//Prepare a new catalog object to merge into the final List of OutputCatalogs
-		newCatalog := catalog.Catalog{Groups: []catalog.Group{}}
-		for _, group := range importedCatalog.Groups {
-			//Prepare a new group to append matching controls into.
-			newGroup := catalog.Group{
-				Title:    group.Title,
-				Controls: []catalog.Control{},
-			}
-			//Append controls to the new group if matches
-			for _, catalogControl := range group.Controls {
-				for _, z := range profileImport.Include.IdSelectors {
-					if catalogControl.Id == z.ControlId {
-						newGroup.Controls = append(newGroup.Controls, catalog.Control{
-							Id: catalogControl.Id,
-						})
-					}
-				}
-			}
-			if len(newGroup.Controls) > 0 {
-				newCatalog.Groups = append(newCatalog.Groups, newGroup)
-			}
-		}
+		newCatalog := getMappedCatalogControlsFromImport(importedCatalog, profileImport)
 		outputCatalogs = append(outputCatalogs, &newCatalog)
 	}
 	return outputCatalogs
