@@ -3,8 +3,8 @@ package templates
 import "html/template"
 
 //GetCatalogTemplate GetCatalogTemplate
-func GetCatalogTemplate() *template.Template {
-	return template.Must(template.New("").Parse(catalogtTemplate))
+func GetCatalogTemplate() (*template.Template, error) {
+	return template.New("").Parse(catalogtTemplate)
 }
 
 const catalogtTemplate = `

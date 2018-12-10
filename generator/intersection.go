@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -10,8 +11,8 @@ import (
 	"github.com/opencontrol/oscalkit/types/oscal/profile"
 )
 
-//IntersectProfile IntersectProfile
-func IntersectProfile(profile *profile.Profile) []*catalog.Catalog {
+//CreateCatalogsFromProfile maps profile controls to multiple catalogs
+func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 
 	var outputCatalogs []*catalog.Catalog
 	//Get first import of the profile (which is a catalog)
@@ -23,9 +24,9 @@ func IntersectProfile(profile *profile.Profile) []*catalog.Catalog {
 			logrus.Errorf("invalid file path: %v", err)
 			continue
 		}
-		f, err := os.Open(catalogReference)
+		bytes, err := ioutil.ReadFile(catalogReference)
 		if err != nil {
-			logrus.Errorf("cannot open file: %v", err)
+			logrus.Errorf("cannot read file: %v", err)
 			continue
 		}
 		defer func() {
@@ -35,7 +36,7 @@ func IntersectProfile(profile *profile.Profile) []*catalog.Catalog {
 			}
 		}()
 		//Once fetched, Read the catalog JSON and Marshall it to Go struct.
-		importedCatalog, err := ReadCatalog(f)
+		importedCatalog, err := ReadCatalog(bytes)
 		if err != nil {
 			logrus.Errorf("cannot parse catalog listed in import.href %v", err)
 		}
