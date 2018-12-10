@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"log"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -27,6 +28,12 @@ func IntersectProfile(profile *profile.Profile) []*catalog.Catalog {
 			logrus.Errorf("cannot open file: %v", err)
 			continue
 		}
+		defer func() {
+			err := os.Remove(catalogReference)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
 		//Once fetched, Read the catalog JSON and Marshall it to Go struct.
 		importedCatalog, err := ReadCatalog(f)
 		if err != nil {
@@ -44,7 +51,9 @@ func IntersectProfile(profile *profile.Profile) []*catalog.Catalog {
 			for _, catalogControl := range group.Controls {
 				for _, z := range profileImport.Include.IdSelectors {
 					if catalogControl.Id == z.ControlId {
-						newGroup.Controls = append(newGroup.Controls, catalogControl)
+						newGroup.Controls = append(newGroup.Controls, catalog.Control{
+							Id: catalogControl.Id,
+						})
 					}
 				}
 			}

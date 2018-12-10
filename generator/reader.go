@@ -12,7 +12,6 @@ import (
 
 	"github.com/opencontrol/oscalkit/types/oscal"
 	"github.com/opencontrol/oscalkit/types/oscal/catalog"
-	"github.com/opencontrol/oscalkit/types/oscal/profile"
 )
 
 func readOscal(f *os.File) (*oscal.OSCAL, error) {
@@ -35,15 +34,6 @@ func ReadCatalog(f *os.File) (*catalog.Catalog, error) {
 
 }
 
-//ReadProfile ReadProfile
-func ReadProfile(f *os.File) (*profile.Profile, error) {
-	o, err := readOscal(f)
-	if err != nil {
-		return nil, fmt.Errorf("cannot read oscal profile from file %v,", err)
-	}
-	return o.Profile, nil
-}
-
 func isHTTPResource(url *url.URL) bool {
 	return strings.Contains(url.Scheme, "http")
 }
@@ -51,6 +41,21 @@ func isHTTPResource(url *url.URL) bool {
 func getName(url *url.URL) string {
 	fragments := strings.Split(url.Path, "/")
 	return (fragments[len(fragments)-1])
+}
+
+func fetchFromHTTPResource(uri *url.URL) ([]byte, error) {
+	c := http.Client{Timeout: 10 * time.Second}
+	resp, err := c.Get(uri.String())
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("cannot read response body %v", err)
+	}
+	return body, nil
+
 }
 
 //GetCatalogFilePath GetCatalogFilePath
@@ -63,24 +68,15 @@ func GetCatalogFilePath(urlString string) (string, error) {
 	if !isHTTPResource(uri) {
 		return urlString, nil
 	}
-
-	c := http.Client{Timeout: 10 * time.Second}
-	resp, err := c.Get(urlString)
-	if err != nil {
-		return "", err
-	}
+	body, err := fetchFromHTTPResource(uri)
 	fileName := "/tmp/" + getName(uri)
-	defer resp.Body.Close()
 	f, err := os.Create(fileName)
 	if err != nil {
 		return "", fmt.Errorf("cannot create json file %v", err)
 	}
 	defer f.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", fmt.Errorf("cannot read response body %v", err)
-	}
 	_, err = f.Write(body)
+
 	if err != nil {
 		return "", fmt.Errorf("cannot write on file %v", err)
 	}
