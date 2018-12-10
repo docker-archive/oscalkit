@@ -10,7 +10,7 @@
 
 GOOS := darwin
 GOARCH := amd64
-VERSION := 0.1.0
+VERSION := 0.2.0
 BUILD := $(shell git rev-parse --short HEAD)-dev
 DATE := $(shell date "+%Y-%m-%d")
 LDFLAGS=-ldflags "-s -w -X github.com/opencontrol/oscalkit/cli/version.Version=$(VERSION) -X github.com/opencontrol/oscalkit/cli/version.Build=$(BUILD) -X github.com/opencontrol/oscalkit/cli/version.Date=$(DATE)"
