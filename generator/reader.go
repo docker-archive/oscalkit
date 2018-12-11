@@ -38,6 +38,40 @@ func ReadProfile(r io.Reader) (*profile.Profile, error) {
 	return o.Profile, nil
 }
 
+//GetCatalogFilePath GetCatalogFilePath
+func GetCatalogFilePath(catalogURL string) (string, error) {
+	uri, err := url.Parse(catalogURL)
+	if err != nil {
+		return "", fmt.Errorf("invalid URL pattern %v", err)
+	}
+
+	if !isHTTPResource(uri) {
+		return GetAbsolutePath(catalogURL)
+	}
+	body, err := fetchFromHTTPResource(uri)
+	fileName := "/tmp/" + getName(uri)
+	f, err := os.Create(fileName)
+	if err != nil {
+		return "", fmt.Errorf("cannot create json file %v", err)
+	}
+	defer f.Close()
+	_, err = f.Write(body)
+
+	if err != nil {
+		return "", fmt.Errorf("cannot write on file %v", err)
+	}
+	return fileName, nil
+
+}
+
+//GetAbsolutePath gets absolute file path
+func GetAbsolutePath(path string) (string, error) {
+	if filepath.IsAbs(path) {
+		return path, nil
+	}
+	return filepath.Abs(path)
+}
+
 func isHTTPResource(url *url.URL) bool {
 	return strings.Contains(url.Scheme, "http")
 }
@@ -59,43 +93,5 @@ func fetchFromHTTPResource(uri *url.URL) ([]byte, error) {
 		return nil, fmt.Errorf("cannot read response body %v", err)
 	}
 	return body, nil
-
-}
-
-//GetAbsolutePath gets absolute file path
-func GetAbsolutePath(path string) (string, error) {
-	if filepath.IsAbs(path) {
-		return path, nil
-	}
-	return filepath.Abs(path)
-}
-
-//GetCatalogFilePath GetCatalogFilePath
-func GetCatalogFilePath(urlString string) (string, error) {
-	uri, err := url.Parse(urlString)
-	if err != nil {
-		return "", fmt.Errorf("invalid URL pattern %v", err)
-	}
-
-	if !isHTTPResource(uri) {
-		if filepath.IsAbs(urlString) {
-			return urlString, nil
-		}
-		p, err := filepath.Abs(urlString)
-		return p, err
-	}
-	body, err := fetchFromHTTPResource(uri)
-	fileName := "/tmp/" + getName(uri)
-	f, err := os.Create(fileName)
-	if err != nil {
-		return "", fmt.Errorf("cannot create json file %v", err)
-	}
-	defer f.Close()
-	_, err = f.Write(body)
-
-	if err != nil {
-		return "", fmt.Errorf("cannot write on file %v", err)
-	}
-	return fileName, nil
 
 }

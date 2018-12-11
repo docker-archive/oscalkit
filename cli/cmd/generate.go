@@ -71,7 +71,7 @@ var Generate = cli.Command{
 			Catalogs []*catalog.Catalog
 		}{catalogs})
 
-		//Todo:: discuss better approach for formatting generate code file.
+		//TODO: discuss better approach for formatting generate code file.
 		if err != nil {
 			return cli.NewExitError("cannot write file for catalogs", 1)
 		}
