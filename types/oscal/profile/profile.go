@@ -32,7 +32,7 @@ type Merge struct {
 // A Custom element frames a structure for embedding represented controls in
 // resolution.
 type Custom struct {
-	IdSelectors      []Call  `xml:"call,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
 	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
 	Groups           []Group `xml:"group,omitempty" json:"groups,omitempty"`
 }
@@ -40,7 +40,7 @@ type Custom struct {
 // As in catalogs, a group of (selected) controls or of groups of controls
 type Group struct {
 	Groups           []Group `xml:"group,omitempty" json:"groups,omitempty"`
-	IdSelectors      []Call  `xml:"call,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
 	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
 }
 
@@ -54,14 +54,14 @@ type Modify struct {
 // catalog) being imported
 type Include struct {
 	All              *All    `xml:"all,omitempty" json:"all,omitempty"`
-	IdSelectors      []Call  `xml:"call,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
 	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
 }
 
 // Which controls and subcontrols to exclude from the resource (source catalog)
 // being imported
 type Exclude struct {
-	IdSelectors      []Call  `xml:"call,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
 	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
 }
 
@@ -116,6 +116,11 @@ type Combine struct {
 // as they are structured in their source catalogs. It does not contain any
 // elements or attributes.
 type AsIs string
+
+func (a *AsIs) UnmarshalJSON(b []byte) error {
+	*a = AsIs(string(b))
+	return nil
+}
 
 // Include all controls from the imported resource (catalog)
 type All struct {

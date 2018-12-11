@@ -49,6 +49,7 @@ func Execute() error {
 		convert.Convert,
 		Validate,
 		Sign,
+		Generate,
 	}
 
 	return app.Run(os.Args)
