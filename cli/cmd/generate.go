@@ -83,7 +83,7 @@ var Generate = cli.Command{
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot format %s file", outputFileName), 1)
 		}
-		newFile.Write(b)
+		newFile.WriteAt(b, 0)
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot write formmated "), 1)
 		}
