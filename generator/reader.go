@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
-
 	"github.com/opencontrol/oscalkit/types/oscal/profile"
 
 	"github.com/opencontrol/oscalkit/types/oscal"
@@ -84,7 +82,6 @@ func GetCatalogFilePath(urlString string) (string, error) {
 			return urlString, nil
 		}
 		p, err := filepath.Abs(urlString)
-		spew.Dump(p)
 		return p, err
 	}
 	body, err := fetchFromHTTPResource(uri)
