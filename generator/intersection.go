@@ -1,11 +1,10 @@
 package generator
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 
-	"github.com/sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 
 	"github.com/opencontrol/oscalkit/types/oscal/catalog"
 	"github.com/opencontrol/oscalkit/types/oscal/profile"
@@ -51,7 +50,8 @@ func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 			logrus.Errorf("invalid file path: %v", err)
 			continue
 		}
-		bytes, err := ioutil.ReadFile(catalogReference)
+
+		f, err := os.Open(catalogReference)
 		if err != nil {
 			logrus.Errorf("cannot read file: %v", err)
 			continue
@@ -63,7 +63,7 @@ func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 			}
 		}()
 		//Once fetched, Read the catalog JSON and Marshall it to Go struct.
-		importedCatalog, err := ReadCatalog(bytes)
+		importedCatalog, err := ReadCatalog(f)
 		if err != nil {
 			logrus.Errorf("cannot parse catalog listed in import.href %v", err)
 		}

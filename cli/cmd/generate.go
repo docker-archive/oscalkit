@@ -2,14 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"go/format"
 	"io/ioutil"
 	"os"
 
-	"github.com/sirupsen/logrus"
-
-	generator "github.com/opencontrol/oscalkit/generator"
+	"github.com/Sirupsen/logrus"
+	"github.com/opencontrol/oscalkit/generator"
 	"github.com/opencontrol/oscalkit/templates"
 	"github.com/opencontrol/oscalkit/types/oscal/catalog"
+
 	"github.com/urfave/cli"
 )
 
@@ -18,7 +19,7 @@ var profilePath string
 //Generate Cli command to generate go code for controls
 var Generate = cli.Command{
 	Name:  "generate",
-	Usage: "generates go code against provided catalogs and profile",
+	Usage: "generates go code against provided profile",
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:        "profile, p",
@@ -28,26 +29,39 @@ var Generate = cli.Command{
 	},
 	Before: func(c *cli.Context) error {
 		if profilePath == "" {
-			return cli.NewExitError("oscalkit sign is missing the --profile flag", 1)
+			return cli.NewExitError("oscalkit generate is missing the --profile flag", 1)
 		}
 
 		return nil
 	},
 	Action: func(c *cli.Context) error {
 
-		bytes, err := ioutil.ReadFile(profilePath)
+		outputFileName := "catalogs.go"
+		profilePath, err := generator.GetAbsolutePath(profilePath)
 		if err != nil {
-			return cli.NewExitError(fmt.Sprintf("cannot read profile. path: %s, err: %v ", profilePath, err), 1)
+			return cli.NewExitError(fmt.Sprintf("cannot get absolute path, err: %v", err), 1)
 		}
-		profile, err := generator.ReadProfile(bytes)
+
+		fileStat, err := os.Stat(profilePath)
+		if err != nil {
+			return cli.NewExitError(fmt.Sprintf("cannot fetch file, err %v", err), 1)
+		}
+		f, err := os.Open(fileStat.Name())
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
+		defer f.Close()
 
-		newFile, err := os.Create("catalogs.go")
+		profile, err := generator.ReadProfile(f)
+		if err != nil {
+			return cli.NewExitError(err, 1)
+		}
+		newFile, err := os.Create(outputFileName)
 		if err != nil {
 			return cli.NewExitError("cannot create file for catalogs", 1)
 		}
+		defer newFile.Close()
+
 		catalogs := generator.CreateCatalogsFromProfile(profile)
 		t, err := templates.GetCatalogTemplate()
 		if err != nil {
@@ -56,8 +70,22 @@ var Generate = cli.Command{
 		err = t.Execute(newFile, struct {
 			Catalogs []*catalog.Catalog
 		}{catalogs})
+
+		//Todo:: discuss better approach for formatting generate code file.
 		if err != nil {
 			return cli.NewExitError("cannot write file for catalogs", 1)
+		}
+		b, err := ioutil.ReadFile(outputFileName)
+		if err != nil {
+			return cli.NewExitError(fmt.Sprintf("cannot open %s file", outputFileName), 1)
+		}
+		b, err = format.Source(b)
+		if err != nil {
+			return cli.NewExitError(fmt.Sprintf("cannot format %s file", outputFileName), 1)
+		}
+		newFile.Write(b)
+		if err != nil {
+			return cli.NewExitError(fmt.Sprintf("cannot write formmated "), 1)
 		}
 		logrus.Info("catalogs.go file created.")
 		return nil
