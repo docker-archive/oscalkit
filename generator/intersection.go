@@ -42,7 +42,10 @@ func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 }
 
 func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import) catalog.Catalog {
-	newCatalog := catalog.Catalog{Groups: []catalog.Group{}}
+	newCatalog := catalog.Catalog{
+		Title:  importedCatalog.Title,
+		Groups: []catalog.Group{},
+	}
 	for _, group := range importedCatalog.Groups {
 		//Prepare a new group to append matching controls into.
 		newGroup := catalog.Group{

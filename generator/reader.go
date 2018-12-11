@@ -49,6 +49,9 @@ func GetCatalogFilePath(catalogURL string) (string, error) {
 		return GetAbsolutePath(catalogURL)
 	}
 	body, err := fetchFromHTTPResource(uri)
+	if err != nil {
+		return "", fmt.Errorf("cannot fetch from url %v", err)
+	}
 	fileName := "/tmp/" + getName(uri)
 	f, err := os.Create(fileName)
 	if err != nil {

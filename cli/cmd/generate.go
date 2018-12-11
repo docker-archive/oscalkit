@@ -75,6 +75,7 @@ var Generate = cli.Command{
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot write file for catalogs, err: %v", err), 1)
 		}
+
 		b, err := ioutil.ReadFile(outputFileName)
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot open %s file", outputFileName), 1)
@@ -83,7 +84,7 @@ var Generate = cli.Command{
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot format %s file", outputFileName), 1)
 		}
-		newFile.WriteAt(b, 0)
+		err = ioutil.WriteFile(outputFileName, b, 0)
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot write formmated "), 1)
 		}
