@@ -42,11 +42,11 @@ var Generate = cli.Command{
 			return cli.NewExitError(fmt.Sprintf("cannot get absolute path, err: %v", err), 1)
 		}
 
-		fileStat, err := os.Stat(profilePath)
+		_, err = os.Stat(profilePath)
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot fetch file, err %v", err), 1)
 		}
-		f, err := os.Open(fileStat.Name())
+		f, err := os.Open(profilePath)
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
