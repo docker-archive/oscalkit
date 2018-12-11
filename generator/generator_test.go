@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"bytes"
 	"fmt"
 	"net/url"
 	"testing"
@@ -45,7 +46,7 @@ func TestIsHttp(t *testing.T) {
 func TestReadCatalog(t *testing.T) {
 
 	catalogTitle := "NIST SP800-53"
-	bytesToWriteInCatalogJSONfile := []byte(string(
+	r := bytes.NewReader([]byte(string(
 		fmt.Sprintf(`
 		{
 			"catalog": {
@@ -79,9 +80,9 @@ func TestReadCatalog(t *testing.T) {
 					}
 				]
 			}
-		}`, catalogTitle)))
+		}`, catalogTitle))))
 
-	c, err := ReadCatalog(bytesToWriteInCatalogJSONfile)
+	c, err := ReadCatalog(r)
 	if err != nil {
 		t.Error(err)
 	}
@@ -94,8 +95,8 @@ func TestReadCatalog(t *testing.T) {
 
 func TestReadInvalidCatalog(t *testing.T) {
 
-	invalidBytes := []byte(string(`{ "catalog": "some dummy bad json"}`))
-	_, err := ReadCatalog(invalidBytes)
+	r := bytes.NewReader([]byte(string(`{ "catalog": "some dummy bad json"}`)))
+	_, err := ReadCatalog(r)
 	if err == nil {
 		t.Error("successfully parsed invalid catalog file")
 	}

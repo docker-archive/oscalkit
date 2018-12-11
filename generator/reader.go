@@ -1,14 +1,17 @@
 package generator
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/davecgh/go-spew/spew"
 
 	"github.com/opencontrol/oscalkit/types/oscal/profile"
 
@@ -16,19 +19,10 @@ import (
 	"github.com/opencontrol/oscalkit/types/oscal/catalog"
 )
 
-func readOscal(b []byte) (*oscal.OSCAL, error) {
-	r := bytes.NewReader(b)
-	o, err := oscal.New(r)
-	if err != nil {
-		return nil, err
-	}
-	return o, nil
-}
-
 //ReadCatalog ReadCatalog
-func ReadCatalog(b []byte) (*catalog.Catalog, error) {
+func ReadCatalog(r io.Reader) (*catalog.Catalog, error) {
 
-	o, err := readOscal(b)
+	o, err := oscal.New(r)
 	if err != nil {
 		return nil, fmt.Errorf("cannot read oscal catalog from file %v,", err)
 	}
@@ -37,9 +31,9 @@ func ReadCatalog(b []byte) (*catalog.Catalog, error) {
 }
 
 //ReadProfile reads profile from byte array
-func ReadProfile(b []byte) (*profile.Profile, error) {
+func ReadProfile(r io.Reader) (*profile.Profile, error) {
 
-	o, err := readOscal(b)
+	o, err := oscal.New(r)
 	if err != nil {
 		return nil, fmt.Errorf("cannot read oscal profile from file. err: %v,", err)
 	}
@@ -70,6 +64,14 @@ func fetchFromHTTPResource(uri *url.URL) ([]byte, error) {
 
 }
 
+//GetAbsolutePath gets absolute file path
+func GetAbsolutePath(path string) (string, error) {
+	if filepath.IsAbs(path) {
+		return path, nil
+	}
+	return filepath.Abs(path)
+}
+
 //GetCatalogFilePath GetCatalogFilePath
 func GetCatalogFilePath(urlString string) (string, error) {
 	uri, err := url.Parse(urlString)
@@ -78,7 +80,12 @@ func GetCatalogFilePath(urlString string) (string, error) {
 	}
 
 	if !isHTTPResource(uri) {
-		return urlString, nil
+		if filepath.IsAbs(urlString) {
+			return urlString, nil
+		}
+		p, err := filepath.Abs(urlString)
+		spew.Dump(p)
+		return p, err
 	}
 	body, err := fetchFromHTTPResource(uri)
 	fileName := "/tmp/" + getName(uri)
