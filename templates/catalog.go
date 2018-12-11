@@ -29,6 +29,15 @@ var ApplicableControls = []catalog.Catalog{
 								Id: 	"{{.Id}}",
 								Class: 	"{{.Class}}",
 								Title:	"{{.Title}}",
+								Subcontrols: []catalog.Subcontrol{
+									{{range .Subcontrols}}
+									catalog.Subcontrol{
+										Id: 	"{{.Id}}",
+										Class: 	"{{.Class}}",
+										Title:	"{{.Title}}",		
+									},
+									{{end}}
+								},
 							},
 						{{end}}
 					},
