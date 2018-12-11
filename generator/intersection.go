@@ -1,7 +1,6 @@
 package generator
 
 import (
-	"log"
 	"os"
 
 	"github.com/Sirupsen/logrus"
@@ -29,12 +28,7 @@ func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 			logrus.Errorf("cannot read file: %v", err)
 			continue
 		}
-		defer func() {
-			err := os.Remove(catalogReference)
-			if err != nil {
-				log.Fatal(err)
-			}
-		}()
+
 		//Once fetched, Read the catalog JSON and Marshall it to Go struct.
 		importedCatalog, err := ReadCatalog(f)
 		if err != nil {
