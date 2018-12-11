@@ -4,8 +4,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
-
 	"github.com/Sirupsen/logrus"
 
 	"github.com/opencontrol/oscalkit/types/oscal/catalog"
@@ -67,7 +65,6 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 						Title:       catalogControl.Title,
 						Subcontrols: catalogControl.Subcontrols,
 					})
-					spew.Dump(newGroup.Controls[0].Subcontrols)
 				}
 			}
 		}
