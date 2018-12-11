@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"github.com/Sirupsen/logrus"
 
 	"github.com/opencontrol/oscalkit/types/oscal/catalog"
@@ -60,10 +62,12 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 			for _, z := range profileImport.Include.IdSelectors {
 				if catalogControl.Id == z.ControlId {
 					newGroup.Controls = append(newGroup.Controls, catalog.Control{
-						Id:    catalogControl.Id,
-						Class: catalogControl.Class,
-						Title: catalogControl.Title,
+						Id:          catalogControl.Id,
+						Class:       catalogControl.Class,
+						Title:       catalogControl.Title,
+						Subcontrols: catalogControl.Subcontrols,
 					})
+					spew.Dump(newGroup.Controls[0].Subcontrols)
 				}
 			}
 		}

@@ -73,7 +73,7 @@ var Generate = cli.Command{
 
 		//TODO: discuss better approach for formatting generate code file.
 		if err != nil {
-			return cli.NewExitError("cannot write file for catalogs", 1)
+			return cli.NewExitError(fmt.Sprintf("cannot write file for catalogs, err: %v", err), 1)
 		}
 		b, err := ioutil.ReadFile(outputFileName)
 		if err != nil {
