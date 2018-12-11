@@ -42,11 +42,11 @@ var Generate = cli.Command{
 			return cli.NewExitError(fmt.Sprintf("cannot get absolute path, err: %v", err), 1)
 		}
 
-		fileStat, err := os.Stat(profilePath)
+		_, err = os.Stat(profilePath)
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot fetch file, err %v", err), 1)
 		}
-		f, err := os.Open(fileStat.Name())
+		f, err := os.Open(profilePath)
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
@@ -71,7 +71,7 @@ var Generate = cli.Command{
 			Catalogs []*catalog.Catalog
 		}{catalogs})
 
-		//Todo:: discuss better approach for formatting generate code file.
+		//TODO: discuss better approach for formatting generate code file.
 		if err != nil {
 			return cli.NewExitError("cannot write file for catalogs", 1)
 		}
