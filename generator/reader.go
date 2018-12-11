@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
-
 	"github.com/opencontrol/oscalkit/types/oscal/profile"
 
 	"github.com/opencontrol/oscalkit/types/oscal"
