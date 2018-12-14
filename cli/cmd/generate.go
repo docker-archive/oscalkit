@@ -15,6 +15,7 @@ import (
 )
 
 var profilePath string
+var outputFileName string
 
 //Generate Cli command to generate go code for controls
 var Generate = cli.Command{
@@ -26,17 +27,21 @@ var Generate = cli.Command{
 			Usage:       "profile to intersect against",
 			Destination: &profilePath,
 		},
+		cli.StringFlag{
+			Name:        "output, o",
+			Usage:       "output filename",
+			Destination: &outputFileName,
+			Value:       "output.go",
+		},
 	},
 	Before: func(c *cli.Context) error {
 		if profilePath == "" {
 			return cli.NewExitError("oscalkit generate is missing the --profile flag", 1)
 		}
-
 		return nil
 	},
 	Action: func(c *cli.Context) error {
 
-		outputFileName := "catalogs.go"
 		profilePath, err := generator.GetAbsolutePath(profilePath)
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot get absolute path, err: %v", err), 1)
@@ -87,7 +92,7 @@ var Generate = cli.Command{
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot write formmated "), 1)
 		}
-		logrus.Info("catalogs.go file created.")
+		logrus.Info(fmt.Sprintf("%s file created.", outputFileName))
 		return nil
 
 	},
