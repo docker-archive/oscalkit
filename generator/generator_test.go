@@ -156,6 +156,44 @@ func TestCreateCatalogsFromProfileWithBadHref(t *testing.T) {
 	}
 }
 
+func TestSubControlsMapping(t *testing.T) {
+
+	profile := profile.Profile{
+		Imports: []profile.Import{
+			profile.Import{
+				Href: &catalog.Href{
+					URL: func() *url.URL {
+						url, _ := url.Parse("https://raw.githubusercontent.com/usnistgov/OSCAL/master/content/nist.gov/SP800-53/rev4/NIST_SP-800-53_rev4_catalog.json")
+						return url
+					}(),
+				},
+				Include: &profile.Include{
+					IdSelectors: []profile.Call{
+						profile.Call{
+							ControlId: "ac-1",
+						},
+						profile.Call{
+							ControlId: "ac-2",
+						},
+						profile.Call{
+							SubcontrolId: "ac-2.1",
+						},
+						profile.Call{
+							SubcontrolId: "ac-2.2",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	c := (CreateCatalogsFromProfile(&profile))
+	if c[0].Groups[0].Controls[1].Subcontrols[0].Id != "ac-2.1" {
+		t.Errorf("does not contain ac-2.1 in subcontrols")
+	}
+
+}
+
 func TestGetCatalogInvalidFilePath(t *testing.T) {
 
 	url := "http://[::1]a"

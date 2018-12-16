@@ -1,7 +1,9 @@
 package generator
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/Sirupsen/logrus"
 
@@ -41,8 +43,47 @@ func CreateCatalogsFromProfile(profile *profile.Profile) []*catalog.Catalog {
 	return outputCatalogs
 }
 
+func mapSubControls(mappedCatalogs *catalog.Catalog, calls []profile.Call) {
+	for i, g := range mappedCatalogs.Groups {
+		for j, control := range g.Controls {
+			for _, call := range calls {
+				if control.Id == getControlIDFromSubControl(call.SubcontrolId) {
+					mappedCatalogs.Groups[i].Controls[j].Subcontrols = append(mappedCatalogs.Groups[i].Controls[j].Subcontrols, catalog.Subcontrol{
+						Id: call.SubcontrolId,
+					})
+				}
+			}
+		}
+	}
+
+}
+func isSubControl(s string) bool {
+	substrings := []string{" ", "(", "."}
+	for _, substr := range substrings {
+		if strings.Contains(s, substr) {
+			return true
+		}
+	}
+	return false
+}
+
+func getControlIDFromSubControl(sc string) string {
+	if len(sc) >= 4 {
+		subc := strings.Split(sc, "-")
+		if isSUbControl(subc[1][0:2]) {
+			return fmt.Sprintf("%s-%s", subc[0], subc[1][0:1])
+		}
+		return fmt.Sprintf("%s-%s", subc[0], subc[1][0:2])
+	}
+	return sc
+
+}
+
 func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import) catalog.Catalog {
-	newCatalog := catalog.Catalog{Groups: []catalog.Group{}}
+	newCatalog := catalog.Catalog{
+		Title:  importedCatalog.Title,
+		Groups: []catalog.Group{},
+	}
 	for _, group := range importedCatalog.Groups {
 		//Prepare a new group to append matching controls into.
 		newGroup := catalog.Group{
@@ -57,7 +98,7 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 						Id:          catalogControl.Id,
 						Class:       catalogControl.Class,
 						Title:       catalogControl.Title,
-						Subcontrols: catalogControl.Subcontrols,
+						Subcontrols: []catalog.Subcontrol{},
 					})
 				}
 			}
@@ -66,5 +107,6 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 			newCatalog.Groups = append(newCatalog.Groups, newGroup)
 		}
 	}
+	mapSubControls(&newCatalog, profileImport.Include.IdSelectors)
 	return newCatalog
 }
