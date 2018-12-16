@@ -57,7 +57,7 @@ func mapSubControls(mappedCatalogs *catalog.Catalog, calls []profile.Call) {
 	}
 
 }
-func isSUbControl(s string) bool {
+func isSubControl(s string) bool {
 	substrings := []string{" ", "(", "."}
 	for _, substr := range substrings {
 		if strings.Contains(s, substr) {
