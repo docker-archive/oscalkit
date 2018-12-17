@@ -70,7 +70,7 @@ func isSubControl(s string) bool {
 func getControlIDFromSubControl(sc string) string {
 	if len(sc) >= 4 {
 		subc := strings.Split(sc, "-")
-		if isSUbControl(subc[1][0:2]) {
+		if isSubControl(subc[1][0:2]) {
 			return fmt.Sprintf("%s-%s", subc[0], subc[1][0:1])
 		}
 		return fmt.Sprintf("%s-%s", subc[0], subc[1][0:2])
