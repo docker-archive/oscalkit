@@ -47,7 +47,7 @@ func mapSubControls(mappedCatalogs *catalog.Catalog, calls []profile.Call) {
 	for i, g := range mappedCatalogs.Groups {
 		for j, control := range g.Controls {
 			for _, call := range calls {
-				if control.Id == getControlIDFromSubControl(call.SubcontrolId) {
+				if strings.ToLower(control.Id) == strings.ToLower(getControlIDFromSubControl(call.SubcontrolId)) {
 					mappedCatalogs.Groups[i].Controls[j].Subcontrols = append(mappedCatalogs.Groups[i].Controls[j].Subcontrols, catalog.Subcontrol{
 						Id: call.SubcontrolId,
 					})
@@ -70,7 +70,7 @@ func isSubControl(s string) bool {
 func getControlIDFromSubControl(sc string) string {
 	if len(sc) >= 4 {
 		subc := strings.Split(sc, "-")
-		if isSUbControl(subc[1][0:2]) {
+		if isSubControl(subc[1][0:2]) {
 			return fmt.Sprintf("%s-%s", subc[0], subc[1][0:1])
 		}
 		return fmt.Sprintf("%s-%s", subc[0], subc[1][0:2])
@@ -93,7 +93,7 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 		//Append controls to the new group if matches
 		for _, catalogControl := range group.Controls {
 			for _, z := range profileImport.Include.IdSelectors {
-				if catalogControl.Id == z.ControlId {
+				if strings.ToLower(catalogControl.Id) == strings.ToLower(z.ControlId) {
 					newGroup.Controls = append(newGroup.Controls, catalog.Control{
 						Id:          catalogControl.Id,
 						Class:       catalogControl.Class,
