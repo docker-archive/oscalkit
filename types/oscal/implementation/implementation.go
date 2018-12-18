@@ -1,4 +1,4 @@
-package models
+package implementation
 
 type ComponentDefinition struct {
 	ID                      string                    `xml:"id,attr,omitempty" json:"id"`
