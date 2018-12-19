@@ -121,7 +121,10 @@ func TestCreateCatalogsFromProfile(t *testing.T) {
 			},
 		},
 	}
-	x := CreateCatalogsFromProfile(&p)
+	x, err := CreateCatalogsFromProfile(&p)
+	if err != nil {
+		t.Errorf("error should be null")
+	}
 	if len(x) != 1 {
 		t.Error("there must be one catalog")
 	}
@@ -150,7 +153,10 @@ func TestCreateCatalogsFromProfileWithBadHref(t *testing.T) {
 			},
 		},
 	}
-	catalogs := CreateCatalogsFromProfile(&p)
+	catalogs, err := CreateCatalogsFromProfile(&p)
+	if err != nil {
+		t.Error("error should  be nil")
+	}
 	if len(catalogs) > 0 {
 		t.Error("nothing should be parsed due to bad url")
 	}
@@ -187,7 +193,10 @@ func TestSubControlsMapping(t *testing.T) {
 		},
 	}
 
-	c := CreateCatalogsFromProfile(&profile)
+	c, err := CreateCatalogsFromProfile(&profile)
+	if err != nil {
+		t.Error("error should be nil")
+	}
 	if c[0].Groups[0].Controls[1].Subcontrols[0].Id != "ac-2.1" {
 		t.Errorf("does not contain ac-2.1 in subcontrols")
 	}

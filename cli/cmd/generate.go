@@ -67,7 +67,10 @@ var Generate = cli.Command{
 		}
 		defer newFile.Close()
 
-		catalogs := generator.CreateCatalogsFromProfile(profile)
+		catalogs, err := generator.CreateCatalogsFromProfile(profile)
+		if err != nil {
+			return cli.NewExitError(fmt.Sprintf("cannot create catalogs from profile, err: %v", err), 1)
+		}
 		t, err := templates.GetCatalogTemplate()
 		if err != nil {
 			return cli.NewExitError("cannot fetch template", 1)
