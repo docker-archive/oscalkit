@@ -13,7 +13,7 @@ GOARCH := amd64
 VERSION := 0.2.0
 BUILD := $(shell git rev-parse --short HEAD)-dev
 DATE := $(shell date "+%Y-%m-%d")
-LDFLAGS=-ldflags "-s -w -X github.com/opencontrol/oscalkit/cli/version.Version=$(VERSION) -X github.com/opencontrol/oscalkit/cli/version.Build=$(BUILD) -X github.com/opencontrol/oscalkit/cli/version.Date=$(DATE)"
+
 NAMESPACE := opencontrolorg
 REPO := oscalkit
 BINARY=oscalkit_$(GOOS)_$(GOARCH)
@@ -29,7 +29,6 @@ generate:
 		sh -c "go generate"
 
 test: generate
-	
 	docker container run \
 		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
 		-w /go/src/github.com/opencontrol/oscalkit \
@@ -42,12 +41,20 @@ build-docker:
 push: build-docker
 	docker image push $(NAMESPACE)/$(REPO):$(BUILD)
 
-$(BINARY): generate
-	docker container run --rm \
-		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
-		-w /go/src/github.com/opencontrol/oscalkit/cli \
-		golang:1.11-alpine \
-		sh -c 'GOOS=${GOOS} GOARCH=${GOARCH} go build -v ${LDFLAGS} -o ../${BINARY}'
+# Builds binary for the OS/arch. Assumes that types have already been generated
+# via the "generate" target
+$(BINARY):
+	docker image build -f Dockerfile.build \
+		--build-arg GOOS=$(GOOS) \
+		--build-arg GOARCH=$(GOARCH) \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD=$(BUILD) \
+		--build-arg DATE=$(DATE) \
+		--build-arg BINARY=$(BINARY) \
+		-t $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD)-builder .;
+	$(eval ID := $(shell docker create $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD)-builder))
+	@docker cp $(ID):/$(BINARY) .
+	@docker rm $(ID) >/dev/null
 
 clean:
 	if [ -f ${BINARY} ]; then rm ${BINARY}; fi
