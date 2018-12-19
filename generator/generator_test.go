@@ -187,7 +187,7 @@ func TestSubControlsMapping(t *testing.T) {
 		},
 	}
 
-	c := (CreateCatalogsFromProfile(&profile))
+	c := CreateCatalogsFromProfile(&profile)
 	if c[0].Groups[0].Controls[1].Subcontrols[0].Id != "ac-2.1" {
 		t.Errorf("does not contain ac-2.1 in subcontrols")
 	}
