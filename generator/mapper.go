@@ -50,7 +50,6 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 				return
 			}
 
-			//			outputCatalogs = append(outputCatalogs, &newCatalog)
 			doneChan <- &newCatalog
 		}(profileImport)
 
