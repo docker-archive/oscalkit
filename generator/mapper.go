@@ -15,7 +15,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 
 	done := 0
 	errChan := make(chan error)
-	doneChan := make(chan *catalog.Catalog)
+	catalogChan := make(chan *catalog.Catalog)
 	var outputCatalogs []*catalog.Catalog
 	//Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
@@ -24,14 +24,14 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			catalogReference, err := GetCatalogFilePath(profileImport.Href.String())
 			if err != nil {
 				logrus.Errorf("invalid file path: %v", err)
-				doneChan <- nil
+				catalogChan <- nil
 				return
 			}
 
 			f, err := os.Open(catalogReference)
 			if err != nil {
 				logrus.Errorf("cannot read file: %v", err)
-				doneChan <- nil
+				catalogChan <- nil
 				return
 			}
 
@@ -50,7 +50,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 				return
 			}
 
-			doneChan <- &newCatalog
+			catalogChan <- &newCatalog
 		}(profileImport)
 
 	}
@@ -58,7 +58,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 		select {
 		case err := <-errChan:
 			return nil, err
-		case newCatalog := <-doneChan:
+		case newCatalog := <-catalogChan:
 			done++
 			if newCatalog != nil {
 				outputCatalogs = append(outputCatalogs, newCatalog)
