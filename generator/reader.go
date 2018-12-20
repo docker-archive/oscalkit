@@ -24,6 +24,11 @@ func ReadCatalog(r io.Reader) (*catalog.Catalog, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot read oscal catalog from file %v,", err)
 	}
+
+	// oscalkit supports catalogs only at this point of time
+	if o.Catalog == nil {
+		return nil, fmt.Errorf("could not parse catalog")
+	}
 	return o.Catalog, nil
 
 }
