@@ -14,6 +14,7 @@ The following OSCAL components are currently supported:
 |---------|-------|
 |[Catalog](https://pages.nist.gov/OSCAL/concepts/#oscal-catalogs)|[XSD](https://github.com/usnistgov/OSCAL/blob/master/schema/xml/oscal-catalog-schema.xsd) \| [JSON schema](https://github.com/usnistgov/OSCAL/blob/master/schema/json/oscal-catalog-schema.json) \| [metaschema](https://github.com/usnistgov/OSCAL/blob/master/schema/metaschema/oscal-catalog-metaschema.xml)|
 |[Profile](https://pages.nist.gov/OSCAL/concepts/#oscal-profiles)|[XSD](https://github.com/usnistgov/OSCAL/blob/master/schema/xml/oscal-profile-schema.xsd) \| [JSON schema](https://github.com/usnistgov/OSCAL/blob/master/schema/json/oscal-profile-schema.json) \| [metaschema](https://github.com/usnistgov/OSCAL/blob/master/schema/metaschema/oscal-profile-metaschema.xml)|
+|Implementation (WIP)|Currently based on the model being developed in https://github.com/usnistgov/OSCAL/issues/216|
 
 ## Installing
 
