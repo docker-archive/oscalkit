@@ -29,11 +29,7 @@ generate:
 		sh -c "go generate"
 
 test:
-	docker container run \
-		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
-		-w /go/src/github.com/opencontrol/oscalkit \
-		circleci/golang:1.11 \
-		sh -c "go test \$$(go list ./... | grep -v /vendor/)"
+	@go test -v $(shell go list ./... | grep -v /vendor/)
 
 build-docker:
 	docker image build --build-arg VERSION=$(VERSION) --build-arg BUILD=$(BUILD) --build-arg DATE=$(DATE) -t $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD) .

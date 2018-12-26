@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/golang:1.11
     working_directory: /go/src/github.com/opencontrol/oscalkit
@@ -26,7 +26,12 @@ jobs:
           destination: raw-test-output
       - store_test_results:
           path: /tmp/test-results
-      
+  
+  deploy:
+    docker:
+      - image: circleci/golang:1.11
+    working_directory: /go/src/github.com/opencontrol/oscalkit
+    steps:
       - setup_remote_docker:
           docker_layer_caching: true
       - run: sudo apt-get install -y rpm
@@ -37,7 +42,17 @@ jobs:
             if [[ -n ${CIRCLE_TAG} ]]; then
               curl -sL https://git.io/goreleaser | bash
             fi
+        
 
-deployment:
-  trigger_tag:
-    tag: /.*/
+workflows:
+  test_and_deploy:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: master
