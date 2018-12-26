@@ -1,6 +1,6 @@
 # oscalkit
 
-[![CircleCI](https://circleci.com/gh/opencontrol/oscalkit.svg?style=svg)](https://circleci.com/gh/opencontrol/oscalkit) [![GoDoc](https://godoc.org/github.com/opencontrol/oscalkit?status.svg)](https://godoc.org/github.com/opencontrol/oscalkit)
+[![CircleCI](https://circleci.com/gh/opencontrol/oscalkit.svg?style=svg)](https://circleci.com/gh/opencontrol/oscalkit) [![codecov](https://codecov.io/gh/opencontrol/oscalkit/branch/master/graph/badge.svg)](https://codecov.io/gh/opencontrol/oscalkit) [![GoDoc](https://godoc.org/github.com/opencontrol/oscalkit?status.svg)](https://godoc.org/github.com/opencontrol/oscalkit)
 
 > In development. Since the OSCAL schemas are still under active development, parsing errors may occur if running the tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/opencontrol/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
 
