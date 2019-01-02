@@ -40,18 +40,21 @@ func ReadProfile(r io.Reader) (*profile.Profile, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot read oscal profile from file. err: %v,", err)
 	}
+	if o.Profile == nil {
+		return nil, fmt.Errorf("unable to marshall profile")
+	}
 	return o.Profile, nil
 }
 
-//GetCatalogFilePath GetCatalogFilePath
-func GetCatalogFilePath(catalogURL string) (string, error) {
-	uri, err := url.Parse(catalogURL)
+//GetFilePath GetFilePath
+func GetFilePath(URL string) (string, error) {
+	uri, err := url.Parse(URL)
 	if err != nil {
 		return "", fmt.Errorf("invalid URL pattern %v", err)
 	}
 
 	if !isHTTPResource(uri) {
-		return GetAbsolutePath(catalogURL)
+		return GetAbsolutePath(URL)
 	}
 	body, err := fetchFromHTTPResource(uri)
 	if err != nil {

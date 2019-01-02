@@ -48,6 +48,14 @@
   revision = "5d49c9dfc7836f0552e532b4b20caebf51b944e3"
 
 [[projects]]
+  digest = "1:7f569d906bdd20d906b606415b7d794f798f91a62fcfb6a4daa6d50690fb7a3f"
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  pruneopts = ""
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
+[[projects]]
   branch = "master"
   digest = "1:438d5957cf1c26ca62975dc4b1b59242acc9e527f39ed3f6cda57ee6d3653daf"
   name = "github.com/urfave/cli"
@@ -108,6 +116,7 @@
     "github.com/mitchellh/go-wordwrap",
     "github.com/santhosh-tekuri/jsonschema",
     "github.com/santhosh-tekuri/jsonschema/loader",
+    "github.com/satori/go.uuid",
     "github.com/urfave/cli",
     "gopkg.in/square/go-jose.v2",
     "gopkg.in/yaml.v2",

@@ -21,7 +21,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	for _, profileImport := range profileArg.Imports {
 		go func(profileImport profile.Import) {
 			//ForEach Import's Href, Fetch the Catalog JSON file
-			catalogReference, err := GetCatalogFilePath(profileImport.Href.String())
+			catalogReference, err := GetFilePath(profileImport.Href.String())
 			if err != nil {
 				logrus.Errorf("invalid file path: %v", err)
 				catalogChan <- nil
