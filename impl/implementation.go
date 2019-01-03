@@ -13,9 +13,9 @@ const (
 	//TotalControlsInExcel the total number of controls in the excel sheet
 	TotalControlsInExcel = 264
 	//ComponentNameIndex The Column at which name of the component configuration is present
-	ComponentNameIndex = 15
+	ComponentNameIndex = 14
 	//NarrativeIndex The Column at which narrative of the component configuration is present
-	NarrativeIndex = 16
+	NarrativeIndex = 15
 	//ControlIndex Column at which control is present in the excel sheet
 	ControlIndex = 2
 	//RowIndex Starting point for valid rows (neglects titles)
@@ -107,7 +107,7 @@ func CreateComponentConfiguration(guid uuid.UUID, componentConfName, narrative s
 		ConfigurableValues: []implementation.ConfigurableValue{
 			implementation.ConfigurableValue{
 				ValueID: uuid.NewV4().String(),
-				Value:   0,
+				Value:   "0",
 			},
 		},
 	}
@@ -164,7 +164,7 @@ func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.P
 						c := strings.ToLower(CSVS[i][ControlIndex])
 						if cat.isSubControl(c) {
 							arr[0].ControlIds = append(arr[0].ControlIds, implementation.ControlId{
-								ControlID:    "",
+								ControlID:    cat.GetControl(c),
 								ItemID:       c,
 								CatalogIDRef: cat.GetID(),
 							})
@@ -252,15 +252,16 @@ func (*NISTCatalog) isSubControl(s string) bool {
 func GenerateImplementationParamter(param profile.SetParam) implementation.Parameter {
 	return implementation.Parameter{
 		ParameterID: param.Id,
-		Value: func() string {
-			str := ""
+		PossibleValues: func() []string {
+			values := []string{}
 			for _, x := range param.Constraints {
-				str += x.Value + " "
+				values = append(values, x.Value)
 			}
-			return str
+			return values
 		}(),
-		Guidance: "{{guidance}}",
-		ValueID:  "{{valueId}}",
+		Guidance:     "{{guidance}}",
+		ValueID:      "{{valueId}}",
+		DefaultValue: "{{defaultValue}}",
 	}
 }
 

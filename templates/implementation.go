@@ -29,7 +29,7 @@ var ImplementationGenerated = implementation.Implementation{
 							ConfigurableValues: []implementation.ConfigurableValue{
 								{{range .ConfigurableValues}}
 									implementation.ConfigurableValue{
-											Value:   {{.Value}},
+											Value:   "{{.Value}}",
 											ValueID: "{{.ValueID}}",
 									},
 								{{end}}
@@ -48,10 +48,15 @@ var ImplementationGenerated = implementation.Implementation{
 										Parameters:         []implementation.Parameter{
 											{{range .Parameters}}
 											implementation.Parameter{
-											Guidance: "{{.Guidance}}",
-											ParameterID: "{{.ParameterID}}",
-											Value: "{{.Value}}",
-											ValueID: "{{.ValueID}}",
+												Guidance: "{{.Guidance}}",
+												ParameterID: "{{.ParameterID}}",
+												ValueID: "{{.ValueID}}",
+												DefaultValue: "{{.PossibleValues}}",
+												PossibleValues: []string{
+													{{range .PossibleValues}}
+														"{{.}}",
+													{{end}}
+												},												
 											},
 											{{end}}
 										},
@@ -81,10 +86,15 @@ var ImplementationGenerated = implementation.Implementation{
 										Parameters:         []implementation.Parameter{
 											{{range .Parameters}}
 											implementation.Parameter{
-											Guidance: "{{.Guidance}}",
-											ParameterID: "{{.ParameterID}}",
-											Value: "{{.Value}}",
-											ValueID: "{{.ValueID}}",
+												Guidance: "{{.Guidance}}",
+												ParameterID: "{{.ParameterID}}",
+												ValueID: "{{.ValueID}}",
+												DefaultValue: "{{.DefaultValue}}",
+												PossibleValues: []string{
+													{{range .PossibleValues}}
+														"{{.}}",
+													{{end}}
+												},
 											},
 											{{end}}
 										},
