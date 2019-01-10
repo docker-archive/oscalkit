@@ -13,13 +13,16 @@ const (
 	//TotalControlsInExcel the total number of controls in the excel sheet
 	TotalControlsInExcel = 264
 	//ComponentNameIndex The Column at which name of the component configuration is present
-	ComponentNameIndex = 14
+	ComponentNameIndex = 16
+	//UUIDIndex The Column at which guid of component exist
+	UUIDIndex = 17
 	//NarrativeIndex The Column at which narrative of the component configuration is present
-	NarrativeIndex = 15
+	NarrativeIndex = 18
 	//ControlIndex Column at which control is present in the excel sheet
 	ControlIndex = 2
 	//RowIndex Starting point for valid rows (neglects titles)
-	RowIndex = 3
+	RowIndex  = 3
+	delimiter = "|"
 )
 
 type guidMap map[string]uuid.UUID
@@ -29,7 +32,7 @@ type cdMap map[string]implementation.ComponentDefinition
 func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) implementation.Implementation {
 
 	ComponentDefinitonMap := make(map[string]implementation.ComponentDefinition)
-	checkAgainstGUUID := make(map[string]uuid.UUID)
+	checkAgainstGUID := make(map[string]uuid.UUID)
 
 	for i := RowIndex; i < TotalControlsInExcel; i++ {
 		applicableControl := CSVS[i][ControlIndex]
@@ -37,17 +40,19 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 			continue
 		}
 		applicableNarrative := CSVS[i][NarrativeIndex]
-		ListOfComponentConfigName := strings.Split(CSVS[i][ComponentNameIndex], "|")
-		for _, componentConfigName := range ListOfComponentConfigName {
+		ListOfComponentConfigName := strings.Split(CSVS[i][ComponentNameIndex], delimiter)
+		for compIndex, componentConfigName := range ListOfComponentConfigName {
 			componentConfigName = strings.TrimSpace(componentConfigName)
 			if componentConfigName == "" {
 				continue
 			}
 			if _, ok := ComponentDefinitonMap[componentConfigName]; !ok {
-				CreateComponentDefinition(checkAgainstGUUID, ComponentDefinitonMap, componentConfigName, p, c, applicableControl, applicableNarrative)
+				guid := strings.Split(CSVS[i][UUIDIndex], delimiter)[compIndex]
+				guid = strings.TrimSpace(guid)
+				CreateComponentDefinition(checkAgainstGUID, ComponentDefinitonMap, componentConfigName, p, c, applicableControl, applicableNarrative, guid)
 			} else {
 				securityCheck := ComponentDefinitonMap[componentConfigName]
-				guid := checkAgainstGUUID[componentConfigName]
+				guid := checkAgainstGUID[componentConfigName]
 				ComponentDefinitonMap[componentConfigName] = AppendParameterInImplementation(securityCheck, guid, p, c, applicableControl)
 			}
 		}
@@ -57,9 +62,9 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 }
 
 //CreateComponentDefinition creates a component definition
-func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, p *profile.Profile, c Catalog, control, narrative string) {
+func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, p *profile.Profile, c Catalog, control, narrative, guid string) {
 
-	componentConfGUID := uuid.NewV4()
+	componentConfGUID, _ := uuid.FromString(guid)
 	gm[componentConfName] = componentConfGUID
 	controlConfiguration := implementation.ControlConfiguration{
 		ConfigurationIDRef: componentConfGUID.String(),
