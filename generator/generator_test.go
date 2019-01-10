@@ -206,7 +206,7 @@ func TestSubControlsMapping(t *testing.T) {
 func TestGetCatalogInvalidFilePath(t *testing.T) {
 
 	url := "http://[::1]a"
-	_, err := GetCatalogFilePath(url)
+	_, err := GetFilePath(url)
 	if err == nil {
 		t.Error("should fail")
 	}

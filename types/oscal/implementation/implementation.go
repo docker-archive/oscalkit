@@ -22,7 +22,7 @@ type Label struct {
 
 type ConfigurableValue struct {
 	ValueID string `xml:"value-id,attr,omitempty" json:"valueId"`
-	Value   int    `xml:"value,attr,omitempty" json:"value"`
+	Value   string `xml:"value,attr,omitempty" json:"value"`
 }
 
 type ComponentConfiguration struct {
@@ -36,10 +36,12 @@ type ComponentConfiguration struct {
 }
 
 type Parameter struct {
-	ParameterID string `xml:"parameter-id,attr,omitempty" json:"parameterId"`
-	ValueID     string `xml:"value-id,attr,omitempty" json:"valueId"`
-	Value       string `xml:"value,attr,omitempty" json:"value"`
-	Guidance    string `xml:"guidance,attr,omitempty" json:"guidance"`
+	ParameterID    string        `xml:"parameter-id,attr,omitempty" json:"parameterId,omitempty"`
+	ValueID        string        `xml:"value-id,attr,omitempty" json:"valueId,omitempty"`
+	Guidance       string        `xml:"guidance,attr,omitempty" json:"guidance,omitempty"`
+	AssessedValue  AssessedValue `xml:"assessed-value,attr,omitempty" json:"assessedValue,omitempty"`
+	PossibleValues []string      `xml:"possbile-values,attr,omitempty" json:"possibleValues,omitempty"`
+	DefaultValue   string        `xml:"default-value,attr,omitempty" json:"defaultValue,omitempty"`
 }
 
 type ImplementsProfile struct {
@@ -53,9 +55,10 @@ type ControlConfiguration struct {
 }
 
 type ControlId struct {
-	CatalogIDRef string `xml:"control-id-ref,attr,omitempty" json:"catalogIdRef,omitempty"`
-	ControlID    string `xml:"control-id,attr,omitempty" json:"controlId,omitempty"`
-	ItemID       string `xml:"item-id,attr,omitempty" json:"itemId,omitempty"`
+	CatalogIDRef   string         `xml:"control-id-ref,attr,omitempty" json:"catalogIdRef,omitempty"`
+	ControlID      string         `xml:"control-id,attr,omitempty" json:"controlId,omitempty"`
+	ItemID         string         `xml:"item-id,attr,omitempty" json:"itemId,omitempty"`
+	AssessmentData AssessmentData `xml:"assesment-data,attr,omitempty" json:"assesmentData,attr,omitempty"`
 }
 
 type Relationship struct {
@@ -88,3 +91,23 @@ type Implementation struct {
 type Capabilities struct{}
 
 type ComponentSpecifications struct{}
+
+type AssessmentData struct {
+	AssessmentID      string             `xml:"assessment-id,attr,omitempty" json:"assessmentId,omitempty"`
+	Guidance          string             `xml:"guidance,attr,omitempty" json:"guidance,omitempty"`
+	ValidationResults []ValidationResult `xml:"validation-results,attr,omitempty" json:"validationResults,omitempty"`
+}
+
+type ValidationResult struct {
+	ValidationMechanismRefID string `xml:"validation-mechanism-refid,attr,omitempty" json:"validationMechanismRefId,omitempty"`
+	Output                   string `xml:"output,attr,omitempty" json:"output,omitempty"`
+	Compliant                bool   `xml:"compliant,attr,omitempty" json:"compliant,omitempty"`
+}
+
+//AssessedValue AssessedValue
+type AssessedValue struct {
+	AssessmentID string `xml:"assessment-id,attr,omitempty" json:"assessmentId,omitempty"`
+	Output       string `xml:"output,attr,omitempty" json:"output,omitempty"`
+	Compliant    bool   `xml:"compliant,attr,omitempty" json:"compliant,omitempty"`
+	Value        string `xml:"value,attr,omitempty" json:"value"`
+}

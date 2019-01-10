@@ -8,6 +8,7 @@ import (
 
 // Each OSCAL profile is defined by a Profile element
 type Profile struct {
+	ID      string   `xml:"id,attr,omitempty" json:"id,omitempty"`
 	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 profile" json:"-"`
 	Merge   *Merge   `xml:"merge,omitempty" json:"merge,omitempty"`
 	Modify  *Modify  `xml:"modify,omitempty" json:"modify,omitempty"`

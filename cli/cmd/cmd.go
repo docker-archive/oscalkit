@@ -50,6 +50,7 @@ func Execute() error {
 		Validate,
 		Sign,
 		Generate,
+		Implementation,
 	}
 
 	return app.Run(os.Args)
