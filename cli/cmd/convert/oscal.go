@@ -23,7 +23,7 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/opencontrol/oscalkit/types/oscal"
+	"github.com/docker/oscalkit/types/oscal"
 	"github.com/urfave/cli"
 )
 

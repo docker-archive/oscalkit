@@ -11,12 +11,9 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-
-	"github.com/opencontrol/oscalkit/templates"
-
-	"github.com/opencontrol/oscalkit/impl"
-
-	"github.com/opencontrol/oscalkit/generator"
+	"github.com/docker/oscalkit/generator"
+	"github.com/docker/oscalkit/impl"
+	"github.com/docker/oscalkit/templates"
 	"github.com/urfave/cli"
 )
 

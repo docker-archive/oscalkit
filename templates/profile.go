@@ -16,8 +16,8 @@ package oscalkit
 import (
 	"net/url"
 
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
-	"github.com/opencontrol/oscalkit/types/oscal/profile"
+	"github.com/docker/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/profile"
 
 )
 

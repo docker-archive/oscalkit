@@ -10,7 +10,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/opencontrol/oscalkit/metaschema"
+	"github.com/docker/oscalkit/metaschema"
 )
 
 const (

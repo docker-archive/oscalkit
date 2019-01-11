@@ -14,7 +14,7 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/opencontrol/oscalkit/validator"
+	"github.com/docker/oscalkit/validator"
 	"github.com/urfave/cli"
 )
 

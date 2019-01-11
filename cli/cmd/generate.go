@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/opencontrol/oscalkit/generator"
-	"github.com/opencontrol/oscalkit/templates"
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/generator"
+	"github.com/docker/oscalkit/templates"
+	"github.com/docker/oscalkit/types/oscal/catalog"
 
 	"github.com/urfave/cli"
 )

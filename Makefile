@@ -14,17 +14,17 @@ VERSION := 0.2.0
 BUILD := $(shell git rev-parse --short HEAD)-dev
 DATE := $(shell date "+%Y-%m-%d")
 
-NAMESPACE := opencontrolorg
+NAMESPACE := docker
 REPO := oscalkit
 BINARY=oscalkit_$(GOOS)_$(GOARCH)
 
 .DEFAULT_GOAL := $(BINARY)
-.PHONY: test build-docker push $(BINARY) clean
+.PHONY: test build-docker push $(BINARY) clean generate
 
 generate:
 	docker build -t $(NAMESPACE)/$(REPO):generate -f Dockerfile.generate .
 	docker container run \
-		-v $$PWD:/go/src/github.com/opencontrol/oscalkit \
+		-v $$PWD:/go/src/github.com/docker/oscalkit \
 		$(NAMESPACE)/$(REPO):generate \
 		sh -c "go generate"
 
@@ -37,9 +37,7 @@ build-docker:
 push: build-docker
 	docker image push $(NAMESPACE)/$(REPO):$(BUILD)
 
-# Builds binary for the OS/arch. Assumes that types have already been generated
-# via the "generate" target
-$(BINARY):
+build:
 	docker image build -f Dockerfile.build \
 		--build-arg GOOS=$(GOOS) \
 		--build-arg GOARCH=$(GOARCH) \
@@ -47,7 +45,11 @@ $(BINARY):
 		--build-arg BUILD=$(BUILD) \
 		--build-arg DATE=$(DATE) \
 		--build-arg BINARY=$(BINARY) \
-		-t $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD)-builder .;
+		-t $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD)-builder .
+
+# Builds binary for the OS/arch. Assumes that types have already been generated
+# via the "generate" target
+$(BINARY): build
 	$(eval ID := $(shell docker create $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD)-builder))
 	@docker cp $(ID):/$(BINARY) .
 	@docker rm $(ID) >/dev/null

@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/opencontrol/oscalkit/types/oscal/implementation"
-	"github.com/opencontrol/oscalkit/types/oscal/profile"
+	"github.com/docker/oscalkit/types/oscal/implementation"
+	"github.com/docker/oscalkit/types/oscal/profile"
 	uuid "github.com/satori/go.uuid"
 )
 

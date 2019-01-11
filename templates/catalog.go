@@ -12,7 +12,7 @@ const catalogtTemplate = `
 package oscalkit
 
 import (
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/catalog"
 )
 
 var ApplicableControls = []catalog.Catalog{

@@ -10,9 +10,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/opencontrol/oscalkit/types/oscal"
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
-	"github.com/opencontrol/oscalkit/types/oscal/profile"
+	"github.com/docker/oscalkit/types/oscal"
+	"github.com/docker/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
 // StructExaminer To Verify The Structure

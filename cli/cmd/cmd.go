@@ -15,8 +15,8 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/opencontrol/oscalkit/cli/cmd/convert"
-	"github.com/opencontrol/oscalkit/cli/version"
+	"github.com/docker/oscalkit/cli/cmd/convert"
+	"github.com/docker/oscalkit/cli/version"
 	"github.com/urfave/cli"
 )
 

@@ -6,9 +6,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/opencontrol/oscalkit/types/oscal/profile"
-
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
 const (

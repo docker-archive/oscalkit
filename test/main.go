@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/opencontrol/oscalkit"
+	"github.com/docker/oscalkit"
 )
 
 func main() {

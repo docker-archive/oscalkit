@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/fatih/color"
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
 )
 
 // SecurityControlsSubcontrolCheck is a test to verify that all controls from the catalog are being mapped correctly

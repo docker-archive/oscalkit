@@ -1,7 +1,7 @@
 builds:
   - binary: oscalkit
     main: ./cli/main.go
-    ldflags: -s -w -X github.com/opencontrol/oscalkit/cli/version.Version={{.Version}} -X github.com/opencontrol/oscalkit/cli/version.Build={{.ShortCommit}} -X github.com/opencontrol/oscalkit/cli/version.Date={{.Date}}
+    ldflags: -s -w -X github.com/docker/oscalkit/cli/version.Version={{.Version}} -X github.com/docker/oscalkit/cli/version.Build={{.ShortCommit}} -X github.com/docker/oscalkit/cli/version.Date={{.Date}}
     env:
       - CGO_ENABLED=0
     goos:
@@ -11,17 +11,8 @@ builds:
     goarch:
       - amd64
 
-nfpm:
-  homepage: https://github.com/opencontrol/oscalkit
-  license: CC0 1.0
-  dependencies:
-    - libxml2-utils
-  formats:
-    - deb
-    - rpm
-
 dockers:
-  - image: opencontrolorg/oscalkit
+  - image: docker/oscalkit
     dockerfile: Dockerfile.release
     tag_templates:
       - "{{ .Version }}"
@@ -30,11 +21,11 @@ dockers:
 brew:
   name: oscalkit
   github:
-    owner: opencontrol
+    owner: docker
     name: homebrew-oscalkit
   commit_author:
-    name: OpenControl
-    email: dev@open-control.org
-  homepage: https://github.com/opencontrol/oscalkit
+    name: Andrew Weiss
+    email: anweiss@docker.com
+  homepage: https://github.com/docker/oscalkit
   dependencies:
     - libxml2

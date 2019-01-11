@@ -5,9 +5,8 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
-	"github.com/opencontrol/oscalkit/types/oscal/profile"
+	"github.com/docker/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
 //CreateCatalogsFromProfile maps profile controls to multiple catalogs

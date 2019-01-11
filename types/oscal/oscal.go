@@ -18,8 +18,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
-	"github.com/opencontrol/oscalkit/types/oscal/profile"
+	"github.com/docker/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/profile"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -53,15 +53,15 @@ type Options struct {
 	Reader io.Reader
 }
 
-// OpenControlOptions ...
-type OpenControlOptions struct {
-	OpenControlYAMLFilepath string
-	OpenControlsDir         string
+// dockerOptions ...
+type dockerOptions struct {
+	dockerYAMLFilepath string
+	dockersDir         string
 }
 
-// NewFromOC initializes an OSCAL type from raw OpenControl data
-// func NewFromOC(options OpenControlOptions) (*OSCAL, error) {
-// 	ocFile, err := os.Open(options.OpenControlYAMLFilepath)
+// NewFromOC initializes an OSCAL type from raw docker data
+// func NewFromOC(options dockerOptions) (*OSCAL, error) {
+// 	ocFile, err := os.Open(options.dockerYAMLFilepath)
 // 	if err != nil {
 // 		return nil, err
 // 	}
@@ -72,13 +72,13 @@ type OpenControlOptions struct {
 // 		return nil, err
 // 	}
 
-// 	var oc opencontrol.OpenControl
+// 	var oc docker.docker
 // 	if err := yaml.Unmarshal(rawOC, &oc); err != nil {
 // 		return nil, err
 // 	}
 
 // 	ocComponentFileList := []string{}
-// 	filepath.Walk(filepath.Join(options.OpenControlsDir, "components/"), func(path string, f os.FileInfo, err error) error {
+// 	filepath.Walk(filepath.Join(options.dockersDir, "components/"), func(path string, f os.FileInfo, err error) error {
 // 		if !f.IsDir() && (filepath.Ext(path) == ".yaml" || filepath.Ext(path) == ".yml") {
 // 			absPath, err := filepath.Abs(path)
 // 			if err != nil {
@@ -90,7 +90,7 @@ type OpenControlOptions struct {
 // 		return nil
 // 	})
 
-// 	ocComponents := []opencontrol.Component{}
+// 	ocComponents := []docker.Component{}
 // 	for _, ocComponentFilepath := range ocComponentFileList {
 // 		ocComponentFile, err := os.Open(ocComponentFilepath)
 // 		if err != nil {
@@ -100,7 +100,7 @@ type OpenControlOptions struct {
 
 // 		rawOCComponentFile, err := ioutil.ReadAll(ocComponentFile)
 
-// 		var ocComponent opencontrol.Component
+// 		var ocComponent docker.Component
 // 		if err := yaml.Unmarshal(rawOCComponentFile, &ocComponent); err != nil {
 // 			return nil, err
 // 		}

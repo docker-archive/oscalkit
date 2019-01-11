@@ -9,7 +9,7 @@ import (
 	"text/template"
 
 	"github.com/iancoleman/strcase"
-	"github.com/mitchellh/go-wordwrap"
+	wordwrap "github.com/mitchellh/go-wordwrap"
 )
 
 const (
@@ -129,7 +129,7 @@ func getImports(metaschema Metaschema) string {
 	imports.WriteString("\t\"encoding/xml\"\n")
 
 	if im := metaschema.ImportedMetaschema; im != nil {
-		imports.WriteString(fmt.Sprintf("\n\t\"github.com/opencontrol/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Use)))
+		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Use)))
 	}
 
 	imports.WriteString(")")

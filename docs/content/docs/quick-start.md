@@ -9,7 +9,7 @@ bref = "Install oscalkit and become familiar with the basic functionality it pro
 
 <h3 class="section-head" id="install"><a href="#install">Install</a></h3>
 
-oscalkit has been packaged for various OS's and as a Docker image. Navigate to the [Releases](https://github.com/opencontrol/oscalkit/releases) page to download the appropriate package for your intended platform.
+oscalkit has been packaged for various OS's and as a Docker image. Navigate to the [Releases](https://github.com/docker/oscalkit/releases) page to download the appropriate package for your intended platform.
 
 #### macOS (Homebrew)
 
@@ -21,11 +21,11 @@ to update:
 
 #### Windows
 
-Download the .exe from the [Releases](https://github.com/opencontrol/oscalkit/releases) page. Move it to a location from which it can be easily executed.
+Download the .exe from the [Releases](https://github.com/docker/oscalkit/releases) page. Move it to a location from which it can be easily executed.
 
 #### Linux
 
-Download the binary from the [Releases](https://github.com/opencontrol/oscalkit/releases) page. Move it to a location from which it can be easily executed.
+Download the binary from the [Releases](https://github.com/docker/oscalkit/releases) page. Move it to a location from which it can be easily executed.
 
 #### Verify installation
 
