@@ -10,10 +10,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/oscalkit/generator"
 	"github.com/docker/oscalkit/impl"
 	"github.com/docker/oscalkit/templates"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 

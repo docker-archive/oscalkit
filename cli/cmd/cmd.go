@@ -14,9 +14,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/oscalkit/cli/cmd/convert"
 	"github.com/docker/oscalkit/cli/version"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 

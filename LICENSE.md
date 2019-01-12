@@ -4,7 +4,7 @@
 
 All dependencies included within the `vendor/` directory are not in the public domain and are licensed as follows:
 
-- [github.com/Sirupsen/logrus: MIT License](https://github.com/sirupsen/logrus/blob/master/LICENSE): Copyright (c) 2014 Simon Eskildsen
+- [github.com/sirupsen/logrus: MIT License](https://github.com/sirupsen/logrus/blob/master/LICENSE): Copyright (c) 2014 Simon Eskildsen
 - [github.com/santhosh-tekuri/jsonschema: BSD 3-clause "New" or "Revised License](https://github.com/santhosh-tekuri/jsonschema/blob/master/LICENSE): Copyright (c) 2017 Santhosh Kumar Tekuri. All rights reserved.
 - [https://github.com/urfave/cli: MIT License](https://github.com/urfave/cli/blob/master/LICENSE): Copyright (c) 2016 Jeremy Saenz & Contributors
 - [gopkg.in/yaml.v2: Apache License 2.0](https://github.com/go-yaml/yaml/blob/v2/LICENSE)

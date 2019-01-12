@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/oscalkit/generator"
 	"github.com/docker/oscalkit/templates"
 	"github.com/docker/oscalkit/types/oscal/catalog"
+	"github.com/sirupsen/logrus"
 
 	"github.com/urfave/cli"
 )
