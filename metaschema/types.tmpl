@@ -13,6 +13,9 @@ type {{toCamel .Name}} struct {
   {{if or (eq "catalog" .Name) (eq "profile" .Name) (eq "declarations" .Name)}}
   XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 {{ .Name }}" json:"-"`
   {{- end}}
+  {{- if eq "profile" .Name}}
+  ID string `xml:"id,attr,omitempty" json:"id,omitempty"`
+  {{- end}}
   {{- range .Flags}}
   {{- $cf := commentFlag .Name $m.DefineFlag}}
   {{- range $cf}}
@@ -27,7 +30,7 @@ type {{toCamel .Name}} struct {
   {{- end}}
 
   {{- range .Model.Fields}}
-  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{plural .Named}},omitempty"`
   {{- end}}
 
   {{- range .Model.Assembly}}
@@ -35,7 +38,7 @@ type {{toCamel .Name}} struct {
   {{- end}}
 
   {{- range .Model.Assemblies}}
-  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{plural .Named}},omitempty"`
   {{- end}}
 
   {{- range .Model.Choice}}
@@ -44,7 +47,7 @@ type {{toCamel .Name}} struct {
   {{- end}}
 
   {{- range .Fields}}
-  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{plural .Named}},omitempty"`
   {{- end}}
 
   {{- range .Assembly}}
@@ -52,7 +55,7 @@ type {{toCamel .Name}} struct {
   {{- end}}
 
   {{- range .Assemblies}}
-  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .GroupAs}},omitempty"`
+  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{plural .Named}},omitempty"`
   {{- end}}
   {{- end}}
 

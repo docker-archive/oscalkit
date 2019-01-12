@@ -92,10 +92,10 @@ type Param struct {
 	// Another parameter invoking this one
 	DependsOn    string       `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
 	Label        Label        `xml:"label,omitempty" json:"label,omitempty"`
-	Descriptions []Desc       `xml:"desc,omitempty" json:"descriptions,omitempty"`
+	Descriptions []Desc       `xml:"desc,omitempty" json:"descs,omitempty"`
 	Constraints  []Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
 	Links        []Link       `xml:"link,omitempty" json:"links,omitempty"`
-	Guidance     []Guideline  `xml:"guideline,omitempty" json:"guidance,omitempty"`
+	Guidance     []Guideline  `xml:"guideline,omitempty" json:"guidelines,omitempty"`
 	Value        Value        `xml:"value,omitempty" json:"value,omitempty"`
 	Select       *Select      `xml:"select,omitempty" json:"select,omitempty"`
 }
@@ -110,7 +110,7 @@ type Select struct {
 
 	// When selecting, a requirement such as one or more
 	HowMany      string   `xml:"how-many,attr,omitempty" json:"howMany,omitempty"`
-	Alternatives []Choice `xml:"choice,omitempty" json:"alternatives,omitempty"`
+	Alternatives []Choice `xml:"choice,omitempty" json:"choices,omitempty"`
 }
 
 // A partition or component of a control, subcontrol or part

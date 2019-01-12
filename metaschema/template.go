@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/iancoleman/strcase"
+	"github.com/jinzhu/inflection"
 	wordwrap "github.com/mitchellh/go-wordwrap"
 )
 
@@ -37,6 +38,7 @@ func GenerateTypes(metaschema *Metaschema) error {
 		"toLower":         strings.ToLower,
 		"toCamel":         strcase.ToCamel,
 		"toLowerCamel":    strcase.ToLowerCamel,
+		"plural":          inflection.Plural,
 		"wrapString":      wrapString,
 		"parseDatatype":   parseDatatype,
 		"commentFlag":     commentFlag,
