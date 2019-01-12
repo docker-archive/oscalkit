@@ -208,6 +208,4 @@ The [GoReleaser](https://goreleaser.com/) tool is used to publish `oscalkit` to 
 - Linux binary
 - Windows binary
 - Docker Image
-- RPM package
-- Deb package
 - Homebrew recipe
