@@ -2,14 +2,6 @@
 
 
 [[projects]]
-  digest = "1:9d57e200ef5ccc4217fe0a34287308bac652435e7c6513f6263e0493d2245c56"
-  name = "github.com/Sirupsen/logrus"
-  packages = ["."]
-  pruneopts = ""
-  revision = "bcd833dfe83d3cebad139e4a29ed79cb2318bf95"
-  version = "v1.2.0"
-
-[[projects]]
   digest = "1:e988ed0ca0d81f4d28772760c02ee95084961311291bdfefc1b04617c178b722"
   name = "github.com/fatih/color"
   packages = ["."]
@@ -80,6 +72,14 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:9a3c631555e0351fdc4e696577bb63afd90c399d782a8462dba9d100d7021db3"
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  pruneopts = ""
+  revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
+  version = "v1.3.0"
+
+[[projects]]
   branch = "master"
   digest = "1:438d5957cf1c26ca62975dc4b1b59242acc9e527f39ed3f6cda57ee6d3653daf"
   name = "github.com/urfave/cli"
@@ -89,7 +89,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:c3415eeb330bf30a2d8181e516ec79804c198f3d171ab9c9364f29dbe76c05d9"
+  digest = "1:59b49c47c11a48f1054529207f65907c014ecf5f9a7c0d9c0f1616dec7b062ed"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
@@ -98,21 +98,21 @@
     "ssh/terminal",
   ]
   pruneopts = ""
-  revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
+  revision = "ff983b9c42bc9fbf91556e191cc8efb585c16908"
 
 [[projects]]
   branch = "master"
-  digest = "1:a9b593bd80a86f44d3334e03e966cf2800ec5f01cc4464a5a2ac3424e12ec84e"
+  digest = "1:682e21255aca5ab896dd001984417c1a13cea5fc7821c79455d9f9d34e35c6d1"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = ""
-  revision = "9167dbfd0f8e88b731dd88cbf73a270701a37bb4"
+  revision = "48ac38b7c8cbedd50b1613c0fccacfc7d88dfcdf"
 
 [[projects]]
-  digest = "1:a3532282671b21e7d256f849866ff95addf15e0090f27a9c5c98196953c3cdef"
+  digest = "1:9ac038eb5180c903d71d582fa4ea7e77658855167a6a09a9035e0b39449dddc7"
   name = "gopkg.in/square/go-jose.v2"
   packages = [
     ".",
@@ -120,8 +120,8 @@
     "json",
   ]
   pruneopts = ""
-  revision = "72415094398e2f013bf50b76fd6de36df47938ea"
-  version = "v2.2.1"
+  revision = "e94fb177d3668d35ab39c61cbb2f311550557e83"
+  version = "v2.2.2"
 
 [[projects]]
   branch = "v2"
@@ -135,13 +135,13 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/Sirupsen/logrus",
     "github.com/fatih/color",
     "github.com/iancoleman/strcase",
     "github.com/mitchellh/go-wordwrap",
     "github.com/santhosh-tekuri/jsonschema",
     "github.com/santhosh-tekuri/jsonschema/loader",
     "github.com/satori/go.uuid",
+    "github.com/sirupsen/logrus",
     "github.com/urfave/cli",
     "gopkg.in/square/go-jose.v2",
     "gopkg.in/yaml.v2",

@@ -3,7 +3,7 @@ jobs:
   test:
     docker:
       - image: circleci/golang:1.11
-    working_directory: /go/src/github.com/opencontrol/oscalkit
+    working_directory: /go/src/github.com/docker/oscalkit
     environment:
       TEST_RESULTS: /tmp/test-results
     steps:
@@ -36,7 +36,7 @@ jobs:
   deploy:
     docker:
       - image: circleci/golang:1.11
-    working_directory: /go/src/github.com/opencontrol/oscalkit
+    working_directory: /go/src/github.com/docker/oscalkit
     steps:
       - setup_remote_docker:
           docker_layer_caching: true

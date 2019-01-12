@@ -13,8 +13,8 @@ package cmd
 import (
 	"path/filepath"
 
-	"github.com/Sirupsen/logrus"
-	"github.com/opencontrol/oscalkit/validator"
+	"github.com/docker/oscalkit/validator"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 

@@ -18,9 +18,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/santhosh-tekuri/jsonschema"
 	"github.com/santhosh-tekuri/jsonschema/loader"
+	"github.com/sirupsen/logrus"
 )
 
 // Workaround for unpublished schemas referenced by http://csrc.nist.gov/ns/oscal

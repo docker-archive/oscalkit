@@ -1,10 +1,10 @@
 # oscalkit
 
-[![CircleCI](https://circleci.com/gh/opencontrol/oscalkit.svg?style=svg)](https://circleci.com/gh/opencontrol/oscalkit) [![codecov](https://codecov.io/gh/opencontrol/oscalkit/branch/master/graph/badge.svg)](https://codecov.io/gh/opencontrol/oscalkit) [![GoDoc](https://godoc.org/github.com/opencontrol/oscalkit?status.svg)](https://godoc.org/github.com/opencontrol/oscalkit)
+[![CircleCI](https://circleci.com/gh/docker/oscalkit.svg?style=svg)](https://circleci.com/gh/docker/oscalkit) [![codecov](https://codecov.io/gh/docker/oscalkit/branch/master/graph/badge.svg)](https://codecov.io/gh/docker/oscalkit) [![GoDoc](https://godoc.org/github.com/docker/oscalkit?status.svg)](https://godoc.org/github.com/docker/oscalkit)
 
-> In development. Since the OSCAL schemas are still under active development, parsing errors may occur if running the tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/opencontrol/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
+> In development. Since the OSCAL schemas are still under active development, parsing errors may occur if running the tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/docker/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
 
-Barebones Go SDK and CLI tool for parsing OSCAL, converting between OSCAL-formatted XML, JSON and YAML and for converting from [OpenControl](http://opencontrol.cfapps.io/) projects in to OSCAL.
+Barebones Go SDK and CLI tool for parsing OSCAL, converting between OSCAL-formatted XML, JSON and YAML and for converting from [docker](http://opencontrol.cfapps.io/) projects in to OSCAL.
 
 ## Supported OSCAL Components
 
@@ -18,23 +18,23 @@ The following OSCAL components are currently supported:
 
 ## Installing
 
-You can download the appropriate `oscalkit` command-line utility for your system from the [GitHub Releases](https://github.com/opencontrol/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can move it to an appropriate directory listed in your `$PATH` environment variable. If you prefer, you can download and install via the included RPM/Deb packages on Linux or Homebrew recipe on macOS. A [Docker image](https://hub.docker.com/r/opencontrolorg/oscalkit/) is also made available on Docker Hub.
+You can download the appropriate `oscalkit` command-line utility for your system from the [GitHub Releases](https://github.com/docker/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can move it to an appropriate directory listed in your `$PATH` environment variable. If you prefer, you can download and install via the included RPM/Deb packages on Linux or Homebrew recipe on macOS. A [Docker image](https://hub.docker.com/r/docker/oscalkit/) is also made available on Docker Hub.
 
 ### Homebrew
 
-    $ brew tap opencontrol/homebrew-oscalkit
+    $ brew tap docker/homebrew-oscalkit
     $ brew install oscalkit
 
 ### Docker
 
 > Running the `oscalkit` Docker container requires either bind-mounting the directory containing your source files or passing file contents in to the command via stdin.
 
-    $ docker pull opencontrolorg/oscalkit:<version>
-    $ docker run -it --rm -v $PWD:/data -w /data opencontrolorg/oscalkit convert oscal-core.xml
+    $ docker pull docker/oscalkit:<version>
+    $ docker run -it --rm -v $PWD:/data -w /data docker/oscalkit convert oscal-core.xml
 
 via stdin:
 
-    $ docker run -it --rm opencontrolorg/oscalkit convert < oscal-core.xml
+    $ docker run -it --rm docker/oscalkit convert < oscal-core.xml
 
 ## Usage
 
@@ -135,7 +135,7 @@ USAGE:
    oscalkit convert opencontrol [command options] [opencontrol.yaml-filepath] [opencontrols-dir-path]
 
 DESCRIPTION:
-   Convert OpenControl-formatted "component" and "opencontrol" YAML into
+   Convert OpenControl-formatted "component" and "OpenControl" YAML into
    OSCAL-formatted "implementation" layer JSON
 
 OPTIONS:

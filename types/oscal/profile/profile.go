@@ -3,7 +3,7 @@ package profile
 import (
 	"encoding/xml"
 
-	"github.com/opencontrol/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/catalog"
 )
 
 // Each OSCAL profile is defined by a Profile element

@@ -10,7 +10,7 @@ func GetImplementationTemplate() (*template.Template, error) {
 const implementationTemplate = `package oscalkit
 
 import (
-	"github.com/opencontrol/oscalkit/types/oscal/implementation"
+	"github.com/docker/oscalkit/types/oscal/implementation"
 )
 
 var ImplementationGenerated = implementation.Implementation{
