@@ -11,6 +11,10 @@ bref = "Install oscalkit and become familiar with the basic functionality it pro
 
 oscalkit has been packaged for various OS's and as a Docker image. Navigate to the [Releases](https://github.com/docker/oscalkit/releases) page to download the appropriate package for your intended platform.
 
+#### Docker
+
+    $ docker image pull docker/oscalkit:0.1.0
+
 #### macOS (Homebrew)
 
     $ brew install oscalkit
@@ -29,7 +33,7 @@ Download the binary from the [Releases](https://github.com/docker/oscalkit/relea
 
 #### Verify installation
 
-Check that you've installed the binary by executing `oscalkit --version` from the command line.
+Check that you've installed the binary by executing `oscalkit --version` from the command line or `docker run -it --rm docker/oscalkit:0.1.0` if using the Docker image.
 
 <h3 class="section-head" id="running"><a href="#running">Running</a></h3>
 
