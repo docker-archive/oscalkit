@@ -3,223 +3,34 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://opencontrol.github.io/oscalkit/blog/welcome/</loc>
-    <lastmod>2017-03-02T21:56:55+01:00</lastmod>
+    <loc>https://docker.github.io/oscalkit/docs/quick-start/</loc>
   </url>
   
   <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/quick-start/</loc>
+    <loc>https://docker.github.io/oscalkit/docs/usage/</loc>
   </url>
   
   <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/custom-plugins/</loc>
+    <loc>https://docker.github.io/oscalkit/docs/sdk/</loc>
   </url>
   
   <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/typography/</loc>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/blog/typography/</loc>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/blog/prototyping/</loc>
-    <lastmod>2017-04-02T22:01:15+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/grid/</loc>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/tables/</loc>
-    <lastmod>2017-04-10T16:40:43+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/forms/</loc>
-    <lastmod>2017-04-10T16:40:50+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/buttons/</loc>
-    <lastmod>2017-04-10T16:41:16+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/labels/</loc>
-    <lastmod>2017-04-10T16:40:43+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/blog/messages/</loc>
-    <lastmod>2017-04-10T16:41:34+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/messages/</loc>
-    <lastmod>2017-04-10T16:41:34+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/tabs/</loc>
-    <lastmod>2017-04-10T16:41:40+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/breadcrumbs/</loc>
-    <lastmod>2017-04-10T16:41:54+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/pagination/</loc>
-    <lastmod>2017-04-10T16:42:03+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/dropdown/</loc>
-    <lastmod>2017-04-10T16:42:12+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/modal/</loc>
-    <lastmod>2017-04-10T16:42:18+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/sticky/</loc>
-    <lastmod>2017-04-10T16:42:26+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/blog/collapse/</loc>
-    <lastmod>2017-04-10T16:42:50+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/collapse/</loc>
-    <lastmod>2017-04-10T16:42:50+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/offcanvas/</loc>
-    <lastmod>2017-04-10T16:42:43+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/toggleme/</loc>
-    <lastmod>2017-04-10T16:42:59+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/animation/</loc>
-    <lastmod>2017-04-10T16:43:08+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/colors/</loc>
-    <lastmod>2017-04-10T16:43:14+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/sizing/</loc>
-    <lastmod>2017-04-10T16:43:21+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/mixins/</loc>
-    <lastmod>2017-04-10T16:43:36+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/utils/</loc>
-    <lastmod>2017-04-10T16:43:30+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/blog/inline-style/</loc>
-    <lastmod>2017-04-02T21:56:55+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/blog/</loc>
-    <lastmod>2017-03-02T21:56:55+01:00</lastmod>
+    <loc>https://docker.github.io/oscalkit/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://opencontrol.github.io/oscalkit/categories/</loc>
+    <loc>https://docker.github.io/oscalkit/docs/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://opencontrol.github.io/oscalkit/company/</loc>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/categories/design/</loc>
-    <lastmod>2017-04-02T22:01:15+01:00</lastmod>
+    <loc>https://docker.github.io/oscalkit/tags/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://opencontrol.github.io/oscalkit/docs/</loc>
-    <lastmod>2017-04-10T16:40:43+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/tags/example/</loc>
-    <lastmod>2017-03-02T21:56:55+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/faq/</loc>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/categories/general/</loc>
-    <lastmod>2017-03-02T21:56:55+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/tags/hugo/</loc>
-    <lastmod>2017-04-02T22:01:15+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/tags/markdown/</loc>
-    <lastmod>2017-03-02T21:56:55+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/password-recovery/</loc>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/tags/prototype/</loc>
-    <lastmod>2017-04-02T22:01:15+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/account/</loc>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/tags/</loc>
-    <lastmod>2017-03-02T21:56:55+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://opencontrol.github.io/oscalkit/</loc>
-    <lastmod>2017-03-02T21:56:55+01:00</lastmod>
+    <loc>https://docker.github.io/oscalkit/</loc>
   </url>
   
 </urlset>
