@@ -4,7 +4,7 @@
 
 > In development. Since the OSCAL schemas are still under active development, parsing errors may occur if running the tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/docker/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
 
-Barebones Go SDK and CLI tool for parsing OSCAL, converting between OSCAL-formatted XML, JSON and YAML and for converting from [docker](http://opencontrol.cfapps.io/) projects in to OSCAL.
+Barebones Go SDK and CLI tool for parsing OSCAL, converting between OSCAL-formatted XML, JSON and YAML and for converting from [OpenControl](http://opencontrol.cfapps.io/) projects in to OSCAL. Also supports Go source code generation from OSCAL formatted catalog and profile artifacts.
 
 ## Supported OSCAL Components
 
@@ -14,11 +14,11 @@ The following OSCAL components are currently supported:
 |---------|-------|
 |[Catalog](https://pages.nist.gov/OSCAL/concepts/#oscal-catalogs)|[XSD](https://github.com/usnistgov/OSCAL/blob/master/schema/xml/oscal-catalog-schema.xsd) \| [JSON schema](https://github.com/usnistgov/OSCAL/blob/master/schema/json/oscal-catalog-schema.json) \| [metaschema](https://github.com/usnistgov/OSCAL/blob/master/schema/metaschema/oscal-catalog-metaschema.xml)|
 |[Profile](https://pages.nist.gov/OSCAL/concepts/#oscal-profiles)|[XSD](https://github.com/usnistgov/OSCAL/blob/master/schema/xml/oscal-profile-schema.xsd) \| [JSON schema](https://github.com/usnistgov/OSCAL/blob/master/schema/json/oscal-profile-schema.json) \| [metaschema](https://github.com/usnistgov/OSCAL/blob/master/schema/metaschema/oscal-profile-metaschema.xml)|
-|Implementation (WIP)|Currently based on the model being developed in https://github.com/usnistgov/OSCAL/issues/216|
+|Implementation (WIP)|Currently based on a combination of the model being developed in [usnistgov/OSCAL#216](https://github.com/usnistgov/OSCAL/issues/216) and the component definition prototype in [this Gist](https://gist.github.com/anweiss/8afd321b6bf2a9d4e1679657a1b8f2fe)|
 
 ## Installing
 
-You can download the appropriate `oscalkit` command-line utility for your system from the [GitHub Releases](https://github.com/docker/oscalkit/releases) page and run it from your local machine directly. For easier execution, you can move it to an appropriate directory listed in your `$PATH` environment variable. If you prefer, you can download and install via the included RPM/Deb packages on Linux or Homebrew recipe on macOS. A [Docker image](https://hub.docker.com/r/docker/oscalkit/) is also made available on Docker Hub.
+You can download the appropriate `oscalkit` command-line utility for your system from the [GitHub Releases](https://github.com/docker/oscalkit/releases) page. You can move it to an appropriate directory listed in your `$PATH` environment variable. A Homebrew recipe is also available for macOS along with a [Docker image](https://hub.docker.com/r/docker/oscalkit/) which has been published to Docker Hub.
 
 ### Homebrew
 
@@ -29,12 +29,12 @@ You can download the appropriate `oscalkit` command-line utility for your system
 
 > Running the `oscalkit` Docker container requires either bind-mounting the directory containing your source files or passing file contents in to the command via stdin.
 
-    $ docker pull docker/oscalkit:<version>
-    $ docker run -it --rm -v $PWD:/data -w /data docker/oscalkit convert oscal-core.xml
+    $ docker pull docker/oscalkit:0.1.0
+    $ docker run -it --rm -v $PWD:/data -w /data docker/oscalkit:0.1.0 convert oscal-core.xml
 
 via stdin:
 
-    $ docker run -it --rm docker/oscalkit convert < oscal-core.xml
+    $ docker run -it --rm docker/oscalkit:0.1.0 convert < oscal-core.xml
 
 ## Usage
 
@@ -45,11 +45,17 @@ NAME:
 USAGE:
    oscalkit [global options] command [command options] [arguments...]
 
+VERSION:
+   0.2.0-e178ab9-dev (Built: 2019-01-14)
+
+
 COMMANDS:
-     convert   convert between one or more OSCAL file formats and from OpenControl format
-     validate  validate files against OSCAL XML and JSON schemas
-     sign      sign OSCAL JSON artifacts
-     help, h   Shows a list of commands or help for one command
+     convert         convert between one or more OSCAL file formats and from OpenControl format
+     validate        validate files against OSCAL XML and JSON schemas
+     sign            sign OSCAL JSON artifacts
+     generate        generates go code against provided profile
+     implementation  generates go code for implementation against provided profile and excel sheet
+     help, h         Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --debug, -d    enable debug command output
@@ -170,19 +176,19 @@ OPTIONS:
 
 #### Examples
 
-Validate FedRAMP framework in OSCAL-formatted JSON against the corresponding JSON schema
+Validate FedRAMP profile in OSCAL-formatted JSON against the corresponding JSON schema
 
     $ oscalkit validate -s oscal-core.json fedramp-annotated-wrt-SP800-53catalog.json
 
 ## Developing
 
-`oscalkit` is developed with [Go](https://golang.org/) (1.9+). If you have Docker installed, the included `Makefile` can be used to run unit tests and compile the application for Linux, macOS and Windows. Otherwise, the native Go toolchain can be used.
+`oscalkit` is developed with [Go](https://golang.org/) (1.11+). If you have Docker installed, the included `Makefile` can be used to run unit tests and compile the application for Linux, macOS and Windows. Otherwise, the native Go toolchain can be used.
 
 ### Dependency management
 
-The [`dep`](https://github.com/golang/dep) dependency management tool is used to vendor the application's dependencies. The `vendor/` folder containing the dependencies is checked in with the source. With [`dep`](https://github.com/golang/dep), you can verify the dependencies as follows:
+Dependencies are managed with [Go 1.11 Modules](https://github.com/golang/go/wiki/Modules). The `vendor/` folder containing the dependencies is checked in with the source for backwards compatibility with previous versions of Go. When using Go 1.11 with `GO111MODULE=on`, you can verify the dependencies as follows:
 
-    $ dep ensure
+    $ go mod verify
 
 ### Compile
 
