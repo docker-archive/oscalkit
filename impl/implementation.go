@@ -53,7 +53,9 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 			} else {
 				securityCheck := componentDefinitonMap[componentConfigName]
 				guid := checkAgainstGUID[componentConfigName]
-				componentDefinitonMap[componentConfigName] = AppendParameterInImplementation(securityCheck, guid, p, c, applicableControl)
+				temp := AppendParameterInImplementation(securityCheck, guid, p, c, applicableControl)
+				temp = AppendControlInImplementation(securityCheck, guid, c, applicableControl)
+				componentDefinitonMap[componentConfigName] = temp
 			}
 		}
 	}
@@ -95,6 +97,25 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 				ProfileID: p.ID,
 				ControlConfigurations: []implementation.ControlConfiguration{
 					controlConfiguration,
+				},
+			},
+		},
+		ControlImplementations: []*implementation.ControlImplementation{
+			&implementation.ControlImplementation{
+				ControlConfigurations: []implementation.ControlConfiguration{
+					implementation.ControlConfiguration{
+						ConfigurationIDRef: componentConfGUID.String(),
+						ProvisioningMechanisms: []implementation.ProvisioningMechanism{
+							implementation.ProvisioningMechanism{
+								ProvisionedControls: []implementation.ControlId{
+									implementation.ControlId{
+										ControlID:    c.GetControl(control),
+										CatalogIDRef: c.GetID(),
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -142,6 +163,26 @@ func AppendParameterInImplementation(cd implementation.ComponentDefinition, guid
 
 }
 
+func AppendControlInImplementation(cd implementation.ComponentDefinition, guid uuid.UUID, c Catalog, control string) implementation.ComponentDefinition {
+	for i := range cd.ControlImplementations {
+		for j := range cd.ControlImplementations[i].ControlConfigurations {
+			if cd.ControlImplementations[i].ControlConfigurations[j].ConfigurationIDRef == guid.String() {
+				ctrl := c.GetControl(control)
+				pControls := cd.ControlImplementations[i].ControlConfigurations[j].ProvisioningMechanisms[0].ProvisionedControls
+				if existsInControls(ctrl, pControls) {
+					continue
+				}
+				cd.ControlImplementations[i].ControlConfigurations[j].ProvisioningMechanisms[0].ProvisionedControls = append(
+					cd.ControlImplementations[i].ControlConfigurations[j].ProvisioningMechanisms[0].ProvisionedControls,
+					implementation.ControlId{ControlID: ctrl, CatalogIDRef: c.GetID(), ItemID: ""},
+				)
+			}
+		}
+
+	}
+	return cd
+}
+
 //CompileImplemenatation compiles all checks from maps to implementation json
 func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Profile) implementation.Implementation {
 	return implementation.Implementation{
@@ -183,6 +224,11 @@ func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.P
 					}
 					for _, def := range cd {
 						for _, ci := range def.ImplementsProfiles {
+							for _, cc := range ci.ControlConfigurations {
+								arr[0].ControlConfigurations = append(arr[0].ControlConfigurations, cc)
+							}
+						}
+						for _, ci := range def.ControlImplementations {
 							for _, cc := range ci.ControlConfigurations {
 								arr[0].ControlConfigurations = append(arr[0].ControlConfigurations, cc)
 							}
@@ -278,4 +324,14 @@ func existsInParams(pId string, p []implementation.Parameter) bool {
 	}
 	return false
 
+}
+
+func existsInControls(cId string, controls []implementation.ControlId) bool {
+
+	for _, x := range controls {
+		if x.ControlID == cId {
+			return true
+		}
+	}
+	return false
 }

@@ -83,6 +83,22 @@ var ImplementationGenerated = implementation.Implementation{
 								{{range .ControlConfigurations}}
 									implementation.ControlConfiguration{
 										ConfigurationIDRef: "{{.ConfigurationIDRef}}",
+										ProvisioningMechanisms: []implementation.ProvisioningMechanism{
+											{{range .ProvisioningMechanisms}}
+												implementation.ProvisioningMechanism{
+													ProvisionedControls: []implementation.ControlId{
+														{{range .ProvisionedControls}}
+															implementation.ControlId{
+																ControlID:    "{{.ControlID}}",
+																CatalogIDRef: "{{.CatalogIDRef}}",
+																ItemID:       "{{.ItemID}}",
+															},
+														{{end}}
+													},
+												},
+							
+											{{end}}
+										},
 										Parameters:         []implementation.Parameter{
 											{{range .Parameters}}
 											implementation.Parameter{
