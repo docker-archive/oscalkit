@@ -8,8 +8,8 @@ import (
 
 // Each OSCAL profile is defined by a Profile element
 type Profile struct {
-	ID      string   `xml:"id,attr,omitempty" json:"id,omitempty"`
 	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 profile" json:"-"`
+	ID      string   `xml:"id,attr,omitempty" json:"id,omitempty"`
 	Merge   *Merge   `xml:"merge,omitempty" json:"merge,omitempty"`
 	Modify  *Modify  `xml:"modify,omitempty" json:"modify,omitempty"`
 	Imports []Import `xml:"import,omitempty" json:"imports,omitempty"`
@@ -34,7 +34,7 @@ type Merge struct {
 // resolution.
 type Custom struct {
 	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
-	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"matches,omitempty"`
 	Groups           []Group `xml:"group,omitempty" json:"groups,omitempty"`
 }
 
@@ -42,13 +42,13 @@ type Custom struct {
 type Group struct {
 	Groups           []Group `xml:"group,omitempty" json:"groups,omitempty"`
 	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
-	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"matches,omitempty"`
 }
 
 // Set parameters or amend controls in resolution
 type Modify struct {
-	ParamSettings []SetParam `xml:"set-param,omitempty" json:"paramSettings,omitempty"`
-	Alterations   []Alter    `xml:"alter,omitempty" json:"alterations,omitempty"`
+	ParamSettings []SetParam `xml:"set-param,omitempty" json:"set-params,omitempty"`
+	Alterations   []Alter    `xml:"alter,omitempty" json:"alters,omitempty"`
 }
 
 // Specifies which controls and subcontrols to include from the resource (source
@@ -56,23 +56,23 @@ type Modify struct {
 type Include struct {
 	All              *All    `xml:"all,omitempty" json:"all,omitempty"`
 	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
-	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"matches,omitempty"`
 }
 
 // Which controls and subcontrols to exclude from the resource (source catalog)
 // being imported
 type Exclude struct {
 	IdSelectors      []Call  `xml:"call,omitempty" json:"calls,omitempty"`
-	PatternSelectors []Match `xml:"match,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"matches,omitempty"`
 }
 
 // A parameter setting, to be propagated to points of insertion
 type SetParam struct {
-	Id           string               `xml:"param-id,attr,omitempty" json:"id,omitempty"`
+	Id           string               `xml:"id,attr,omitempty" json:"id,omitempty"`
 	Class        string               `xml:"class,attr,omitempty" json:"class,omitempty"`
 	DependsOn    string               `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
 	Label        catalog.Label        `xml:"label,omitempty" json:"label,omitempty"`
-	Descriptions []catalog.Desc       `xml:"desc,omitempty" json:"descriptions,omitempty"`
+	Descriptions []catalog.Desc       `xml:"desc,omitempty" json:"descs,omitempty"`
 	Constraints  []catalog.Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
 	Links        []catalog.Link       `xml:"link,omitempty" json:"links,omitempty"`
 	Parts        []catalog.Part       `xml:"part,omitempty" json:"parts,omitempty"`
@@ -88,8 +88,8 @@ type Alter struct {
 	ControlId string `xml:"control-id,attr,omitempty" json:"controlId,omitempty"`
 	// Value of the 'id' flag on a target subcontrol
 	SubcontrolId string   `xml:"subcontrol-id,attr,omitempty" json:"subcontrolId,omitempty"`
-	Removals     []Remove `xml:"remove,omitempty" json:"removals,omitempty"`
-	Additions    []Add    `xml:"add,omitempty" json:"additions,omitempty"`
+	Removals     []Remove `xml:"remove,omitempty" json:"removes,omitempty"`
+	Additions    []Add    `xml:"add,omitempty" json:"adds,omitempty"`
 }
 
 // Specifies contents to be added into controls or subcontrols, in resolution
@@ -117,11 +117,6 @@ type Combine struct {
 // as they are structured in their source catalogs. It does not contain any
 // elements or attributes.
 type AsIs string
-
-func (a *AsIs) UnmarshalJSON(b []byte) error {
-	*a = AsIs(string(b))
-	return nil
-}
 
 // Include all controls from the imported resource (catalog)
 type All struct {
