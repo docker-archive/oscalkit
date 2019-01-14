@@ -176,7 +176,7 @@ func convert(src io.Reader, dest io.Writer, outputFormat string) error {
 			return err
 		}
 
-		oscalJSON, err := oscal.RawJSON(true)
+		oscalJSON, err := oscal.JSON(true)
 		if err != nil {
 			return err
 		}
@@ -197,7 +197,7 @@ func convert(src io.Reader, dest io.Writer, outputFormat string) error {
 			return err
 		}
 
-		oscalXML, err := oscal.RawXML(true)
+		oscalXML, err := oscal.XML(true)
 		if err != nil {
 			return err
 		}
@@ -218,7 +218,7 @@ func convert(src io.Reader, dest io.Writer, outputFormat string) error {
 			return err
 		}
 
-		oscalYAML, err := oscal.RawYAML()
+		oscalYAML, err := oscal.YAML()
 		if err != nil {
 			return err
 		}

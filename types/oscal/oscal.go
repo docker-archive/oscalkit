@@ -190,23 +190,23 @@ func New(r io.Reader) (*OSCAL, error) {
 	return nil, errors.New("Malformed OSCAL. Must be XML or JSON")
 }
 
-// RawXML ...
-func (o *OSCAL) RawXML(prettify bool) ([]byte, error) {
+// XML returns a byte slice containing the raw XML from the OSCAL object
+func (o *OSCAL) XML(prettify bool) ([]byte, error) {
 	if prettify {
 		return xml.MarshalIndent(o, "", "  ")
 	}
 	return xml.Marshal(o)
 }
 
-// RawJSON ...
-func (o *OSCAL) RawJSON(prettify bool) ([]byte, error) {
+// JSON returns a byte slice containing the raw JSON from the OSCAL object
+func (o *OSCAL) JSON(prettify bool) ([]byte, error) {
 	if prettify {
 		return json.MarshalIndent(o, "", "  ")
 	}
 	return json.Marshal(o)
 }
 
-// RawYAML ...
-func (o *OSCAL) RawYAML() ([]byte, error) {
+// YAML returns a byte slice containing the raw YAML from the OSCAL object
+func (o *OSCAL) YAML() ([]byte, error) {
 	return yaml.Marshal(o)
 }

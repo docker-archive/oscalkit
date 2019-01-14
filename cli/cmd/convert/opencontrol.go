@@ -48,7 +48,7 @@ var includeXML bool
 // 		}
 
 // 		if includeXML {
-// 			rawXMLOCOSCAL, err := ocOSCAL.RawXML(true)
+// 			rawXMLOCOSCAL, err := ocOSCAL.XML(true)
 // 			if err != nil {
 // 				return cli.NewExitError(fmt.Sprintf("Error producing raw XML: %s", err), 1)
 // 			}
@@ -58,7 +58,7 @@ var includeXML bool
 // 		}
 
 // 		if yaml {
-// 			rawYAMLOCOSCAL, err := ocOSCAL.RawYAML()
+// 			rawYAMLOCOSCAL, err := ocOSCAL.YAML()
 // 			if err != nil {
 // 				return cli.NewExitError(err, 1)
 // 			}
@@ -67,7 +67,7 @@ var includeXML bool
 // 			}
 // 		}
 
-// 		rawOCOSCAL, err := ocOSCAL.RawJSON(true)
+// 		rawOCOSCAL, err := ocOSCAL.JSON(true)
 // 		if err != nil {
 // 			return cli.NewExitError(err, 1)
 // 		}
