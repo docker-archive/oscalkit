@@ -10,16 +10,19 @@ import (
 )
 
 const (
-	//TotalControlsInExcel the total number of controls in the excel sheet
-	TotalControlsInExcel = 264
-	//ComponentNameIndex The Column at which name of the component configuration is present
-	ComponentNameIndex = 14
-	//NarrativeIndex The Column at which narrative of the component configuration is present
-	NarrativeIndex = 15
-	//ControlIndex Column at which control is present in the excel sheet
-	ControlIndex = 2
-	//RowIndex Starting point for valid rows (neglects titles)
-	RowIndex = 3
+	//totalControlsInExcel the total number of controls in the excel sheet
+	totalControlsInExcel = 264
+	//componentNameIndex The Column at which name of the component configuration is present
+	componentNameIndex = 16
+	//uuidIndex The Column at which guid of component exist
+	uuidIndex = 17
+	//narrativeIndex The Column at which narrative of the component configuration is present
+	narrativeIndex = 18
+	//controlIndex Column at which control is present in the excel sheet
+	controlIndex = 2
+	//rowIndex Starting point for valid rows (neglects titles)
+	rowIndex  = 3
+	delimiter = "|"
 )
 
 type guidMap map[string]uuid.UUID
@@ -28,38 +31,42 @@ type cdMap map[string]implementation.ComponentDefinition
 //GenerateImplementation generates implementation from component excel sheet
 func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) implementation.Implementation {
 
-	ComponentDefinitonMap := make(map[string]implementation.ComponentDefinition)
-	checkAgainstGUUID := make(map[string]uuid.UUID)
+	componentDefinitonMap := make(map[string]implementation.ComponentDefinition)
+	checkAgainstGUID := make(map[string]uuid.UUID)
 
-	for i := RowIndex; i < TotalControlsInExcel; i++ {
-		applicableControl := CSVS[i][ControlIndex]
+	for i := rowIndex; i < totalControlsInExcel; i++ {
+		applicableControl := CSVS[i][controlIndex]
 		if applicableControl == "" {
 			continue
 		}
-		applicableNarrative := CSVS[i][NarrativeIndex]
-		ListOfComponentConfigName := strings.Split(CSVS[i][ComponentNameIndex], "|")
-		for _, componentConfigName := range ListOfComponentConfigName {
+		applicableNarrative := CSVS[i][narrativeIndex]
+		ListOfComponentConfigName := strings.Split(CSVS[i][componentNameIndex], delimiter)
+		for compIndex, componentConfigName := range ListOfComponentConfigName {
 			componentConfigName = strings.TrimSpace(componentConfigName)
 			if componentConfigName == "" {
 				continue
 			}
-			if _, ok := ComponentDefinitonMap[componentConfigName]; !ok {
-				CreateComponentDefinition(checkAgainstGUUID, ComponentDefinitonMap, componentConfigName, p, c, applicableControl, applicableNarrative)
+			if _, ok := componentDefinitonMap[componentConfigName]; !ok {
+				guid := strings.Split(CSVS[i][uuidIndex], delimiter)[compIndex]
+				guid = strings.TrimSpace(guid)
+				CreateComponentDefinition(checkAgainstGUID, componentDefinitonMap, componentConfigName, p, c, applicableControl, applicableNarrative, guid)
 			} else {
-				securityCheck := ComponentDefinitonMap[componentConfigName]
-				guid := checkAgainstGUUID[componentConfigName]
-				ComponentDefinitonMap[componentConfigName] = AppendParameterInImplementation(securityCheck, guid, p, c, applicableControl)
+				securityCheck := componentDefinitonMap[componentConfigName]
+				guid := checkAgainstGUID[componentConfigName]
+				temp := AppendParameterInImplementation(securityCheck, guid, p, c, applicableControl)
+				temp = AppendControlInImplementation(securityCheck, guid, c, applicableControl)
+				componentDefinitonMap[componentConfigName] = temp
 			}
 		}
 	}
-	return CompileImplemenatation(ComponentDefinitonMap, CSVS, c, p)
+	return CompileImplemenatation(componentDefinitonMap, CSVS, c, p)
 
 }
 
 //CreateComponentDefinition creates a component definition
-func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, p *profile.Profile, c Catalog, control, narrative string) {
+func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, p *profile.Profile, c Catalog, control, narrative, guid string) {
 
-	componentConfGUID := uuid.NewV4()
+	componentConfGUID, _ := uuid.FromString(guid)
 	gm[componentConfName] = componentConfGUID
 	controlConfiguration := implementation.ControlConfiguration{
 		ConfigurationIDRef: componentConfGUID.String(),
@@ -90,6 +97,25 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 				ProfileID: p.ID,
 				ControlConfigurations: []implementation.ControlConfiguration{
 					controlConfiguration,
+				},
+			},
+		},
+		ControlImplementations: []*implementation.ControlImplementation{
+			&implementation.ControlImplementation{
+				ControlConfigurations: []implementation.ControlConfiguration{
+					implementation.ControlConfiguration{
+						ConfigurationIDRef: componentConfGUID.String(),
+						ProvisioningMechanisms: []implementation.ProvisioningMechanism{
+							implementation.ProvisioningMechanism{
+								ProvisionedControls: []implementation.ControlId{
+									implementation.ControlId{
+										ControlID:    c.GetControl(control),
+										CatalogIDRef: c.GetID(),
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -137,6 +163,26 @@ func AppendParameterInImplementation(cd implementation.ComponentDefinition, guid
 
 }
 
+func AppendControlInImplementation(cd implementation.ComponentDefinition, guid uuid.UUID, c Catalog, control string) implementation.ComponentDefinition {
+	for i := range cd.ControlImplementations {
+		for j := range cd.ControlImplementations[i].ControlConfigurations {
+			if cd.ControlImplementations[i].ControlConfigurations[j].ConfigurationIDRef == guid.String() {
+				ctrl := c.GetControl(control)
+				pControls := cd.ControlImplementations[i].ControlConfigurations[j].ProvisioningMechanisms[0].ProvisionedControls
+				if existsInControls(ctrl, pControls) {
+					continue
+				}
+				cd.ControlImplementations[i].ControlConfigurations[j].ProvisioningMechanisms[0].ProvisionedControls = append(
+					cd.ControlImplementations[i].ControlConfigurations[j].ProvisioningMechanisms[0].ProvisionedControls,
+					implementation.ControlId{ControlID: ctrl, CatalogIDRef: c.GetID(), ItemID: ""},
+				)
+			}
+		}
+
+	}
+	return cd
+}
+
 //CompileImplemenatation compiles all checks from maps to implementation json
 func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Profile) implementation.Implementation {
 	return implementation.Implementation{
@@ -157,11 +203,11 @@ func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.P
 							ControlIds: []implementation.ControlId{},
 						},
 					}
-					for i := 3; i < TotalControlsInExcel; i++ {
-						if CSVS[i][ControlIndex] == "" {
+					for i := 3; i < totalControlsInExcel; i++ {
+						if CSVS[i][controlIndex] == "" {
 							continue
 						}
-						c := strings.ToLower(CSVS[i][ControlIndex])
+						c := strings.ToLower(CSVS[i][controlIndex])
 						if cat.isSubControl(c) {
 							arr[0].ControlIds = append(arr[0].ControlIds, implementation.ControlId{
 								ControlID:    cat.GetControl(c),
@@ -171,13 +217,18 @@ func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.P
 							continue
 						}
 						arr[0].ControlIds = append(arr[0].ControlIds, implementation.ControlId{
-							ControlID:    cat.GetControl(CSVS[i][ControlIndex]),
+							ControlID:    cat.GetControl(CSVS[i][controlIndex]),
 							ItemID:       "",
 							CatalogIDRef: cat.GetID(),
 						})
 					}
 					for _, def := range cd {
 						for _, ci := range def.ImplementsProfiles {
+							for _, cc := range ci.ControlConfigurations {
+								arr[0].ControlConfigurations = append(arr[0].ControlConfigurations, cc)
+							}
+						}
+						for _, ci := range def.ControlImplementations {
 							for _, cc := range ci.ControlConfigurations {
 								arr[0].ControlConfigurations = append(arr[0].ControlConfigurations, cc)
 							}
@@ -273,4 +324,14 @@ func existsInParams(pId string, p []implementation.Parameter) bool {
 	}
 	return false
 
+}
+
+func existsInControls(cId string, controls []implementation.ControlId) bool {
+
+	for _, x := range controls {
+		if x.ControlID == cId {
+			return true
+		}
+	}
+	return false
 }

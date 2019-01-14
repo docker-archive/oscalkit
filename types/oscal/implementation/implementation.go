@@ -50,8 +50,9 @@ type ImplementsProfile struct {
 }
 
 type ControlConfiguration struct {
-	ConfigurationIDRef string      `xml:"configuration-id-ref,attr,omitempty" json:"configurationIdRef"`
-	Parameters         []Parameter `xml:"parameters,attr,omitempty" json:"parameters"`
+	ConfigurationIDRef     string                  `xml:"configuration-id-ref,attr,omitempty" json:"configurationIdRef"`
+	Parameters             []Parameter             `xml:"parameters,attr,omitempty" json:"parameters"`
+	ProvisioningMechanisms []ProvisioningMechanism `xml:"provisioning-mechanisms,attr,omitempty" json:"provisioningMechanisms,omitempty"`
 }
 
 type ControlId struct {
@@ -110,4 +111,9 @@ type AssessedValue struct {
 	Output       string `xml:"output,attr,omitempty" json:"output,omitempty"`
 	Compliant    bool   `xml:"compliant,attr,omitempty" json:"compliant,omitempty"`
 	Value        string `xml:"value,attr,omitempty" json:"value"`
+}
+
+type ProvisioningMechanism struct {
+	ProvisioningMechanismRefIds []string
+	ProvisionedControls         []ControlId `xml:"provisioned-controls,attr,omitempty" json:"provisionedControls,omitempty"`
 }
