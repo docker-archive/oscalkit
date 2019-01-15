@@ -7,7 +7,7 @@ func GetImplementationTemplate() (*template.Template, error) {
 	return template.New("").Parse(implementationTemplate)
 }
 
-const implementationTemplate = `package oscalkit
+const implementationTemplate = `package {{.PackageName}}
 
 import (
 	"github.com/docker/oscalkit/types/oscal/implementation"
@@ -16,7 +16,7 @@ import (
 var ImplementationGenerated = implementation.Implementation{
 	Capabilities: implementation.Capabilities{},
 	ComponentDefinitions: []implementation.ComponentDefinition{
-		{{range .ComponentDefinitions}}
+		{{range .Implementation.ComponentDefinitions}}
 		implementation.ComponentDefinition{
 			ComponentConfigurations: []*implementation.ComponentConfiguration{
 					{{range .ComponentConfigurations}}

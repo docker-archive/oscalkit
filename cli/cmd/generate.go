@@ -10,12 +10,12 @@ import (
 	"github.com/docker/oscalkit/templates"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/sirupsen/logrus"
-
 	"github.com/urfave/cli"
 )
 
 var profilePath string
 var outputFileName string
+var packageName string
 
 //Generate Cli command to generate go code for controls
 var Generate = cli.Command{
@@ -32,6 +32,12 @@ var Generate = cli.Command{
 			Usage:       "output filename",
 			Destination: &outputFileName,
 			Value:       "output.go",
+		},
+		cli.StringFlag{
+			Name:        "package, pkg",
+			Usage:       "package name for generated go file (default is oscalkit)",
+			Destination: &packageName,
+			Value:       "oscalkit",
 		},
 	},
 	Before: func(c *cli.Context) error {
@@ -76,8 +82,9 @@ var Generate = cli.Command{
 			return cli.NewExitError("cannot fetch template", 1)
 		}
 		err = t.Execute(newFile, struct {
-			Catalogs []*catalog.Catalog
-		}{catalogs})
+			Catalogs    []*catalog.Catalog
+			PackageName string
+		}{catalogs, packageName})
 
 		//TODO: discuss better approach for formatting generate code file.
 		if err != nil {

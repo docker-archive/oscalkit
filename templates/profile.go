@@ -11,7 +11,7 @@ func GetProfileTemplate() *template.Template {
 }
 
 const profileTemplate = `
-package oscalkit
+package {{.PackageName}}
 
 import (
 	"net/url"
@@ -25,7 +25,7 @@ import (
 var ApplicableProfileControls = profile.Profile{
 	Imports: []profile.Import{
 		profile.Import{
-			{{range .Imports}}
+			{{range .Profile.Imports}}
 				Exclude: &profile.Exclude{
 					IdSelectors: []profile.Call{
 					},
@@ -50,11 +50,11 @@ var ApplicableProfileControls = profile.Profile{
 			},
 	},
 	Merge: &profile.Merge{
-		AsIs: profile.AsIs("{{.Merge.AsIs}}"), 
+		AsIs: profile.AsIs("{{.Profile.Merge.AsIs}}"), 
 	},
 	Modify: &profile.Modify{
 		Alterations: []profile.Alter{
-			{{range .Modify.Alterations}}
+			{{range .Profile.Modify.Alterations}}
 				profile.Alter{
 					ControlId: "123",
 					Additions: []profile.Add{

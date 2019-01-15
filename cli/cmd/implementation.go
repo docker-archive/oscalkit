@@ -13,6 +13,7 @@ import (
 	"github.com/docker/oscalkit/generator"
 	"github.com/docker/oscalkit/impl"
 	"github.com/docker/oscalkit/templates"
+	"github.com/docker/oscalkit/types/oscal/implementation"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -40,6 +41,12 @@ var Implementation = cli.Command{
 			Usage:       "output filename",
 			Destination: &outputFileName,
 			Value:       "implementation.go",
+		},
+		cli.StringFlag{
+			Name:        "package, pkg",
+			Usage:       "package name for generated go file (default is oscalkit)",
+			Destination: &packageName,
+			Value:       "oscalkit",
 		},
 	},
 	Before: func(c *cli.Context) error {
@@ -96,12 +103,15 @@ var Implementation = cli.Command{
 		}
 
 		catalog := impl.NISTCatalog{ID: "NIST_SP-800-53"}
-		implementation := impl.GenerateImplementation(records, profile, &catalog)
+		implementationData := impl.GenerateImplementation(records, profile, &catalog)
 		t, err := templates.GetImplementationTemplate()
 		if err != nil {
 			return fmt.Errorf("cannot get implementation template err %v", err)
 		}
-		err = t.Execute(outputFile, implementation)
+		err = t.Execute(outputFile, struct {
+			Implementation implementation.Implementation
+			PackageName    string
+		}{implementationData, packageName})
 		if err != nil {
 			return err
 		}
