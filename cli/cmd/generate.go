@@ -5,6 +5,7 @@ import (
 	"go/format"
 	"io/ioutil"
 	"os"
+	"regexp"
 
 	"github.com/docker/oscalkit/generator"
 	"github.com/docker/oscalkit/templates"
@@ -47,6 +48,10 @@ var Generate = cli.Command{
 		return nil
 	},
 	Action: func(c *cli.Context) error {
+		err := validatePackageName(packageName)
+		if err != nil {
+			return cli.NewExitError(err, 1)
+		}
 
 		profilePath, err := generator.GetAbsolutePath(profilePath)
 		if err != nil {
@@ -107,4 +112,13 @@ var Generate = cli.Command{
 		return nil
 
 	},
+}
+
+func validatePackageName(packageName string) error {
+	var validPackage = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
+	if !validPackage.Match([]byte(packageName)) {
+		return fmt.Errorf("invalid package name: %s", packageName)
+	}
+
+	return nil
 }

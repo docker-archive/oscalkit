@@ -59,6 +59,10 @@ var Implementation = cli.Command{
 		return nil
 	},
 	Action: func(c *cli.Context) error {
+		err := validatePackageName(packageName)
+		if err != nil {
+			return cli.NewExitError(err, 1)
+		}
 
 		profileF, err := generator.GetFilePath(profile)
 		if err != nil {
