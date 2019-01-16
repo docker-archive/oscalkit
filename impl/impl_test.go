@@ -19,18 +19,19 @@ func TestGenerateImplementation(t *testing.T) {
 	components := []string{"CompA", "CompB", "CompC"}
 	controls := []string{"ac-2", "ac-2.2", "ac-4"}
 	ComponentDetails := [][]string{
-		[]string{controls[0], fmt.Sprintf("%s|%s", components[0], components[1]), "2-Narrative"},
-		[]string{controls[1], fmt.Sprintf("%s|%s", components[0], components[1]), "2.2-Narrative"},
-		[]string{controls[2], "CompC", "4-Narrative"},
+		[]string{controls[0], fmt.Sprintf("%s|%s", components[0], components[1]), "2-Narrative", "123|321"},
+		[]string{controls[1], fmt.Sprintf("%s|%s", components[0], components[1]), "2.2-Narrative", "456|654"},
+		[]string{controls[2], "CompC", "4-Narrative", "789|987"},
 	}
-	csvs := make([][]string, TotalControlsInExcel)
+	csvs := make([][]string, totalControlsInExcel)
 	for i := range csvs {
 		csvs[i] = make([]string, 20)
 	}
 	for i, x := range ComponentDetails {
-		csvs[i+RowIndex][ControlIndex] = x[0]
-		csvs[i+RowIndex][ComponentNameIndex] = x[1]
-		csvs[i+RowIndex][NarrativeIndex] = x[2]
+		csvs[i+rowIndex][controlIndex] = x[0]
+		csvs[i+rowIndex][componentNameIndex] = x[1]
+		csvs[i+rowIndex][narrativeIndex] = x[2]
+		csvs[i+rowIndex][uuidIndex] = x[3]
 	}
 
 	p := profile.Profile{
