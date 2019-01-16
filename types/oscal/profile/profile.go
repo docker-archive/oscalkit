@@ -68,7 +68,7 @@ type Exclude struct {
 
 // A parameter setting, to be propagated to points of insertion
 type SetParam struct {
-	Id           string               `xml:"id,attr,omitempty" json:"id,omitempty"`
+	Id           string               `xml:"param-id,attr,omitempty" json:"id,omitempty"`
 	Class        string               `xml:"class,attr,omitempty" json:"class,omitempty"`
 	DependsOn    string               `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
 	Label        catalog.Label        `xml:"label,omitempty" json:"label,omitempty"`

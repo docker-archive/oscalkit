@@ -16,14 +16,18 @@ type {{toCamel .Name}} struct {
   {{- if eq "profile" .Name}}
   ID string `xml:"id,attr,omitempty" json:"id,omitempty"`
   {{- end}}
-  {{- range .Flags}}
+{{- range .Flags}}
   {{- $cf := commentFlag .Name $m.DefineFlag}}
   {{- range $cf}}
   // {{ . }}
   {{- end}}
   {{- $dt := parseDatatype .Datatype $packageName}}
+  {{- if and (eq "id" .Name) (eq "profile" $packageName)}}
+  Id string `xml:"param-id,attr,omitempty" json:"id,omitempty"`
+  {{- else}}
   {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
   {{- end}}
+{{- end}}
 
   {{- range .Model.Field}}
   {{toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
