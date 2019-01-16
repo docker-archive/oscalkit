@@ -103,7 +103,7 @@ func TestReadInvalidCatalog(t *testing.T) {
 
 func TestCreateCatalogsFromProfile(t *testing.T) {
 
-	href, _ := url.Parse("https://raw.githubusercontent.com/usnistgov/OSCAL/master/content/nist.gov/SP800-53/rev4/NIST_SP-800-53_rev4_catalog.json")
+	href, _ := url.Parse("https://raw.githubusercontent.com/usnistgov/OSCAL/master/content/nist.gov/SP800-53/rev4/NIST_SP-800-53_rev4_catalog.xml")
 	p := profile.Profile{
 		Imports: []profile.Import{
 			profile.Import{
@@ -168,7 +168,7 @@ func TestSubControlsMapping(t *testing.T) {
 			profile.Import{
 				Href: &catalog.Href{
 					URL: func() *url.URL {
-						url, _ := url.Parse("https://raw.githubusercontent.com/usnistgov/OSCAL/master/content/nist.gov/SP800-53/rev4/NIST_SP-800-53_rev4_catalog.json")
+						url, _ := url.Parse("https://raw.githubusercontent.com/usnistgov/OSCAL/master/content/nist.gov/SP800-53/rev4/NIST_SP-800-53_rev4_catalog.xml")
 						return url
 					}(),
 				},

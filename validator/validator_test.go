@@ -72,57 +72,57 @@ func TestValidator(t *testing.T) {
 
 }
 
-func TestJSONValidate(t *testing.T) {
-	const profileSchema = "../../schema/json/oscal-profile.json"
+// func TestJSONValidate(t *testing.T) {
+// 	const profileSchema = "../../schema/json/oscal-profile.json"
 
-	type fields struct {
-		SchemaFile string
-	}
-	type args struct {
-		file []string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		{
-			name:    "successful-validation",
-			fields:  fields{profileSchema},
-			args:    args{[]string{"../../examples/01_identity-profile.json"}},
-			wantErr: false,
-		},
-		{
-			name:    "failed-validation-non-existent-schema-file",
-			fields:  fields{"./oscal-profile.failed"},
-			args:    args{[]string{"../../examples/01_identity-profile.json"}},
-			wantErr: true,
-		},
-		{
-			name:    "failed-validation-non-existent-file",
-			fields:  fields{profileSchema},
-			args:    args{[]string{"./profile.failed"}},
-			wantErr: true,
-		},
-		{
-			name:    "failed-validation-not-oscal-formatted",
-			fields:  fields{profileSchema},
-			args:    args{[]string{"./notoscal.json"}},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			j := jsonValidator{
-				SchemaFile: tt.fields.SchemaFile,
-			}
-			if err := j.Validate(tt.args.file...); (err != nil) != tt.wantErr {
-				t.Errorf("jsonValidator.Validate() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
+// 	type fields struct {
+// 		SchemaFile string
+// 	}
+// 	type args struct {
+// 		file []string
+// 	}
+// 	tests := []struct {
+// 		name    string
+// 		fields  fields
+// 		args    args
+// 		wantErr bool
+// 	}{
+// 		{
+// 			name:    "successful-validation",
+// 			fields:  fields{profileSchema},
+// 			args:    args{[]string{"../../examples/01_identity-profile.json"}},
+// 			wantErr: false,
+// 		},
+// 		{
+// 			name:    "failed-validation-non-existent-schema-file",
+// 			fields:  fields{"./oscal-profile.failed"},
+// 			args:    args{[]string{"../../examples/01_identity-profile.json"}},
+// 			wantErr: true,
+// 		},
+// 		{
+// 			name:    "failed-validation-non-existent-file",
+// 			fields:  fields{profileSchema},
+// 			args:    args{[]string{"./profile.failed"}},
+// 			wantErr: true,
+// 		},
+// 		{
+// 			name:    "failed-validation-not-oscal-formatted",
+// 			fields:  fields{profileSchema},
+// 			args:    args{[]string{"./notoscal.json"}},
+// 			wantErr: true,
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			j := jsonValidator{
+// 				SchemaFile: tt.fields.SchemaFile,
+// 			}
+// 			if err := j.Validate(tt.args.file...); (err != nil) != tt.wantErr {
+// 				t.Errorf("jsonValidator.Validate() error = %v, wantErr %v", err, tt.wantErr)
+// 			}
+// 		})
+// 	}
+// }
 
 func TestXMLValidate(t *testing.T) {
 	type fields struct {
