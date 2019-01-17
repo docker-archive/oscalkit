@@ -12,17 +12,20 @@ import (
 const (
 	// totalControlsInExcel the total number of controls in the excel sheet
 	totalControlsInExcel = 264
-	// componentNameIndex The Column at which name of the component configuration is present
-	componentNameIndex = 16
-	// uuidIndex The Column at which guid of component exist
+	// checksIndex The Column at which name of the component configuration is present
+	checksIndex = 16
+	//uuidIndex The Column at which guid of component exist
 	uuidIndex = 17
 	// narrativeIndex The Column at which narrative of the component configuration is present
 	narrativeIndex = 18
 	// controlIndex Column at which control is present in the excel sheet
 	controlIndex = 2
-	// rowIndex Starting point for valid rows (neglects titles)
-	rowIndex  = 3
-	delimiter = "|"
+	//rowIndex Starting point for valid rows (neglects titles)
+	rowIndex = 3
+	// componentNameRow is the index for getting component name
+	componentNameRow = 1
+	delimiter        = "|"
+	componentIDRegex = "cpe:[0-9].[0-9]:[a-z]:docker:[a-z]*:[0-9].[0-9].[0-9]"
 )
 
 type guidMap map[string]uuid.UUID
@@ -33,14 +36,13 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 
 	componentDefinitionMap := make(map[string]implementation.ComponentDefinition)
 	checkAgainstGUID := make(map[string]uuid.UUID)
-
 	for i := rowIndex; i < totalControlsInExcel; i++ {
 		applicableControl := CSVS[i][controlIndex]
 		if applicableControl == "" {
 			continue
 		}
 		applicableNarrative := CSVS[i][narrativeIndex]
-		ListOfComponentConfigName := strings.Split(CSVS[i][componentNameIndex], delimiter)
+		ListOfComponentConfigName := strings.Split(CSVS[i][checksIndex], delimiter)
 		for compIndex, componentConfigName := range ListOfComponentConfigName {
 			componentConfigName = strings.TrimSpace(componentConfigName)
 			if componentConfigName == "" {
@@ -188,7 +190,8 @@ func AppendControlInImplementation(cd implementation.ComponentDefinition, guid u
 func CompileImplementation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Profile) implementation.Implementation {
 	return implementation.Implementation{
 		ComponentDefinitions: []implementation.ComponentDefinition{
-			implementation.ComponentDefinition{
+			{
+				ID: getComponentID(CSVS[componentNameRow][checksIndex]),
 				ComponentConfigurations: func() []*implementation.ComponentConfiguration {
 					var arr []*implementation.ComponentConfiguration
 					for _, v := range cd {
@@ -258,7 +261,12 @@ func CompileImplementation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Pr
 	}
 }
 
-// Catalog catalog interface to determine control id pattern
+func getComponentID(componentName string) string {
+	re := regexp.MustCompile(componentIDRegex)
+	return re.FindString(componentName)
+}
+
+//Catalog catalog interface to determine control id pattern
 type Catalog interface {
 	GetControl(p string) string
 	isSubControl(s string) bool
