@@ -29,12 +29,28 @@ var ApplicableControls = []catalog.Catalog{
 								Id: 	"{{.Id}}",
 								Class: 	"{{.Class}}",
 								Title:	"{{.Title}}",
+								Parts:  []catalog.Part{
+									{{range .Parts}}
+										catalog.Part{
+											Id:  "{{.Id}}",
+											Class: "{{.Class}}",
+											},
+									{{end}}
+								},
 								Subcontrols: []catalog.Subcontrol{
 									{{range .Subcontrols}}
 									{
 										Id: 	"{{.Id}}",
 										Class: 	"{{.Class}}",
 										Title:	"{{.Title}}",		
+										Parts:  []catalog.Part{
+											{{range .Parts}}
+												catalog.Part{
+													Id:  "{{.Id}}",
+													Class: "{{.Class}}",
+													},
+											{{end}}
+										},
 									},
 									{{end}}
 								},

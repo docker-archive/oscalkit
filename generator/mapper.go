@@ -1,12 +1,14 @@
 package generator
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"strings"
 
+	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
-	"github.com/sirupsen/logrus"
 )
 
 //CreateCatalogsFromProfile maps profile controls to multiple catalogs
@@ -19,37 +21,28 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	//Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
 		go func(profileImport profile.Import) {
+			c := make(chan *catalog.Catalog)
+			e := make(chan error)
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
 			//ForEach Import's Href, Fetch the Catalog JSON file
-			catalogReference, err := GetFilePath(profileImport.Href.String())
-			if err != nil {
-				logrus.Errorf("invalid file path: %v", err)
-				catalogChan <- nil
-				return
-			}
+			getCatalogForImport(ctx, profileImport, c, e)
+			select {
+			case importedCatalog := <-c:
+				//Prepare a new catalog object to merge into the final List of OutputCatalogs
+				importedCatalog = AddPartInCatalog(profileArg.Modify.Alterations, importedCatalog)
+				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport)
+				if err != nil {
+					errChan <- err
+					return
+				}
+				catalogChan <- &newCatalog
 
-			f, err := os.Open(catalogReference)
-			if err != nil {
-				logrus.Errorf("cannot read file: %v", err)
-				catalogChan <- nil
-				return
-			}
-
-			//Once fetched, Read the catalog JSON and Marshall it to Go struct.
-			importedCatalog, err := ReadCatalog(f)
-			if err != nil {
-				logrus.Errorf("cannot parse catalog listed in import.href %v", err)
+			case err := <-e:
 				errChan <- err
-				return
-
-			}
-			//Prepare a new catalog object to merge into the final List of OutputCatalogs
-			newCatalog, err := getMappedCatalogControlsFromImport(importedCatalog, profileImport)
-			if err != nil {
-				errChan <- err
-				return
 			}
 
-			catalogChan <- &newCatalog
 		}(profileImport)
 
 	}
@@ -69,7 +62,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	}
 }
 
-func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import) (catalog.Catalog, error) {
+func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import) (catalog.Catalog, error) {
 	newCatalog := catalog.Catalog{
 		Title:  importedCatalog.Title,
 		Groups: []catalog.Group{},
@@ -94,13 +87,20 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 							Class:       catalogControl.Class,
 							Title:       catalogControl.Title,
 							Subcontrols: []catalog.Subcontrol{},
+							Params:      catalogControl.Params,
+							Parts:       catalogControl.Parts,
 						}
 						//For subcontrols, find again in entire profile
 						for _, catalogSubControl := range catalogControl.Subcontrols {
 							for subcontrolIndex, subcontrol := range include.IdSelectors {
 								//if found append the subcontrol into the control attribute
 								if strings.ToLower(catalogSubControl.Id) == strings.ToLower(subcontrol.SubcontrolId) {
-									newControl.Subcontrols = append(newControl.Subcontrols, catalogSubControl)
+									newControl.Subcontrols = append(newControl.Subcontrols, catalog.Subcontrol{
+										Id:    catalogSubControl.Id,
+										Class: catalogSubControl.Class,
+										Title: catalogSubControl.Title,
+										Parts: catalogSubControl.Parts,
+									})
 									//remove that subcontrol from profile. (for less computation)
 									include.IdSelectors = append(include.IdSelectors[:subcontrolIndex], include.IdSelectors[subcontrolIndex+1:]...)
 									break
@@ -122,4 +122,73 @@ func getMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 		}
 	}
 	return newCatalog, nil
+}
+
+func getCatalogForImport(ctx context.Context, i profile.Import, c chan *catalog.Catalog, e chan error) {
+	go func(i profile.Import) {
+		if i.Href == nil {
+			e <- fmt.Errorf("href cannot be nil")
+			return
+		}
+		path, err := GetFilePath(i.Href.String())
+		if err != nil {
+			e <- err
+			return
+		}
+		f, err := os.Open(path)
+		if err != nil {
+			e <- err
+			return
+		}
+		defer f.Close()
+		o, err := oscal.New(f)
+		if err != nil {
+			e <- err
+			return
+		}
+		if o.Catalog != nil {
+			c <- o.Catalog
+			return
+		}
+		for _, p := range o.Profile.Imports {
+			go func(p profile.Import) {
+				getCatalogForImport(ctx, p, c, e)
+			}(p)
+		}
+	}(i)
+}
+
+func AddPartInCatalog(alterations []profile.Alter, c *catalog.Catalog) *catalog.Catalog {
+	for _, x := range alterations {
+		for i, g := range c.Groups {
+			for j, ctrl := range g.Controls {
+				if x.ControlId == "" {
+					continue
+				}
+				if ctrl.Id == x.ControlId {
+					var parts []catalog.Part
+					for _, add := range x.Additions {
+						for _, p := range add.Parts {
+							for _, catalogPart := range ctrl.Parts {
+								var subctrlParts []catalog.Part
+								for k, subctrls := range ctrl.Subcontrols {
+									for _, scp := range subctrls.Parts {
+										if scp.Class == p.Class {
+											subctrlParts = append(subctrlParts, scp)
+										}
+									}
+									c.Groups[i].Controls[j].Subcontrols[k].Parts = subctrlParts
+								}
+								if p.Class == catalogPart.Class {
+									parts = append(parts, catalogPart)
+								}
+							}
+						}
+					}
+					c.Groups[i].Controls[j].Parts = parts
+				}
+			}
+		}
+	}
+	return c
 }
