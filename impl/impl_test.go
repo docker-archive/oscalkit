@@ -29,7 +29,7 @@ func TestGenerateImplementation(t *testing.T) {
 	}
 	for i, x := range ComponentDetails {
 		csvs[i+rowIndex][controlIndex] = x[0]
-		csvs[i+rowIndex][checksIndex] = x[1]
+		csvs[i+rowIndex][componentConfigIndex] = x[1]
 		csvs[i+rowIndex][narrativeIndex] = x[2]
 		csvs[i+rowIndex][uuidIndex] = x[3]
 	}

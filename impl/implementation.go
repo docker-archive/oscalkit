@@ -12,8 +12,8 @@ import (
 const (
 	// totalControlsInExcel the total number of controls in the excel sheet
 	totalControlsInExcel = 264
-	// checksIndex The Column at which name of the component configuration is present
-	checksIndex = 16
+	// componentConfigIndex The Column at which name of the component configuration is present
+	componentConfigIndex = 16
 	//uuidIndex The Column at which guid of component exist
 	uuidIndex = 17
 	// narrativeIndex The Column at which narrative of the component configuration is present
@@ -42,7 +42,7 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 			continue
 		}
 		applicableNarrative := CSVS[i][narrativeIndex]
-		ListOfComponentConfigName := strings.Split(CSVS[i][checksIndex], delimiter)
+		ListOfComponentConfigName := strings.Split(CSVS[i][componentConfigIndex], delimiter)
 		for compIndex, componentConfigName := range ListOfComponentConfigName {
 			componentConfigName = strings.TrimSpace(componentConfigName)
 			if componentConfigName == "" {
@@ -191,7 +191,7 @@ func CompileImplementation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Pr
 	return implementation.Implementation{
 		ComponentDefinitions: []implementation.ComponentDefinition{
 			{
-				ID: getComponentID(CSVS[componentNameRow][checksIndex]),
+				ID: getComponentID(CSVS[componentNameRow][componentConfigIndex]),
 				ComponentConfigurations: func() []*implementation.ComponentConfiguration {
 					var arr []*implementation.ComponentConfiguration
 					for _, v := range cd {
