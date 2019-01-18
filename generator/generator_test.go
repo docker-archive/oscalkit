@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
@@ -215,4 +217,68 @@ func failTest(err error, t *testing.T) {
 	if err != nil {
 		t.Error(t)
 	}
+}
+
+func TestAddPartInCatalog(t *testing.T) {
+
+	alt := []profile.Alter{
+		profile.Alter{
+			ControlId: "ac-10",
+			Additions: []profile.Add{
+				profile.Add{
+					Parts: []catalog.Part{
+						catalog.Part{
+							Id:    "ac-10_prm",
+							Class: "guidance",
+							Title: "parent prm guidance",
+						},
+						catalog.Part{
+							Id:    "ac-2_prm3",
+							Class: "whatever",
+						},
+					},
+				},
+			},
+		},
+		profile.Alter{
+			SubcontrolId: "ac-10.1",
+			Additions: []profile.Add{
+				profile.Add{
+					Parts: []catalog.Part{
+						catalog.Part{
+							Id:    "ac-10_obj",
+							Class: "yolo",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	cat := catalog.Catalog{
+		Groups: []catalog.Group{
+			catalog.Group{
+				Controls: []catalog.Control{
+					catalog.Control{
+						Id: "ac-10",
+						Subcontrols: []catalog.Subcontrol{
+							catalog.Subcontrol{
+								Id:    "ac-10.1",
+								Parts: []catalog.Part{},
+							},
+						},
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id:    "ac_10_prm",
+								Class: "guidance",
+								Title: "sdfsdfsd",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	spew.Dump(AddPartInCatalog(alt, &cat))
 }

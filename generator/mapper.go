@@ -31,7 +31,9 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			select {
 			case importedCatalog := <-c:
 				//Prepare a new catalog object to merge into the final List of OutputCatalogs
-				importedCatalog = AddPartInCatalog(profileArg.Modify.Alterations, importedCatalog)
+				if profileArg.Modify != nil {
+					importedCatalog = AddPartInCatalog(profileArg.Modify.Alterations, importedCatalog)
+				}
 				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport)
 				if err != nil {
 					errChan <- err
@@ -156,39 +158,4 @@ func getCatalogForImport(ctx context.Context, i profile.Import, c chan *catalog.
 			}(p)
 		}
 	}(i)
-}
-
-func AddPartInCatalog(alterations []profile.Alter, c *catalog.Catalog) *catalog.Catalog {
-	for _, x := range alterations {
-		for i, g := range c.Groups {
-			for j, ctrl := range g.Controls {
-				if x.ControlId == "" {
-					continue
-				}
-				if ctrl.Id == x.ControlId {
-					var parts []catalog.Part
-					for _, add := range x.Additions {
-						for _, p := range add.Parts {
-							for _, catalogPart := range ctrl.Parts {
-								var subctrlParts []catalog.Part
-								for k, subctrls := range ctrl.Subcontrols {
-									for _, scp := range subctrls.Parts {
-										if scp.Class == p.Class {
-											subctrlParts = append(subctrlParts, scp)
-										}
-									}
-									c.Groups[i].Controls[j].Subcontrols[k].Parts = subctrlParts
-								}
-								if p.Class == catalogPart.Class {
-									parts = append(parts, catalogPart)
-								}
-							}
-						}
-					}
-					c.Groups[i].Controls[j].Parts = parts
-				}
-			}
-		}
-	}
-	return c
 }
