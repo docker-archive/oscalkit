@@ -2,9 +2,11 @@
 
 [![CircleCI](https://circleci.com/gh/docker/oscalkit.svg?style=svg)](https://circleci.com/gh/docker/oscalkit) [![codecov](https://codecov.io/gh/docker/oscalkit/branch/master/graph/badge.svg)](https://codecov.io/gh/docker/oscalkit) [![GoDoc](https://godoc.org/github.com/docker/oscalkit?status.svg)](https://godoc.org/github.com/docker/oscalkit)
 
-> In development. Since the OSCAL schemas are still under active development, parsing errors may occur if running the tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/docker/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
+> In development. Since the OSCAL standard is still under active development, parsing errors may occur if running the included CLI tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/docker/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
 
-Barebones Go SDK and CLI tool for parsing OSCAL, converting between OSCAL-formatted XML, JSON and YAML and for converting from [OpenControl](http://opencontrol.cfapps.io/) projects in to OSCAL. Also supports Go source code generation from OSCAL formatted catalog and profile artifacts.
+Barebones Go SDK for the [Open Security Controls Assessment Language (OSCAL)](https://csrc.nist.gov/Projects/Open-Security-Controls-Assessment-Language) which is in development by the [National Institute of Standards and Technology (NIST)](https://www.nist.gov/). A CLI tool is also included for processing OSCAL documents, converting between OSCAL-formatted XML, JSON and YAML and for converting from [OpenControl](http://opencontrol.cfapps.io/) projects in to OSCAL. The tool also supports Go source code generation from OSCAL formatted catalog and profile artifacts.
+
+Documentation for the OSCAL standard can be found at https://pages.nist.gov/OSCAL.
 
 ## Supported OSCAL Components
 
