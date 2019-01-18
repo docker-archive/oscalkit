@@ -16,9 +16,7 @@ type Mechanism struct {
 	Data string `xml:"data,attr,omitempty" json:"data"`
 }
 
-type Label struct {
-	AdminSetting string `xml:"admin-setting,attr,omitempty" json:"adminSetting"`
-}
+type Label map[string]string
 
 type ConfigurableValue struct {
 	ValueID string `xml:"value-id,attr,omitempty" json:"valueId"`
