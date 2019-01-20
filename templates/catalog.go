@@ -34,6 +34,7 @@ var ApplicableControls = []catalog.Catalog{
 										catalog.Part{
 											Id:  "{{.Id}}",
 											Class: "{{.Class}}",
+											Title: "{{.Title}}",
 											},
 									{{end}}
 								},

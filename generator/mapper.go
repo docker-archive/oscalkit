@@ -18,6 +18,10 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	errChan := make(chan error)
 	catalogChan := make(chan *catalog.Catalog)
 	var outputCatalogs []*catalog.Catalog
+	profileArg, err := AppendAlterations(profileArg)
+	if err != nil {
+		return nil, err
+	}
 	//Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
 		go func(profileImport profile.Import) {
@@ -32,7 +36,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			case importedCatalog := <-c:
 				//Prepare a new catalog object to merge into the final List of OutputCatalogs
 				if profileArg.Modify != nil {
-					importedCatalog = AddPartInCatalog(profileArg.Modify.Alterations, importedCatalog)
+					importedCatalog = ProcessAlteration(profileArg.Modify.Alterations, importedCatalog)
 				}
 				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport)
 				if err != nil {
@@ -43,6 +47,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 
 			case err := <-e:
 				errChan <- err
+				return
 			}
 
 		}(profileImport)
