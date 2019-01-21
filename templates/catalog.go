@@ -17,21 +17,21 @@ import (
 
 var ApplicableControls = []catalog.Catalog{
 {{range .Catalogs}}
-	catalog.Catalog{
+	{
 		Title: "{{ .Title }}",
 		Groups: []catalog.Group{
 			{{range .Groups}}
-				catalog.Group{
+				{
 					Id:  "{{.Title}}",
 					Controls: []catalog.Control{
 						{{range .Controls}}
-							catalog.Control{
+							{
 								Id: 	"{{.Id}}",
 								Class: 	"{{.Class}}",
 								Title:	"{{.Title}}",
 								Subcontrols: []catalog.Subcontrol{
 									{{range .Subcontrols}}
-									catalog.Subcontrol{
+									{
 										Id: 	"{{.Id}}",
 										Class: 	"{{.Class}}",
 										Title:	"{{.Title}}",		
