@@ -10,17 +10,17 @@ import (
 )
 
 const (
-	//totalControlsInExcel the total number of controls in the excel sheet
+	// totalControlsInExcel the total number of controls in the excel sheet
 	totalControlsInExcel = 264
-	//componentNameIndex The Column at which name of the component configuration is present
+	// componentNameIndex The Column at which name of the component configuration is present
 	componentNameIndex = 16
-	//uuidIndex The Column at which guid of component exist
+	// uuidIndex The Column at which guid of component exist
 	uuidIndex = 17
-	//narrativeIndex The Column at which narrative of the component configuration is present
+	// narrativeIndex The Column at which narrative of the component configuration is present
 	narrativeIndex = 18
-	//controlIndex Column at which control is present in the excel sheet
+	// controlIndex Column at which control is present in the excel sheet
 	controlIndex = 2
-	//rowIndex Starting point for valid rows (neglects titles)
+	// rowIndex Starting point for valid rows (neglects titles)
 	rowIndex  = 3
 	delimiter = "|"
 )
@@ -31,7 +31,7 @@ type cdMap map[string]implementation.ComponentDefinition
 //GenerateImplementation generates implementation from component excel sheet
 func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) implementation.Implementation {
 
-	componentDefinitonMap := make(map[string]implementation.ComponentDefinition)
+	componentDefinitionMap := make(map[string]implementation.ComponentDefinition)
 	checkAgainstGUID := make(map[string]uuid.UUID)
 
 	for i := rowIndex; i < totalControlsInExcel; i++ {
@@ -46,20 +46,20 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 			if componentConfigName == "" {
 				continue
 			}
-			if _, ok := componentDefinitonMap[componentConfigName]; !ok {
+			if _, ok := componentDefinitionMap[componentConfigName]; !ok {
 				guid := strings.Split(CSVS[i][uuidIndex], delimiter)[compIndex]
 				guid = strings.TrimSpace(guid)
-				CreateComponentDefinition(checkAgainstGUID, componentDefinitonMap, componentConfigName, p, c, applicableControl, applicableNarrative, guid)
+				CreateComponentDefinition(checkAgainstGUID, componentDefinitionMap, componentConfigName, p, c, applicableControl, applicableNarrative, guid)
 			} else {
-				securityCheck := componentDefinitonMap[componentConfigName]
+				securityCheck := componentDefinitionMap[componentConfigName]
 				guid := checkAgainstGUID[componentConfigName]
 				temp := AppendParameterInImplementation(securityCheck, guid, p, c, applicableControl)
 				temp = AppendControlInImplementation(securityCheck, guid, c, applicableControl)
-				componentDefinitonMap[componentConfigName] = temp
+				componentDefinitionMap[componentConfigName] = temp
 			}
 		}
 	}
-	return CompileImplemenatation(componentDefinitonMap, CSVS, c, p)
+	return CompileImplementation(componentDefinitionMap, CSVS, c, p)
 
 }
 
@@ -81,7 +81,7 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 				if existsInParams(param.Id, parameters) {
 					continue
 				}
-				x := GenerateImplementationParamter(param)
+				x := GenerateImplementationParameter(param)
 				parameters = append(parameters, x)
 			}
 		}
@@ -139,7 +139,7 @@ func CreateComponentConfiguration(guid uuid.UUID, componentConfName, narrative s
 	}
 }
 
-//AppendParameterInImplementation Appends parameter in the relative guid
+// AppendParameterInImplementation Appends parameter in the relative guid
 func AppendParameterInImplementation(cd implementation.ComponentDefinition, guid uuid.UUID, p *profile.Profile, c Catalog, control string) implementation.ComponentDefinition {
 	for i := range cd.ImplementsProfiles {
 		for j := range cd.ImplementsProfiles[i].ControlConfigurations {
@@ -152,7 +152,7 @@ func AppendParameterInImplementation(cd implementation.ComponentDefinition, guid
 						continue
 					}
 					if c.GetControl(param.Id) == c.GetControl(control) {
-						x := GenerateImplementationParamter(param)
+						x := GenerateImplementationParameter(param)
 						cd.ImplementsProfiles[i].ControlConfigurations[j].Parameters = append(cd.ImplementsProfiles[i].ControlConfigurations[j].Parameters, x)
 					}
 				}
@@ -163,6 +163,7 @@ func AppendParameterInImplementation(cd implementation.ComponentDefinition, guid
 
 }
 
+// AppendControlInImplementation appends a control in the implementation
 func AppendControlInImplementation(cd implementation.ComponentDefinition, guid uuid.UUID, c Catalog, control string) implementation.ComponentDefinition {
 	for i := range cd.ControlImplementations {
 		for j := range cd.ControlImplementations[i].ControlConfigurations {
@@ -183,8 +184,8 @@ func AppendControlInImplementation(cd implementation.ComponentDefinition, guid u
 	return cd
 }
 
-//CompileImplemenatation compiles all checks from maps to implementation json
-func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Profile) implementation.Implementation {
+// CompileImplementation compiles all checks from maps to implementation json
+func CompileImplementation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Profile) implementation.Implementation {
 	return implementation.Implementation{
 		ComponentDefinitions: []implementation.ComponentDefinition{
 			implementation.ComponentDefinition{
@@ -257,23 +258,24 @@ func CompileImplemenatation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.P
 	}
 }
 
-//Catalog catalog interface to determine control id pattern
+// Catalog catalog interface to determine control id pattern
 type Catalog interface {
 	GetControl(p string) string
 	isSubControl(s string) bool
 	GetID() string
 }
 
-//NISTCatalog NIST80053 catalog
+// NISTCatalog NIST80053 catalog
 type NISTCatalog struct {
 	ID string
 }
 
+// GetID returns the NIST catalogID
 func (n *NISTCatalog) GetID() string {
 	return n.ID
 }
 
-//GetControl GetControl
+// GetControl GetControl
 func (*NISTCatalog) GetControl(p string) string {
 
 	p = strings.ToLower(p)
@@ -299,8 +301,8 @@ func (*NISTCatalog) isSubControl(s string) bool {
 	return false
 }
 
-//GenerateImplementationParamter GenerateImplementationParamter
-func GenerateImplementationParamter(param profile.SetParam) implementation.Parameter {
+// GenerateImplementationParameter GenerateImplementationParameter
+func GenerateImplementationParameter(param profile.SetParam) implementation.Parameter {
 	return implementation.Parameter{
 		ParameterID: param.Id,
 		PossibleValues: func() []string {
@@ -316,9 +318,9 @@ func GenerateImplementationParamter(param profile.SetParam) implementation.Param
 	}
 }
 
-func existsInParams(pId string, p []implementation.Parameter) bool {
+func existsInParams(pID string, p []implementation.Parameter) bool {
 	for _, x := range p {
-		if x.ParameterID == pId {
+		if x.ParameterID == pID {
 			return true
 		}
 	}
@@ -326,10 +328,10 @@ func existsInParams(pId string, p []implementation.Parameter) bool {
 
 }
 
-func existsInControls(cId string, controls []implementation.ControlId) bool {
+func existsInControls(cID string, controls []implementation.ControlId) bool {
 
 	for _, x := range controls {
-		if x.ControlID == cId {
+		if x.ControlID == cID {
 			return true
 		}
 	}
