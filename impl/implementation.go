@@ -88,7 +88,17 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 			}
 		}
 	}
-
+	controlConfiguration.ProvisioningMechanisms = []implementation.ProvisioningMechanism{
+		implementation.ProvisioningMechanism{
+			ProvisionedControls: []implementation.ControlId{
+				implementation.ControlId{
+					ControlID:    c.GetControl(control),
+					CatalogIDRef: c.GetID(),
+					ItemID:       "",
+				},
+			},
+		},
+	}
 	controlConfiguration.Parameters = parameters
 	cdm[componentConfName] = implementation.ComponentDefinition{
 		ComponentConfigurations: []*implementation.ComponentConfiguration{
@@ -105,19 +115,7 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 		ControlImplementations: []*implementation.ControlImplementation{
 			&implementation.ControlImplementation{
 				ControlConfigurations: []implementation.ControlConfiguration{
-					implementation.ControlConfiguration{
-						ConfigurationIDRef: componentConfGUID.String(),
-						ProvisioningMechanisms: []implementation.ProvisioningMechanism{
-							implementation.ProvisioningMechanism{
-								ProvisionedControls: []implementation.ControlId{
-									implementation.ControlId{
-										ControlID:    c.GetControl(control),
-										CatalogIDRef: c.GetID(),
-									},
-								},
-							},
-						},
-					},
+					controlConfiguration,
 				},
 			},
 		},
@@ -232,9 +230,16 @@ func CompileImplementation(cd cdMap, CSVS [][]string, cat Catalog, p *profile.Pr
 								arr[0].ControlConfigurations = append(arr[0].ControlConfigurations, cc)
 							}
 						}
-						for _, ci := range def.ControlImplementations {
-							for _, cc := range ci.ControlConfigurations {
-								arr[0].ControlConfigurations = append(arr[0].ControlConfigurations, cc)
+					}
+
+					for j, x := range arr[0].ControlConfigurations {
+						for _, def := range cd {
+							for _, ci := range def.ControlImplementations {
+								for _, cc := range ci.ControlConfigurations {
+									if cc.ConfigurationIDRef == x.ConfigurationIDRef {
+										arr[0].ControlConfigurations[j].ProvisioningMechanisms = cc.ProvisioningMechanisms
+									}
+								}
 							}
 						}
 					}
