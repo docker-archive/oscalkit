@@ -15,6 +15,7 @@ import (
 	"os"
 
 	"github.com/docker/oscalkit/cli/cmd/convert"
+	"github.com/docker/oscalkit/cli/cmd/generate"
 	"github.com/docker/oscalkit/cli/version"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -49,8 +50,7 @@ func Execute() error {
 		convert.Convert,
 		Validate,
 		Sign,
-		Generate,
-		Implementation,
+		generate.Generate,
 	}
 
 	return app.Run(os.Args)

@@ -1,4 +1,4 @@
-package cmd
+package generate
 
 import (
 	"fmt"
@@ -18,9 +18,9 @@ var profilePath string
 var outputFileName string
 var packageName string
 
-//Generate Cli command to generate go code for controls
-var Generate = cli.Command{
-	Name:  "generate",
+// Code Cli command to generate go code for controls in catalog
+var Code = cli.Command{
+	Name:  "code",
 	Usage: "generates go code against provided profile",
 	Flags: []cli.Flag{
 		cli.StringFlag{
