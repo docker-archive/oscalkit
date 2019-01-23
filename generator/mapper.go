@@ -11,7 +11,7 @@ import (
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
-//CreateCatalogsFromProfile maps profile controls to multiple catalogs
+// CreateCatalogsFromProfile maps profile controls to multiple catalogs
 func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog, error) {
 
 	done := 0
@@ -22,7 +22,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	if err != nil {
 		return nil, err
 	}
-	//Get first import of the profile (which is a catalog)
+	// Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
 		go func(profileImport profile.Import) {
 			c := make(chan *catalog.Catalog)
@@ -30,11 +30,11 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 
-			//ForEach Import's Href, Fetch the Catalog JSON file
+			// ForEach Import's Href, Fetch the Catalog JSON file
 			getCatalogForImport(ctx, profileImport, c, e)
 			select {
 			case importedCatalog := <-c:
-				//Prepare a new catalog object to merge into the final List of OutputCatalogs
+				// Prepare a new catalog object to merge into the final List of OutputCatalogs
 				if profileArg.Modify != nil {
 					importedCatalog = ProcessAlteration(profileArg.Modify.Alterations, importedCatalog)
 				}
@@ -69,13 +69,14 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	}
 }
 
+// GetMappedCatalogControlsFromImport gets mapped controls in catalog per profile import
 func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import) (catalog.Catalog, error) {
 	newCatalog := catalog.Catalog{
 		Title:  importedCatalog.Title,
 		Groups: []catalog.Group{},
 	}
 	for _, group := range importedCatalog.Groups {
-		//Prepare a new group to append matching controls into.
+		// Prepare a new group to append matching controls into.
 		newGroup := catalog.Group{
 			Title:    group.Title,
 			Controls: []catalog.Control{},
@@ -97,10 +98,10 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 							Params:      catalogControl.Params,
 							Parts:       catalogControl.Parts,
 						}
-						//For subcontrols, find again in entire profile
+						// For subcontrols, find again in entire profile
 						for _, catalogSubControl := range catalogControl.Subcontrols {
 							for subcontrolIndex, subcontrol := range include.IdSelectors {
-								//if found append the subcontrol into the control attribute
+								// If found append the subcontrol into the control attribute
 								if strings.ToLower(catalogSubControl.Id) == strings.ToLower(subcontrol.SubcontrolId) {
 									newControl.Subcontrols = append(newControl.Subcontrols, catalog.Subcontrol{
 										Id:    catalogSubControl.Id,
@@ -108,15 +109,15 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 										Title: catalogSubControl.Title,
 										Parts: catalogSubControl.Parts,
 									})
-									//remove that subcontrol from profile. (for less computation)
+									// Remove that subcontrol from profile. (for less computation)
 									include.IdSelectors = append(include.IdSelectors[:subcontrolIndex], include.IdSelectors[subcontrolIndex+1:]...)
 									break
 								}
 							}
 						}
-						//finally append the control in the group.
+						// Finally append the control in the group.
 						newGroup.Controls = append(newGroup.Controls, newControl)
-						//remove controlId from profile as well. (for less computation)
+						// Remove controlId from profile as well. (for less computation)
 						include.IdSelectors = append(include.IdSelectors[:controlIndex], profileImport.Include.IdSelectors[controlIndex+1:]...)
 						break
 					}

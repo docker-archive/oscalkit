@@ -13,7 +13,7 @@ import (
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
-//ProcessAddition processess additions of a profile
+// ProcessAddition processes additions of a profile
 func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Control {
 	for j, ctrl := range controls {
 		if ctrl.Id == alt.ControlId {
@@ -23,7 +23,7 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 					for _, catalogPart := range ctrl.Parts {
 						if p.Class == catalogPart.Class {
 							appended = true
-							//append with all the parts with matching classes
+							// append with all the parts with matching classes
 							parts := ModifyParts(p, ctrl.Parts)
 							ctrl.Parts = parts
 						}
@@ -43,7 +43,7 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 						for _, catalogPart := range subctrl.Parts {
 							if p.Class == catalogPart.Class {
 								appended = true
-								//append with all the parts
+								// append with all the parts
 								parts := ModifyParts(p, subctrl.Parts)
 								subctrl.Parts = parts
 							}
@@ -61,7 +61,7 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 	return controls
 }
 
-//ProcessAlteration processess alteration section of a profile
+// ProcessAlteration processes alteration section of a profile
 func ProcessAlteration(alterations []profile.Alter, c *catalog.Catalog) *catalog.Catalog {
 	for _, alt := range alterations {
 		for i, g := range c.Groups {
@@ -71,10 +71,10 @@ func ProcessAlteration(alterations []profile.Alter, c *catalog.Catalog) *catalog
 	return c
 }
 
-//ModifyParts modifies parts
+// ModifyParts modifies parts
 func ModifyParts(p catalog.Part, controlParts []catalog.Part) []catalog.Part {
 
-	//append with all the parts
+	// append with all the parts
 	var parts []catalog.Part
 	for i, part := range controlParts {
 		if p.Class != part.Class {
@@ -90,7 +90,7 @@ func ModifyParts(p catalog.Part, controlParts []catalog.Part) []catalog.Part {
 	return parts
 }
 
-//FindAlter finds alter manipulation attribute in the profile import chain
+// FindAlter finds alter manipulation attribute in the profile import chain
 func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, error) {
 
 	ec := make(chan error)

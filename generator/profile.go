@@ -4,7 +4,7 @@ import (
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
-//AppendAlterations appends alter attributes from import chain
+// AppendAlterations appends alter attributes from import chain
 func AppendAlterations(p *profile.Profile) (*profile.Profile, error) {
 	if p.Modify == nil {
 		p.Modify = &profile.Modify{
