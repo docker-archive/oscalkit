@@ -24,14 +24,17 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	}
 	// Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
+		err := ValidateHref(profileImport.Href)
+		if err != nil {
+			return nil, err
+		}
 		go func(profileImport profile.Import) {
 			c := make(chan *catalog.Catalog)
 			e := make(chan error)
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
-
 			// ForEach Import's Href, Fetch the Catalog JSON file
-			getCatalogForImport(ctx, profileImport, c, e)
+			getCatalogForImport(ctx, profileImport, c, e, profileImport.Href.String())
 			select {
 			case importedCatalog := <-c:
 				// Prepare a new catalog object to merge into the final List of OutputCatalogs
@@ -132,9 +135,10 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 	return newCatalog, nil
 }
 
-func getCatalogForImport(ctx context.Context, i profile.Import, c chan *catalog.Catalog, e chan error) {
+func getCatalogForImport(ctx context.Context, i profile.Import, c chan *catalog.Catalog, e chan error, basePath string) {
 	go func(i profile.Import) {
-		if i.Href == nil {
+		err := ValidateHref(i.Href)
+		if err != nil {
 			e <- fmt.Errorf("href cannot be nil")
 			return
 		}
@@ -158,9 +162,15 @@ func getCatalogForImport(ctx context.Context, i profile.Import, c chan *catalog.
 			c <- o.Catalog
 			return
 		}
+		newP, err := SetBasePath(o.Profile, basePath)
+		if err != nil {
+			e <- err
+			return
+		}
+		o.Profile = newP
 		for _, p := range o.Profile.Imports {
 			go func(p profile.Import) {
-				getCatalogForImport(ctx, p, c, e)
+				getCatalogForImport(ctx, p, c, e, basePath)
 			}(p)
 		}
 	}(i)

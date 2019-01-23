@@ -1,6 +1,13 @@
 package generator
 
 import (
+	"fmt"
+	"net/url"
+	"path"
+	"path/filepath"
+
+	"github.com/docker/oscalkit/types/oscal/catalog"
+
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
@@ -29,6 +36,28 @@ func AppendAlterations(p *profile.Profile) (*profile.Profile, error) {
 				p.Modify.Alterations = append(p.Modify.Alterations, *alt)
 			}
 		}
+	}
+	return p, nil
+}
+
+//SetBasePath sets up base paths for profiles
+func SetBasePath(p *profile.Profile, parentPath string) (*profile.Profile, error) {
+
+	for i, x := range p.Imports {
+
+		if x.Href == nil {
+			return nil, fmt.Errorf("href cannot be nil")
+		}
+		path := fmt.Sprintf("%s/%s", path.Dir(parentPath), path.Base(x.Href.String()))
+		path, err := filepath.Abs(path)
+		if err != nil {
+			return nil, err
+		}
+		uri, err := url.Parse(path)
+		if err != nil {
+			return nil, err
+		}
+		p.Imports[i].Href = &catalog.Href{URL: uri}
 	}
 	return p, nil
 }

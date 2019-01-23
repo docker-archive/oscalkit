@@ -78,6 +78,10 @@ var Code = cli.Command{
 		}
 		defer newFile.Close()
 
+		profile, err = generator.SetBasePath(profile, profilePath)
+		if err != nil {
+			cli.NewExitError(fmt.Errorf("failed to setup href path for profiles: %v", err), 1)
+		}
 		catalogs, err := generator.CreateCatalogsFromProfile(profile)
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("cannot create catalogs from profile, err: %v", err), 1)
