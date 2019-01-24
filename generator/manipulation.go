@@ -151,6 +151,7 @@ func traverseProfile(ctx context.Context, call profile.Call, p *profile.Profile,
 				errCh <- err
 				return
 			}
+			defer f.Close()
 			o, err := oscal.New(f)
 			if err != nil {
 				errCh <- err
