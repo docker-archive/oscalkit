@@ -8,6 +8,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/docker/oscalkit/impl"
 	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
@@ -66,6 +67,26 @@ func ProcessAlteration(alterations []profile.Alter, c *catalog.Catalog) *catalog
 	for _, alt := range alterations {
 		for i, g := range c.Groups {
 			c.Groups[i].Controls = ProcessAddition(alt, g.Controls)
+		}
+	}
+	return c
+}
+
+// ProcessSetParam processes set-param of a profile
+func ProcessSetParam(setParams []profile.SetParam, c *catalog.Catalog, catalogHelper impl.Catalog) *catalog.Catalog {
+	for _, sp := range setParams {
+		ctrlID := catalogHelper.GetControl(sp.Id)
+		for i, g := range c.Groups {
+			for j, catalogCtrl := range g.Controls {
+				if ctrlID == catalogCtrl.Id {
+					for k := range catalogCtrl.Parts {
+						if len(sp.Constraints) == 0 {
+							continue
+						}
+						c.Groups[i].Controls[j].Parts[k].ModifyProse(sp.Id, sp.Constraints[0].Value)
+					}
+				}
+			}
 		}
 	}
 	return c
