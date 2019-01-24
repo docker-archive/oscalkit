@@ -13,6 +13,8 @@ package catalog
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -25,6 +27,30 @@ type Prose struct {
 	UL      []UL
 	OL      []OL
 	Pre     []Pre
+}
+
+// ReplaceInsertParams replaces insert parameters
+func (p *Prose) ReplaceInsertParams(parameterID, parameterValue string) error {
+
+	rs := fmt.Sprintf(`<insert param-id="%s">`, parameterID)
+	regex, err := regexp.Compile(rs)
+	if err != nil {
+		return err
+	}
+	for i := range p.P {
+		p.P[i].Raw = regex.ReplaceAllString(p.P[i].Raw, parameterValue)
+
+	}
+	for i := range p.OL {
+		p.OL[i].Raw = regex.ReplaceAllString(p.OL[i].Raw, parameterValue)
+	}
+	for i := range p.Pre {
+		p.Pre[i].Raw = regex.ReplaceAllString(p.Pre[i].Raw, parameterValue)
+	}
+	for i := range p.UL {
+		p.UL[i].Raw = regex.ReplaceAllString(p.UL[i].Raw, parameterValue)
+	}
+	return nil
 }
 
 // MarshalXML ...
