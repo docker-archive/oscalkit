@@ -119,6 +119,20 @@ func TestCreateCatalogsFromProfile(t *testing.T) {
 				},
 			},
 		},
+		Modify: &profile.Modify{
+			Alterations: []profile.Alter{
+				profile.Alter{
+					ControlId: "ac-1",
+					Additions: []profile.Add{profile.Add{
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id: "ac-1_obj",
+							},
+						},
+					}},
+				},
+			},
+		},
 	}
 	x, err := CreateCatalogsFromProfile(&p)
 	if err != nil {
@@ -153,8 +167,8 @@ func TestCreateCatalogsFromProfileWithBadHref(t *testing.T) {
 		},
 	}
 	catalogs, err := CreateCatalogsFromProfile(&p)
-	if err != nil {
-		t.Error("error should  be nil")
+	if err == nil {
+		t.Error("error should not be nil")
 	}
 	if len(catalogs) > 0 {
 		t.Error("nothing should be parsed due to bad url")
@@ -190,6 +204,50 @@ func TestSubControlsMapping(t *testing.T) {
 				},
 			},
 		},
+		Modify: &profile.Modify{
+			Alterations: []profile.Alter{
+				profile.Alter{
+					ControlId: "ac-1",
+					Additions: []profile.Add{profile.Add{
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id: "ac-1_obj",
+							},
+						},
+					}},
+				},
+				profile.Alter{
+					ControlId: "ac-2",
+					Additions: []profile.Add{profile.Add{
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id: "ac-2_obj",
+							},
+						},
+					}},
+				},
+				profile.Alter{
+					SubcontrolId: "ac-2.1",
+					Additions: []profile.Add{profile.Add{
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id: "ac-2.1_obj",
+							},
+						},
+					}},
+				},
+				profile.Alter{
+					SubcontrolId: "ac-2.2",
+					Additions: []profile.Add{profile.Add{
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id: "ac-2.2_obj",
+							},
+						},
+					}},
+				},
+			},
+		},
 	}
 
 	c, err := CreateCatalogsFromProfile(&profile)
@@ -211,8 +269,160 @@ func TestGetCatalogInvalidFilePath(t *testing.T) {
 	}
 }
 
+func TestProcessAdditionWithSameClass(t *testing.T) {
+	partID := "ac-10_prt"
+	class := "guidance"
+	alters := []profile.Alter{
+		{
+			ControlId: "ac-10",
+			Additions: []profile.Add{
+				profile.Add{
+					Parts: []catalog.Part{
+						catalog.Part{
+							Id:    partID,
+							Class: class,
+						},
+					},
+				},
+			},
+		},
+		profile.Alter{
+			SubcontrolId: "ac-10.1",
+			Additions: []profile.Add{
+				profile.Add{
+					Parts: []catalog.Part{
+						catalog.Part{
+							Id:    partID,
+							Class: class,
+						},
+					},
+				},
+			},
+		},
+	}
+	c := catalog.Catalog{
+		Groups: []catalog.Group{
+			catalog.Group{
+				Controls: []catalog.Control{
+					catalog.Control{
+						Id: "ac-10",
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id:    partID,
+								Class: class,
+							},
+						},
+						Subcontrols: []catalog.Subcontrol{
+							catalog.Subcontrol{
+								Id: "ac-10.1",
+								Parts: []catalog.Part{
+									catalog.Part{
+										Id:    partID,
+										Class: class,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	o := ProcessAlteration(alters, &c)
+	for _, g := range o.Groups {
+		for _, c := range g.Controls {
+			for i := range c.Parts {
+				expected := fmt.Sprintf("%s_%d", partID, i+1)
+				if c.Parts[i].Id != expected {
+					t.Errorf("%s and %s are not identical", c.Parts[i].Id, expected)
+					return
+				}
+			}
+			for i, sc := range c.Subcontrols {
+				expected := fmt.Sprintf("%s_%d", partID, i+1)
+				if sc.Parts[i].Id != expected {
+					t.Errorf("%s and %s are not identical", sc.Parts[i].Id, expected)
+					return
+				}
+			}
+		}
+	}
+}
+
+func TestProcessAdditionWithDifferentPartClass(t *testing.T) {
+
+	ctrlID := "ac-10"
+	subctrlID := "ac-10.1"
+	partID := "ac-10_stmt.a"
+
+	alters := []profile.Alter{
+		profile.Alter{
+			ControlId: ctrlID,
+			Additions: []profile.Add{
+				profile.Add{
+					Parts: []catalog.Part{
+						catalog.Part{
+							Id:    partID,
+							Class: "c1",
+						},
+					},
+				},
+			},
+		},
+		profile.Alter{
+			SubcontrolId: subctrlID,
+			Additions: []profile.Add{
+				profile.Add{
+					Parts: []catalog.Part{
+						catalog.Part{
+							Id:    partID,
+							Class: "c2",
+						},
+					},
+				},
+			},
+		},
+	}
+	c := catalog.Catalog{
+		Groups: []catalog.Group{
+			catalog.Group{
+				Controls: []catalog.Control{
+					catalog.Control{
+						Id: ctrlID,
+						Parts: []catalog.Part{
+							catalog.Part{
+								Id:    partID,
+								Class: "c3",
+							},
+						},
+						Subcontrols: []catalog.Subcontrol{
+							catalog.Subcontrol{
+								Id: subctrlID,
+								Parts: []catalog.Part{
+									catalog.Part{
+										Id:    partID,
+										Class: "c4",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	o := ProcessAlteration(alters, &c)
+	if len(o.Groups[0].Controls[0].Parts) != 2 {
+		t.Error("parts for controls not getting added properly")
+	}
+	if len(o.Groups[0].Controls[0].Subcontrols[0].Parts) != 2 {
+		t.Error("parts for sub-controls not getting added properly")
+	}
+
+}
 func failTest(err error, t *testing.T) {
 	if err != nil {
-		t.Error(t)
+		t.Error(err)
 	}
 }

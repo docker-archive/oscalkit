@@ -16,7 +16,7 @@ import (
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
-//ReadCatalog ReadCatalog
+// ReadCatalog ReadCatalog
 func ReadCatalog(r io.Reader) (*catalog.Catalog, error) {
 
 	o, err := oscal.New(r)
@@ -32,7 +32,7 @@ func ReadCatalog(r io.Reader) (*catalog.Catalog, error) {
 
 }
 
-//ReadProfile reads profile from byte array
+// ReadProfile reads profile from byte array
 func ReadProfile(r io.Reader) (*profile.Profile, error) {
 
 	o, err := oscal.New(r)
@@ -45,7 +45,7 @@ func ReadProfile(r io.Reader) (*profile.Profile, error) {
 	return o.Profile, nil
 }
 
-//GetFilePath GetFilePath
+// GetFilePath GetFilePath
 func GetFilePath(URL string) (string, error) {
 	uri, err := url.Parse(URL)
 	if err != nil {
@@ -74,7 +74,7 @@ func GetFilePath(URL string) (string, error) {
 
 }
 
-//GetAbsolutePath gets absolute file path
+// GetAbsolutePath gets absolute file path
 func GetAbsolutePath(path string) (string, error) {
 	if filepath.IsAbs(path) {
 		return path, nil
