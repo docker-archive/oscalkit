@@ -98,8 +98,13 @@ func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	for _, i := range p.Imports {
+		err := ValidateHref(i.Href)
+		if err != nil {
+			return nil, err
+		}
+		basePath := i.Href.String()
 		go func(i profile.Import) {
-			traverseProfile(ctx, call, p, altCh, ec)
+			traverseProfile(ctx, call, p, altCh, ec, basePath)
 		}(i)
 	}
 
@@ -114,7 +119,7 @@ func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, error) {
 
 }
 
-func traverseProfile(ctx context.Context, call profile.Call, p *profile.Profile, altCh chan *profile.Alter, errCh chan error) {
+func traverseProfile(ctx context.Context, call profile.Call, p *profile.Profile, altCh chan *profile.Alter, errCh chan error, basePath string) {
 
 	if p == nil {
 		errCh <- fmt.Errorf("profile cannot be nil")
@@ -135,7 +140,18 @@ func traverseProfile(ctx context.Context, call profile.Call, p *profile.Profile,
 		}
 	}
 
+	p, err := SetBasePath(p, basePath)
+	if err != nil {
+		errCh <- err
+		return
+	}
+
 	for _, imp := range p.Imports {
+		err := ValidateHref(imp.Href)
+		if err != nil {
+			errCh <- err
+			return
+		}
 		go func(imp profile.Import) {
 			if imp.Href == nil {
 				errCh <- fmt.Errorf("import href cannot be nil")
@@ -161,7 +177,7 @@ func traverseProfile(ctx context.Context, call profile.Call, p *profile.Profile,
 				logrus.Warn("catalog found")
 				return
 			}
-			traverseProfile(ctx, call, o.Profile, altCh, errCh)
+			traverseProfile(ctx, call, o.Profile, altCh, errCh, basePath)
 		}(imp)
 
 	}
