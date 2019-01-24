@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/docker/oscalkit/impl"
 	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
@@ -39,7 +40,9 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			case importedCatalog := <-c:
 				// Prepare a new catalog object to merge into the final List of OutputCatalogs
 				if profileArg.Modify != nil {
+					nc := impl.NISTCatalog{}
 					importedCatalog = ProcessAlteration(profileArg.Modify.Alterations, importedCatalog)
+					importedCatalog = ProcessSetParam(profileArg.Modify.ParamSettings, importedCatalog, &nc)
 				}
 				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport)
 				if err != nil {

@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/docker/oscalkit/impl"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
@@ -421,6 +422,99 @@ func TestProcessAdditionWithDifferentPartClass(t *testing.T) {
 	}
 
 }
+
+func TestProcessSetParam(t *testing.T) {
+	parameterID := "ac-1_prm_1"
+	parameterVal := "777"
+	ctrl := "ac-1"
+	shouldChange := fmt.Sprintf(`this should change. <insert param-id="%s">`, parameterID)
+	afterChange := fmt.Sprintf(`this should change. %s`, parameterVal)
+	sp := []profile.SetParam{
+		profile.SetParam{
+			Id: parameterID,
+			Constraints: []catalog.Constraint{
+				catalog.Constraint{
+					Value: parameterVal,
+				},
+			},
+		},
+	}
+	controls := []catalog.Control{
+		catalog.Control{
+			Id: ctrl,
+			Parts: []catalog.Part{
+				catalog.Part{
+					Prose: &catalog.Prose{
+						P: []catalog.P{
+							catalog.P{
+								Raw: shouldChange,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	ctlg := &catalog.Catalog{
+		Groups: []catalog.Group{
+			catalog.Group{
+				Controls: controls,
+			},
+		},
+	}
+	nc := impl.NISTCatalog{}
+	ctlg = ProcessSetParam(sp, ctlg, &nc)
+	if ctlg.Groups[0].Controls[0].Parts[0].Prose.P[0].Raw != afterChange {
+		t.Error("failed to parse set param template")
+	}
+}
+
+func TestProcessSetParamWithUnmatchParam(t *testing.T) {
+	parameterID := "ac-1_prm_1"
+	parameterVal := "777"
+	ctrl := "ac-1"
+	shouldChange := fmt.Sprintf(`this should change. <insert param-id="%s">`, parameterID)
+	afterChange := fmt.Sprintf(`this should change. %s`, parameterVal)
+	sp := []profile.SetParam{
+		profile.SetParam{
+			Id: "ac-1_prm_2",
+			Constraints: []catalog.Constraint{
+				catalog.Constraint{
+					Value: parameterVal,
+				},
+			},
+		},
+	}
+	controls := []catalog.Control{
+		catalog.Control{
+			Id: ctrl,
+			Parts: []catalog.Part{
+				catalog.Part{
+					Prose: &catalog.Prose{
+						P: []catalog.P{
+							catalog.P{
+								Raw: shouldChange,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	ctlg := &catalog.Catalog{
+		Groups: []catalog.Group{
+			catalog.Group{
+				Controls: controls,
+			},
+		},
+	}
+	nc := impl.NISTCatalog{}
+	ctlg = ProcessSetParam(sp, ctlg, &nc)
+	if ctlg.Groups[0].Controls[0].Parts[0].Prose.P[0].Raw == afterChange {
+		t.Error("should not change parameter with mismatching parameter id")
+	}
+}
+
 func failTest(err error, t *testing.T) {
 	if err != nil {
 		t.Error(err)
