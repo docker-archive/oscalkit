@@ -29,11 +29,13 @@ func AppendAlterations(p *profile.Profile) (*profile.Profile, error) {
 				}
 			}
 			if !alterFound {
-				alt, err := FindAlter(call, p)
+				alt, found, err := FindAlter(call, p)
 				if err != nil {
 					return nil, err
 				}
-				p.Modify.Alterations = append(p.Modify.Alterations, *alt)
+				if found {
+					p.Modify.Alterations = append(p.Modify.Alterations, *alt)
+				}
 			}
 		}
 	}

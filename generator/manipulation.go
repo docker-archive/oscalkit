@@ -112,7 +112,7 @@ func ModifyParts(p catalog.Part, controlParts []catalog.Part) []catalog.Part {
 }
 
 // FindAlter finds alter manipulation attribute in the profile import chain
-func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, error) {
+func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, bool, error) {
 
 	ec := make(chan error)
 	altCh := make(chan *profile.Alter)
@@ -121,7 +121,7 @@ func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, error) {
 	for _, i := range p.Imports {
 		err := ValidateHref(i.Href)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		basePath := i.Href.String()
 		go func(i profile.Import) {
@@ -131,11 +131,11 @@ func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, error) {
 
 	select {
 	case alt := <-altCh:
-		return alt, nil
+		return alt, true, nil
 	case err := <-ec:
-		return nil, err
+		return nil, false, err
 	case <-ctx.Done():
-		return nil, timeoutErr(call)
+		return nil, false, nil
 	}
 
 }
