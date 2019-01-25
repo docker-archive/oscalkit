@@ -20,6 +20,7 @@ var ImplementationGenerated = implementation.Implementation{
 	ComponentDefinitions: []implementation.ComponentDefinition{
 		{{range .Implementation.ComponentDefinitions}}
 		implementation.ComponentDefinition{
+			ID: ` + "`{{.ID}}`" + `,
 			ComponentConfigurations: []*implementation.ComponentConfiguration{
 					{{range .ComponentConfigurations}}
 					{
