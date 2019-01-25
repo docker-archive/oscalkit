@@ -13,11 +13,11 @@ const (
 	// totalControlsInExcel the total number of controls in the excel sheet
 	totalControlsInExcel = 264
 	// componentConfigIndex The Column at which name of the component configuration is present
-	componentConfigIndex = 16
+	componentConfigIndex = 17
 	//uuidIndex The Column at which guid of component exist
-	uuidIndex = 17
+	uuidIndex = 18
 	// narrativeIndex The Column at which narrative of the component configuration is present
-	narrativeIndex = 18
+	narrativeIndex = 19
 	// controlIndex Column at which control is present in the excel sheet
 	controlIndex = 2
 	//rowIndex Starting point for valid rows (neglects titles)
