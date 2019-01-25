@@ -44,16 +44,22 @@ func AppendAlterations(p *profile.Profile) (*profile.Profile, error) {
 func SetBasePath(p *profile.Profile, parentPath string) (*profile.Profile, error) {
 
 	for i, x := range p.Imports {
-
 		if x.Href == nil {
 			return nil, fmt.Errorf("href cannot be nil")
 		}
+		uri, err := url.Parse(x.Href.String())
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse url: %s", err)
+		}
+		if isHTTPResource(uri) {
+			continue
+		}
 		path := fmt.Sprintf("%s/%s", path.Dir(parentPath), path.Base(x.Href.String()))
-		path, err := filepath.Abs(path)
+		path, err = filepath.Abs(path)
 		if err != nil {
 			return nil, err
 		}
-		uri, err := url.Parse(path)
+		uri, err = url.Parse(path)
 		if err != nil {
 			return nil, err
 		}
