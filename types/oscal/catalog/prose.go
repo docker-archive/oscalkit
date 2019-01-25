@@ -424,3 +424,26 @@ func formatRawProse(raw string) string {
 
 	return strings.Join(value, " ")
 }
+
+func traverseParts(part *Part, parameterID, parameterVal string) {
+	if part == nil {
+		return
+	}
+	if part.Prose == nil {
+		return
+	}
+
+	part.Prose.ReplaceInsertParams(parameterID, parameterVal)
+	if len(part.Parts) == 0 {
+		return
+	}
+	for i := range part.Parts {
+		traverseParts(&part.Parts[i], parameterID, parameterVal)
+	}
+	return
+}
+
+// ModifyProse modifies prose insert parameter template
+func (part *Part) ModifyProse(parameterID, parameterVal string) {
+	traverseParts(part, parameterID, parameterVal)
+}
