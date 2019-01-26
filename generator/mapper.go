@@ -19,10 +19,10 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	errChan := make(chan error)
 	catalogChan := make(chan *catalog.Catalog)
 	var outputCatalogs []*catalog.Catalog
-	profileArg, err := AppendAlterations(profileArg)
-	if err != nil {
-		return nil, err
-	}
+	// profileArg, err := AppendAlterations(profileArg)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	// Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
 		err := ValidateHref(profileImport.Href)
