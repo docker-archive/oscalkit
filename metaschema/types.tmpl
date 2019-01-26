@@ -16,6 +16,7 @@ type {{toCamel .Name}} struct {
   {{- end}}
   {{- if eq "profile" .Name}}
   ID string `xml:"id,attr,omitempty" json:"id,omitempty"`
+  Title string `xml:"title,omitempty" json:"title,omitempty"`
   {{- end}}
 {{- range .Flags}}
   {{- $cf := commentFlag .Name $m.DefineFlag}}
