@@ -155,27 +155,46 @@ func New(r io.Reader) (*OSCAL, error) {
 
 // XML writes the OSCAL object as XML to the given writer
 func (o *OSCAL) XML(w io.Writer, prettify bool) error {
-	e := xml.NewEncoder(w)
-	if prettify {
-		e.Indent("", "  ")
-		return e.Encode(o)
-	}
-
-	return e.Encode(o)
+	return o.encode(encodeOptions{"xml", prettify, w})
 }
 
 // JSON writes the OSCAL object as JSON to the given writer
 func (o *OSCAL) JSON(w io.Writer, prettify bool) error {
-	e := json.NewEncoder(w)
-	if prettify {
-		e.SetIndent("", "  ")
-		return e.Encode(o)
-	}
-
-	return e.Encode(o)
+	return o.encode(encodeOptions{"json", prettify, w})
 }
 
 // YAML writes the OSCAL object as YAML to the given writer
 func (o *OSCAL) YAML(w io.Writer) error {
-	return yaml.NewEncoder(w).Encode(o)
+	return o.encode(encodeOptions{format: "yaml", writer: w})
+}
+
+type encodeOptions struct {
+	format   string
+	prettify bool
+	writer   io.Writer
+}
+
+func (o *OSCAL) encode(options encodeOptions) error {
+	switch options.format {
+	case "xml":
+		e := xml.NewEncoder(options.writer)
+		if options.prettify {
+			e.Indent("", "  ")
+		}
+
+		return e.Encode(o)
+
+	case "json":
+		e := json.NewEncoder(options.writer)
+		if options.prettify {
+			e.SetIndent("", "  ")
+		}
+
+		return e.Encode(o)
+
+	case "yaml":
+		return yaml.NewEncoder(options.writer).Encode(o)
+	}
+
+	return errors.New("Incorret format specified")
 }
