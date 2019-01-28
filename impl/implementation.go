@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/docker/oscalkit/types/oscal/implementation"
 	"github.com/docker/oscalkit/types/oscal/profile"
 	uuid "github.com/satori/go.uuid"
@@ -13,12 +12,6 @@ import (
 const (
 	// totalControlsInExcel the total number of controls in the excel sheet
 	totalControlsInExcel = 264
-	// componentConfigIndex The Column at which name of the component configuration is present
-	componentConfigIndex = 17
-	//uuidIndex The Column at which guid of component exist
-	uuidIndex = 18
-	// narrativeIndex The Column at which narrative of the component configuration is present
-	narrativeIndex = 19
 	// controlIndex Column at which control is present in the excel sheet
 	controlIndex = 2
 	// rowIndex Starting point for valid rows (neglects titles)
@@ -45,9 +38,6 @@ type componenet struct {
 func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) implementation.Implementation {
 
 	var cdMapList = make([]cdMap, 0)
-	ucpCompDef := make(cdMap)
-	dtrCompDef := make(cdMap)
-	engineCompDef := make(cdMap)
 
 	components := []componenet{
 		{
@@ -56,7 +46,7 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 			compNameIndex:  17,
 			uuidIndex:      18,
 			narrativeIndex: 19,
-			definition:     ucpCompDef,
+			definition:     make(cdMap),
 		},
 		{
 			id:             getComponentID(CSVS[componentNameRow][20]),
@@ -64,7 +54,7 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 			compNameIndex:  20,
 			uuidIndex:      21,
 			narrativeIndex: 22,
-			definition:     dtrCompDef,
+			definition:     make(cdMap),
 		},
 		{
 			id:             getComponentID(CSVS[componentNameRow][14]),
@@ -72,21 +62,19 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 			compNameIndex:  14,
 			uuidIndex:      15,
 			narrativeIndex: 16,
-			definition:     engineCompDef,
+			definition:     make(cdMap),
 		},
 	}
 
 	for _, comp := range components {
-		cdMapList = append(cdMapList, fillCDMap(CSVS, comp.compNameIndex, comp.definition, comp.uuidIndex, comp.id, p, c))
+		cdMapList = append(cdMapList, fillCDMap(CSVS, comp.compNameIndex, comp.definition, comp.uuidIndex, comp.narrativeIndex, comp.id, p, c))
 	}
 
-	//	spew.Dump(cdMapList)
-
-	return CompileImplementation(cdMapList, CSVS, c, p)
+	return CompileImplementation(cdMapList, CSVS, c, p, components)
 
 }
 
-func fillCDMap(CSVS [][]string, controlIndex int, compDef cdMap, uuidIndex int, compID string, p *profile.Profile, c Catalog) cdMap {
+func fillCDMap(CSVS [][]string, compNameIndex int, compDef cdMap, uuidIndex int, narrativeIndex int, compID string, p *profile.Profile, c Catalog) cdMap {
 	checkAgainstGUID := make(map[string]uuid.UUID)
 	for i := rowIndex; i < totalControlsInExcel; i++ {
 		applicableControl := CSVS[i][controlIndex]
@@ -94,13 +82,14 @@ func fillCDMap(CSVS [][]string, controlIndex int, compDef cdMap, uuidIndex int, 
 			continue
 		}
 		applicableNarrative := CSVS[i][narrativeIndex]
-		ListOfComponentConfigName := strings.Split(CSVS[i][controlIndex], delimiter)
+		ListOfComponentConfigName := strings.Split(CSVS[i][compNameIndex], delimiter)
 		for compIndex, componentConfigName := range ListOfComponentConfigName {
 			componentConfigName = strings.TrimSpace(componentConfigName)
 			if componentConfigName == "" {
 				continue
 			}
 			if _, ok := compDef[componentConfigName]; !ok {
+
 				guid := strings.Split(CSVS[i][uuidIndex], delimiter)[compIndex]
 				guid = strings.TrimSpace(guid)
 				CreateComponentDefinition(checkAgainstGUID, compDef, componentConfigName, p, c, applicableControl, applicableNarrative, guid, compID)
@@ -175,7 +164,7 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 
 }
 
-//CreateComponentConfiguration creates component configuration
+// CreateComponentConfiguration creates component configuration
 func CreateComponentConfiguration(guid uuid.UUID, componentConfName, narrative string) *implementation.ComponentConfiguration {
 
 	return &implementation.ComponentConfiguration{
@@ -237,7 +226,7 @@ func AppendControlInImplementation(cd implementation.ComponentDefinition, guid u
 }
 
 // CompileImplementation compiles all checks from maps to implementation json
-func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *profile.Profile) implementation.Implementation {
+func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *profile.Profile, components []componenet) implementation.Implementation {
 
 	return implementation.Implementation{
 		ComponentDefinitions: func() []implementation.ComponentDefinition {
@@ -245,6 +234,17 @@ func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *prof
 			var cds []implementation.ComponentDefinition
 			for _, cd := range cdList {
 				compD := implementation.ComponentDefinition{
+					ID: func() string {
+						for _, c := range cd {
+							for _, comp := range components {
+								if c.ID == comp.id {
+									return c.ID
+								}
+							}
+						}
+						return ""
+					}(),
+
 					ComponentConfigurations: func() []*implementation.ComponentConfiguration {
 						var arr []*implementation.ComponentConfiguration
 						for _, v := range cd {
@@ -321,15 +321,9 @@ func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *prof
 
 				cds = append(cds, compD)
 			}
-			spew.Dump(len(cds))
 			return cds
 		}(),
 	}
-}
-
-func getComponentID(componentName string) string {
-	re := regexp.MustCompile(componentIDRegex)
-	return re.FindString(componentName)
 }
 
 //Catalog catalog interface to determine control id pattern
