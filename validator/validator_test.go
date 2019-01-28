@@ -139,8 +139,8 @@ func TestXMLValidate(t *testing.T) {
 	}{
 		{
 			name:    "successful-validation",
-			fields:  fields{"../testdata/oscal-profile.xsd"},
-			args:    args{[]string{"../testdata/fedramp-simple-profile.xml"}},
+			fields:  fields{"../test_util/artifacts/oscal-profile-schema.xsd"},
+			args:    args{[]string{"../test_util/artifacts/NIST_SP-800-53_rev4_HIGH-baseline_profile.xml"}},
 			wantErr: false,
 		},
 		{

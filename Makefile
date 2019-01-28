@@ -29,7 +29,12 @@ generate:
 		sh -c "go generate"
 
 test:
-	@go test -race -coverprofile=coverage.txt -covermode=atomic -v $(shell go list ./... | grep -v /vendor/)
+	@echo "Running Oscalkit test Utility"
+	@sh test_util/RunTest.sh -p test_util/artifacts/NIST_SP-800-53_rev4_HIGH-baseline_profile.xml
+	@sh test_util/RunTest.sh -p test_util/artifacts/NIST_SP-800-53_rev4_MODERATE-baseline_profile.xml
+	@sh test_util/RunTest.sh -p test_util/artifacts/NIST_SP-800-53_rev4_LOW-baseline_profile.xml
+	@echo "Running remaining tests"
+	@go test -race -coverprofile=coverage.txt -covermode=atomic -v $(shell go list ./... | grep -v "/vendor/\|/test_util/src")
 
 build-docker:
 	docker image build --build-arg VERSION=$(VERSION) --build-arg BUILD=$(BUILD) --build-arg DATE=$(DATE) -t $(NAMESPACE)/$(REPO):$(VERSION)-$(BUILD) .

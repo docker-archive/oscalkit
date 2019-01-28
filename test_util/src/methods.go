@@ -101,16 +101,12 @@ func DownloadCatalog(url string) (string, error) {
 		return "", err
 	}
 	defer catalog.Close()
-	if !strings.Contains(url, "http") {
-		url = "https://raw.githubusercontent.com/usnistgov/OSCAL/master/content/nist.gov/SP800-53/rev4/" + save[len(save)-1]
-	}
 	println("Downloading catalog from URL: " + url)
 	data, err := http.Get(url)
 	if err != nil {
 		return "", err
 	}
 	defer data.Body.Close()
-
 	_, err = io.Copy(catalog, data.Body)
 	if err != nil {
 		return "", err
@@ -141,11 +137,14 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 	SecurityControlsDetails := make(map[string][]string)
 
 	for l := 0; l < len(parsedProfile.Imports); l++ {
-		println("Import:", parsedProfile.Imports[l].Href.Scheme+"://"+parsedProfile.Imports[l].Href.Host+parsedProfile.Imports[l].Href.Path)
-		//println("Import:", parsedProfile.Imports[l].Href.Path)
-		dirName, err := DownloadCatalog(parsedProfile.Imports[l].Href.Scheme + "://" + parsedProfile.Imports[l].Href.Host + parsedProfile.Imports[l].Href.Path)
-		if err != nil {
-			log.Fatal(err)
+		println("Import:", parsedProfile.Imports[l].Href.String())
+		dirName := "test_util/artifacts/"
+		var err error
+		if strings.Contains(parsedProfile.Imports[l].Href.String(), "http") {
+			dirName, err = DownloadCatalog(parsedProfile.Imports[l].Href.String())
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 		save := strings.Split(parsedProfile.Imports[l].Href.Path, "/")
 		filename := dirName + "/" + save[len(save)-1]
@@ -156,10 +155,9 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 		check, _ := ProfileCatalogCheck(f)
 		if check == "Catalog" {
 
-			ProfileControls := ImportParsing(parsedProfile, parsedProfile.Imports[l].Href.Path)
-
-			catalog := dirName + "/" + save[len(save)-1]
-			f, err := os.Open(catalog)
+			ProfileControls := ParseImport(parsedProfile, parsedProfile.Imports[l].Href.Path)
+			catalogPath := dirName + "/" + save[len(save)-1]
+			f, err := os.Open(catalogPath)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -194,7 +192,9 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 
 			println("Size of SecurityControls: ", len(SecurityControlsDetails))
 		} else if check == "Profile" {
-			f, err := os.Open(save[len(save)-1])
+
+			fmt.Println("profile path: " + save[len(save)-1])
+			f, err := os.Open(dirName + save[len(save)-1])
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -205,7 +205,7 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 			}
 
 			save := ProfileProcessing(parsedProfile1)
-			save1 := ImportParsing(parsedProfile, parsedProfile.Imports[l].Href.Path)
+			save1 := ParseImport(parsedProfile, parsedProfile.Imports[l].Href.Path)
 
 			println(len(save))
 			println(len(save1))
@@ -265,8 +265,8 @@ func RemoveDuplicateSlice(slice1 []string, slice2 []string) []string {
 	return result
 }
 
-// ImportParsing method to parse the profile and return the controls and subcontrols
-func ImportParsing(parsedProfile *profile.Profile, link string) []string {
+// ParseImport method to parse the profile and return the controls and subcontrols
+func ParseImport(parsedProfile *profile.Profile, link string) []string {
 
 	SecurityControls := make([]string, 0)
 
