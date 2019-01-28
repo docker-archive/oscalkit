@@ -196,5 +196,5 @@ func (o *OSCAL) encode(options encodeOptions) error {
 		return yaml.NewEncoder(options.writer).Encode(o)
 	}
 
-	return errors.New("Incorret format specified")
+	return errors.New("Incorrect format specified")
 }
