@@ -89,6 +89,7 @@ func fillCDMap(CSVS [][]string, compNameIndex int, compDef cdMap, uuidIndex int,
 				continue
 			}
 			if _, ok := compDef[componentConfigName]; !ok {
+
 				guid := strings.Split(CSVS[i][uuidIndex], delimiter)[compIndex]
 				guid = strings.TrimSpace(guid)
 				CreateComponentDefinition(checkAgainstGUID, compDef, componentConfigName, p, c, applicableControl, applicableNarrative, guid, compID)
