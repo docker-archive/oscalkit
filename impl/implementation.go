@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/implementation"
 	"github.com/docker/oscalkit/types/oscal/profile"
 	uuid "github.com/satori/go.uuid"
@@ -20,6 +21,8 @@ const (
 	componentIDRegex = `cpe:[0-9].[0-9]:[a-z]:docker:[a-z-]*:(\d+\.)?(\d+\.)?(\*|\d+)`
 	// componentNameRow is the index for getting component name
 	componentNameRow = 1
+	// NIST subControlID Regex
+	subControlIDRegex = "[a-zA-Z]{2}-\\d{1,2}\\.\\d{1,2}"
 )
 
 type guidMap map[string]uuid.UUID
@@ -123,7 +126,8 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 				if existsInParams(param.Id, parameters) {
 					continue
 				}
-				x := GenerateImplementationParameter(param)
+				guidance := getGuidance(p.Modify.Alterations, param.Id)
+				x := GenerateImplementationParameter(param, guidance)
 				parameters = append(parameters, x)
 			}
 		}
@@ -193,7 +197,8 @@ func AppendParameterInImplementation(cd implementation.ComponentDefinition, guid
 						continue
 					}
 					if c.GetControl(param.Id) == c.GetControl(control) {
-						x := GenerateImplementationParameter(param)
+						guidance := getGuidance(p.Modify.Alterations, param.Id)
+						x := GenerateImplementationParameter(param, guidance)
 						cd.ImplementsProfiles[i].ControlConfigurations[j].Parameters = append(cd.ImplementsProfiles[i].ControlConfigurations[j].Parameters, x)
 					}
 				}
@@ -370,7 +375,7 @@ func (*NISTCatalog) isSubControl(s string) bool {
 }
 
 // GenerateImplementationParameter GenerateImplementationParameter
-func GenerateImplementationParameter(param profile.SetParam) implementation.Parameter {
+func GenerateImplementationParameter(param profile.SetParam, guidance []string) implementation.Parameter {
 	return implementation.Parameter{
 		ParameterID: param.Id,
 		PossibleValues: func() []string {
@@ -380,7 +385,7 @@ func GenerateImplementationParameter(param profile.SetParam) implementation.Para
 			}
 			return values
 		}(),
-		Guidance:     "{{guidance}}",
+		Guidance:     guidance,
 		ValueID:      "{{valueId}}",
 		DefaultValue: "{{defaultValue}}",
 	}
@@ -409,4 +414,35 @@ func existsInControls(cID string, controls []implementation.ControlId) bool {
 func getComponentID(componentName string) string {
 	re := regexp.MustCompile(componentIDRegex)
 	return re.FindString(componentName)
+}
+
+func getGuidance(alterations []profile.Alter, paramID string) []string {
+	subControlID := getSubControlIDFromParam(paramID)
+	for _, alter := range alterations {
+		if alter.SubcontrolId == subControlID {
+			for _, addition := range alter.Additions {
+				for _, part := range addition.Parts {
+					if part.Class == "guidance" {
+						guidance := getGuidanceFromPart(part.Prose)
+						return guidance
+					}
+
+				}
+			}
+		}
+	}
+	return []string{}
+}
+
+func getSubControlIDFromParam(paramID string) string {
+	re := regexp.MustCompile(subControlIDRegex)
+	return re.FindString(paramID)
+}
+
+func getGuidanceFromPart(part *catalog.Prose) []string {
+	var guidance []string
+	for _, p := range part.P {
+		guidance = append(guidance, p.Raw)
+	}
+	return guidance
 }
