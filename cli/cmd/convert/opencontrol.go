@@ -1,13 +1,3 @@
-// oscalkit - OSCAL conversion utility
-// Written in 2017 by Andrew Weiss <andrew.weiss@docker.com>
-
-// To the extent possible under law, the author(s) have dedicated all copyright
-// and related and neighboring rights to this software to the public domain worldwide.
-// This software is distributed without any warranty.
-
-// You should have received a copy of the CC0 Public Domain Dedication along with this software.
-// If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
-
 package convert
 
 var includeXML bool
@@ -48,7 +38,7 @@ var includeXML bool
 // 		}
 
 // 		if includeXML {
-// 			rawXMLOCOSCAL, err := ocOSCAL.RawXML(true)
+// 			rawXMLOCOSCAL, err := ocOSCAL.XML(true)
 // 			if err != nil {
 // 				return cli.NewExitError(fmt.Sprintf("Error producing raw XML: %s", err), 1)
 // 			}
@@ -58,7 +48,7 @@ var includeXML bool
 // 		}
 
 // 		if yaml {
-// 			rawYAMLOCOSCAL, err := ocOSCAL.RawYAML()
+// 			rawYAMLOCOSCAL, err := ocOSCAL.YAML()
 // 			if err != nil {
 // 				return cli.NewExitError(err, 1)
 // 			}
@@ -67,7 +57,7 @@ var includeXML bool
 // 			}
 // 		}
 
-// 		rawOCOSCAL, err := ocOSCAL.RawJSON(true)
+// 		rawOCOSCAL, err := ocOSCAL.JSON(true)
 // 		if err != nil {
 // 			return cli.NewExitError(err, 1)
 // 		}

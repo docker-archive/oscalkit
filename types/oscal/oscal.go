@@ -1,13 +1,3 @@
-// oscalkit - OSCAL conversion utility
-// Written in 2017 by Andrew Weiss <andrew.weiss@docker.com>
-
-// To the extent possible under law, the author(s) have dedicated all copyright
-// and related and neighboring rights to this software to the public domain worldwide.
-// This software is distributed without any warranty.
-
-// You should have received a copy of the CC0 Public Domain Dedication along with this software.
-// If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
-
 package oscal
 
 import (
@@ -23,7 +13,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// OSCAL ...
+// OSCAL contains specific OSCAL components
 type OSCAL struct {
 	XMLName xml.Name         `json:"-" yaml:"-"`
 	Catalog *catalog.Catalog `json:"catalog,omitempty" yaml:"catalog,omitempty"`
@@ -31,7 +21,7 @@ type OSCAL struct {
 	Profile *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
 }
 
-// MarshalXML ...
+// MarshalXML marshals either a catalog or a profile
 func (o *OSCAL) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	if o.Catalog != nil {
 		o.XMLName = o.Catalog.XMLName
@@ -48,16 +38,11 @@ func (o *OSCAL) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
-// Options ...
-type Options struct {
-	Reader io.Reader
-}
-
 // dockerOptions ...
-type dockerOptions struct {
-	dockerYAMLFilepath string
-	dockersDir         string
-}
+// type dockerOptions struct {
+// 	dockerYAMLFilepath string
+// 	dockersDir         string
+// }
 
 // NewFromOC initializes an OSCAL type from raw docker data
 // func NewFromOC(options dockerOptions) (*OSCAL, error) {
@@ -111,16 +96,14 @@ type dockerOptions struct {
 // 	return convertOC(oc, ocComponents)
 // }
 
-// New ...
+// New returns a concrete OSCAL type from a reader
 func New(r io.Reader) (*OSCAL, error) {
-	var err error
-
-	rawOSCAL, err := ioutil.ReadAll(r)
+	oscalBytes, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
 
-	d := xml.NewDecoder(bytes.NewReader(rawOSCAL))
+	d := xml.NewDecoder(bytes.NewReader(oscalBytes))
 	for {
 		token, err := d.Token()
 		if err != nil || token == nil {
@@ -131,34 +114,23 @@ func New(r io.Reader) (*OSCAL, error) {
 			switch startElement.Name.Local {
 			case "catalog":
 				var catalog catalog.Catalog
-				if err := xml.Unmarshal(rawOSCAL, &catalog); err != nil {
+				if err := d.DecodeElement(&catalog, &startElement); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			// case "declarations":
-			// 	var declarations Declarations
-			// 	if err := xml.Unmarshal(rawOSCAL, &declarations); err != nil {
-			// 		return nil, err
-			// 	}
-			// 	return &OSCAL{Declarations: &declarations}, nil
-
 			case "profile":
 				var profile profile.Profile
-				if err := xml.Unmarshal(rawOSCAL, &profile); err != nil {
+				if err := d.DecodeElement(&profile, &startElement); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Profile: &profile}, nil
 			}
-
 		}
 	}
 
 	var oscalT map[string]json.RawMessage
-	if err := json.Unmarshal(rawOSCAL, &oscalT); err != nil {
-		return nil, err
-	}
-	if err = json.Unmarshal(rawOSCAL, &oscalT); err == nil {
+	if err := json.Unmarshal(oscalBytes, &oscalT); err == nil {
 		for k, v := range oscalT {
 			switch k {
 			case "catalog":
@@ -168,13 +140,6 @@ func New(r io.Reader) (*OSCAL, error) {
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			// case "declarations":
-			// 	var declarations Declarations
-			// 	if err := json.Unmarshal(v, &declarations); err != nil {
-			// 		return nil, err
-			// 	}
-			// 	return &OSCAL{Declarations: &declarations}, nil
-
 			case "profile":
 				var profile profile.Profile
 				if err := json.Unmarshal(v, &profile); err != nil {
@@ -183,30 +148,53 @@ func New(r io.Reader) (*OSCAL, error) {
 				return &OSCAL{Profile: &profile}, nil
 			}
 		}
-
-		return nil, errors.New("Malformed OSCAL")
 	}
 
 	return nil, errors.New("Malformed OSCAL. Must be XML or JSON")
 }
 
-// RawXML ...
-func (o *OSCAL) RawXML(prettify bool) ([]byte, error) {
-	if prettify {
-		return xml.MarshalIndent(o, "", "  ")
-	}
-	return xml.Marshal(o)
+// XML writes the OSCAL object as XML to the given writer
+func (o *OSCAL) XML(w io.Writer, prettify bool) error {
+	return o.encode(encodeOptions{"xml", prettify, w})
 }
 
-// RawJSON ...
-func (o *OSCAL) RawJSON(prettify bool) ([]byte, error) {
-	if prettify {
-		return json.MarshalIndent(o, "", "  ")
-	}
-	return json.Marshal(o)
+// JSON writes the OSCAL object as JSON to the given writer
+func (o *OSCAL) JSON(w io.Writer, prettify bool) error {
+	return o.encode(encodeOptions{"json", prettify, w})
 }
 
-// RawYAML ...
-func (o *OSCAL) RawYAML() ([]byte, error) {
-	return yaml.Marshal(o)
+// YAML writes the OSCAL object as YAML to the given writer
+func (o *OSCAL) YAML(w io.Writer) error {
+	return o.encode(encodeOptions{format: "yaml", writer: w})
+}
+
+type encodeOptions struct {
+	format   string
+	prettify bool
+	writer   io.Writer
+}
+
+func (o *OSCAL) encode(options encodeOptions) error {
+	switch options.format {
+	case "xml":
+		e := xml.NewEncoder(options.writer)
+		if options.prettify {
+			e.Indent("", "  ")
+		}
+
+		return e.Encode(o)
+
+	case "json":
+		e := json.NewEncoder(options.writer)
+		if options.prettify {
+			e.SetIndent("", "  ")
+		}
+
+		return e.Encode(o)
+
+	case "yaml":
+		return yaml.NewEncoder(options.writer).Encode(o)
+	}
+
+	return errors.New("Incorrect format specified")
 }

@@ -1,13 +1,3 @@
-// oscalkit - OSCAL conversion utility
-// Written in 2017 by Andrew Weiss <andrew.weiss@docker.com>
-
-// To the extent possible under law, the author(s) have dedicated all copyright
-// and related and neighboring rights to this software to the public domain worldwide.
-// This software is distributed without any warranty.
-
-// You should have received a copy of the CC0 Public Domain Dedication along with this software.
-// If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
-
 package convert
 
 import (
@@ -171,17 +161,12 @@ func convert(src io.Reader, dest io.Writer, outputFormat string) error {
 	case "json":
 		logrus.Debug("Converting to JSON")
 
-		oscal, err := oscal.New(src)
+		o, err := oscal.New(src)
 		if err != nil {
 			return err
 		}
 
-		oscalJSON, err := oscal.RawJSON(true)
-		if err != nil {
-			return err
-		}
-
-		if _, err := dest.Write(oscalJSON); err != nil {
+		if err := o.JSON(dest, true); err != nil {
 			return err
 		}
 
@@ -192,17 +177,12 @@ func convert(src io.Reader, dest io.Writer, outputFormat string) error {
 	case "xml":
 		logrus.Debug("Converting to XML")
 
-		oscal, err := oscal.New(src)
+		o, err := oscal.New(src)
 		if err != nil {
 			return err
 		}
 
-		oscalXML, err := oscal.RawXML(true)
-		if err != nil {
-			return err
-		}
-
-		if _, err := dest.Write(oscalXML); err != nil {
+		if err := o.XML(dest, true); err != nil {
 			return err
 		}
 
@@ -213,17 +193,12 @@ func convert(src io.Reader, dest io.Writer, outputFormat string) error {
 	case "yaml":
 		logrus.Debug("Converting to YAML")
 
-		oscal, err := oscal.New(src)
+		o, err := oscal.New(src)
 		if err != nil {
 			return err
 		}
 
-		oscalYAML, err := oscal.RawYAML()
-		if err != nil {
-			return err
-		}
-
-		if _, err := dest.Write(oscalYAML); err != nil {
+		if err := o.YAML(dest); err != nil {
 			return err
 		}
 
