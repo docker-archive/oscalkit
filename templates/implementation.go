@@ -51,7 +51,11 @@ var ImplementationGenerated = implementation.Implementation{
 										Parameters:         []implementation.Parameter{
 											{{range .Parameters}}
 											{
-												Guidance: "{{.Guidance}}",
+												Guidance: []string{
+													{{range .Guidance}}
+														"{{.}}",
+													{{end}}
+												},
 												ParameterID: "{{.ParameterID}}",
 												ValueID: "{{.ValueID}}",
 												PossibleValues: []string{
@@ -104,7 +108,11 @@ var ImplementationGenerated = implementation.Implementation{
 										Parameters:         []implementation.Parameter{
 											{{range .Parameters}}
 											{
-												Guidance: "{{.Guidance}}",
+												Guidance: []string{
+													{{range .Guidance}}
+														"{{.}}",
+													{{end}}
+												},
 												ParameterID: "{{.ParameterID}}",
 												ValueID: "{{.ValueID}}",
 												DefaultValue: "{{.DefaultValue}}",
