@@ -25,7 +25,7 @@ const (
 type guidMap map[string]uuid.UUID
 type cdMap map[string]implementation.ComponentDefinition
 
-type componenet struct {
+type component struct {
 	id             string
 	compNameIndex  int
 	name           string
@@ -39,7 +39,7 @@ func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) impl
 
 	var cdMapList = make([]cdMap, 0)
 
-	components := []componenet{
+	components := []component{
 		{
 			id:             getComponentID(CSVS[componentNameRow][17]),
 			name:           "UCP",
@@ -226,7 +226,7 @@ func AppendControlInImplementation(cd implementation.ComponentDefinition, guid u
 }
 
 // CompileImplementation compiles all checks from maps to implementation json
-func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *profile.Profile, components []componenet) implementation.Implementation {
+func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *profile.Profile, components []component) implementation.Implementation {
 
 	return implementation.Implementation{
 		ComponentDefinitions: func() []implementation.ComponentDefinition {

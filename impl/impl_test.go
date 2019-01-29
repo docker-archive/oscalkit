@@ -19,7 +19,7 @@ func TestGenerateImplementation(t *testing.T) {
 	dtrCompID := "(component ID: cpe:2.3:a:docker:dtr:2.7.0:*:*:*:*:*:*:*)"
 	engineCompID := "(component ID: cpe:2.3:a:docker:engine-enterprise:18.09:*:*:*:*:*:*:*)"
 	components := []string{"CompA", "CompB", "CompC"}
-	comps := []componenet{
+	comps := []component{
 		{
 			id:             getComponentID(ucpCompID),
 			name:           "UCP",
