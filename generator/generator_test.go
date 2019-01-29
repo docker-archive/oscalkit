@@ -330,7 +330,7 @@ func TestProcessAdditionWithSameClass(t *testing.T) {
 		},
 	}
 
-	o := ProcessAlteration(alters, &c)
+	o := ProcessAlterations(alters, &c)
 	for _, g := range o.Groups {
 		for _, c := range g.Controls {
 			for i := range c.Parts {
@@ -413,7 +413,7 @@ func TestProcessAdditionWithDifferentPartClass(t *testing.T) {
 			},
 		},
 	}
-	o := ProcessAlteration(alters, &c)
+	o := ProcessAlterations(alters, &c)
 	if len(o.Groups[0].Controls[0].Parts) != 2 {
 		t.Error("parts for controls not getting added properly")
 	}
