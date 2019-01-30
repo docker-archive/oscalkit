@@ -213,7 +213,6 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 			println("Common = ", len(CommonMap(save1, save)))
 			SecurityControlsDetails = appendMaps(SecurityControlsDetails, CommonMap(save1, save))
 			println("Final Count = ", len(SecurityControlsDetails))
-			// parsedProfile and parsedProfile1 common and save in SecurityControls
 		}
 	}
 
