@@ -189,8 +189,8 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 				SecurityControlsDetails = appendMaps(SecurityControlsDetails, CatalogControlsDetails)
 				SecurityControlsDetails = uniqueMaps(SecurityControlsDetails, CatalogControlsDetails)
 			}
-
 			println("Size of SecurityControls: ", len(SecurityControlsDetails))
+
 		} else if check == "Profile" {
 
 			fmt.Println("profile path: " + save[len(save)-1])
@@ -207,11 +207,12 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 			save := ProfileProcessing(parsedProfile1)
 			save1 := ParseImport(parsedProfile, parsedProfile.Imports[l].Href.Path)
 
-			println(len(save))
-			println(len(save1))
+			println("Recursive count = ", len(save))
+			println("Count of profile = ", len(save1))
 
+			println("Common = ", len(CommonMap(save1, save)))
 			SecurityControlsDetails = appendMaps(SecurityControlsDetails, CommonMap(save1, save))
-			println(len(SecurityControlsDetails))
+			println("Final Count = ", len(SecurityControlsDetails))
 			// parsedProfile and parsedProfile1 common and save in SecurityControls
 		}
 	}
@@ -240,8 +241,8 @@ func CommonMap(slice1 []string, CatalogControlsDetails map[string][]string) map[
 	for _, s1element := range slice1 {
 		if _, ok := CatalogControlsDetails[s1element]; ok {
 			save := CatalogControlsDetails[s1element]
-			CatalogControlsDetails[s1element] = append(CatalogControlsDetails[s1element], save[0])
-			CatalogControlsDetails[s1element] = append(CatalogControlsDetails[s1element], save[1])
+			Result[s1element] = append(Result[s1element], save[0])
+			Result[s1element] = append(Result[s1element], save[1])
 		}
 	}
 	return Result
@@ -269,7 +270,6 @@ func RemoveDuplicateSlice(slice1 []string, slice2 []string) []string {
 func ParseImport(parsedProfile *profile.Profile, link string) []string {
 
 	SecurityControls := make([]string, 0)
-
 	for i := 0; i < len(parsedProfile.Imports); i++ {
 		if parsedProfile.Imports[i].Href.Path == link {
 			for j := 0; j < len(parsedProfile.Imports[i].Include.IdSelectors); j++ {
