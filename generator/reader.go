@@ -61,7 +61,7 @@ func GetFilePath(URL string) (string, error) {
 	if !isHTTPResource(uri) {
 		return GetAbsolutePath(URL)
 	}
-	logrus.Infof("fetching from http resource %s", uri.String())
+	logrus.Debugf("fetching from http resource %s", uri.String())
 	body, err := fetchFromHTTPResource(uri)
 	if err != nil {
 		return "", fmt.Errorf("cannot fetch from url %v", err)
@@ -77,7 +77,7 @@ func GetFilePath(URL string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("cannot write on file %v", err)
 	}
-	logrus.Infof("file downloaded in %f seconds.", time.Since(t).Seconds())
+	logrus.Debugf("file downloaded in %f seconds.", time.Since(t).Seconds())
 	return fileName, nil
 
 }

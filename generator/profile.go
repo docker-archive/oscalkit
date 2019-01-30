@@ -6,11 +6,22 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sync"
 
 	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
+
+// HTTPFilePath map of http resource against filepath to lessen downloads
+type HTTPFilePath struct {
+	sync.Mutex
+	m map[string]string
+}
+
+var pathmap = HTTPFilePath{
+	m: make(map[string]string),
+}
 
 func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, error) {
 
@@ -30,7 +41,21 @@ func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, err
 		if err != nil {
 			return nil, false, err
 		}
-		f, err := os.Open(imp.Href.String())
+		path := imp.Href.String()
+		if isHTTPResource(imp.Href.URL) {
+			pathmap.Lock()
+			if v, ok := pathmap.m[imp.Href.String()]; !ok {
+				path, err = GetFilePath(imp.Href.String())
+				if err != nil {
+					return nil, false, err
+				}
+				pathmap.m[imp.Href.String()] = path
+			} else {
+				path = v
+			}
+			pathmap.Unlock()
+		}
+		f, err := os.Open(path)
 		if err != nil {
 			return nil, false, err
 		}
@@ -120,8 +145,13 @@ func SetBasePath(p *profile.Profile, parentPath string) (*profile.Profile, error
 		if err != nil {
 			return nil, err
 		}
-		if isHTTPResource(parentURL) {
-			url, err := url.Parse(path.Join(parentPath, x.Href.String()))
+		// If the import href is http. Do nothing as it doesn't depend on the parent path
+		if isHTTPResource(x.Href.URL) {
+			continue
+		}
+		//if parent is HTTP, and imports are relative, modify imports to http
+		if !isHTTPResource(x.Href.URL) && isHTTPResource(parentURL) {
+			url, err := makeURL(parentURL, x.Href.URL)
 			if err != nil {
 				return nil, err
 			}
@@ -140,4 +170,12 @@ func SetBasePath(p *profile.Profile, parentPath string) (*profile.Profile, error
 		p.Imports[i].Href = &catalog.Href{URL: uri}
 	}
 	return p, nil
+}
+
+func makeURL(url, child *url.URL) (*url.URL, error) {
+	newURL, err := url.Parse(fmt.Sprintf("%s://%s%s/%s", url.Scheme, url.Host, path.Dir(url.Path), child.String()))
+	if err != nil {
+		return nil, err
+	}
+	return newURL, nil
 }

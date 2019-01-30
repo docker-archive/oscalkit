@@ -29,7 +29,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	}
 	logrus.Info("fetching alterations from import chain complete")
 
-	logrus.Info("processing alteration and parameters... \nmapping to controls...")
+	logrus.Debug("processing alteration and parameters... \nmapping to controls...")
 	// Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
 		err := ValidateHref(profileImport.Href)
