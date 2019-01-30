@@ -14,6 +14,11 @@ import (
 	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
+	"github.com/sirupsen/logrus"
+)
+
+const (
+	tempDir = "/tmp/"
 )
 
 // ReadCatalog ReadCatalog
@@ -47,6 +52,7 @@ func ReadProfile(r io.Reader) (*profile.Profile, error) {
 
 // GetFilePath GetFilePath
 func GetFilePath(URL string) (string, error) {
+	t := time.Now()
 	uri, err := url.Parse(URL)
 	if err != nil {
 		return "", fmt.Errorf("invalid URL pattern %v", err)
@@ -55,21 +61,23 @@ func GetFilePath(URL string) (string, error) {
 	if !isHTTPResource(uri) {
 		return GetAbsolutePath(URL)
 	}
+	logrus.Debugf("fetching from http resource %s", uri.String())
 	body, err := fetchFromHTTPResource(uri)
 	if err != nil {
 		return "", fmt.Errorf("cannot fetch from url %v", err)
 	}
-	fileName := "/tmp/" + getName(uri)
+
+	fileName := tempDir + getName(uri)
 	f, err := os.Create(fileName)
 	if err != nil {
 		return "", fmt.Errorf("cannot create json file %v", err)
 	}
 	defer f.Close()
 	_, err = f.Write(body)
-
 	if err != nil {
 		return "", fmt.Errorf("cannot write on file %v", err)
 	}
+	logrus.Debugf("file downloaded in %f seconds.", time.Since(t).Seconds())
 	return fileName, nil
 
 }

@@ -1,15 +1,9 @@
 package generator
 
 import (
-	"context"
 	"fmt"
-	"os"
-	"time"
-
-	"github.com/sirupsen/logrus"
 
 	"github.com/docker/oscalkit/impl"
-	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
@@ -62,8 +56,8 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 	return controls
 }
 
-// ProcessAlteration processes alteration section of a profile
-func ProcessAlteration(alterations []profile.Alter, c *catalog.Catalog) *catalog.Catalog {
+// ProcessAlterations processes alteration section of a profile
+func ProcessAlterations(alterations []profile.Alter, c *catalog.Catalog) *catalog.Catalog {
 	for _, alt := range alterations {
 		for i, g := range c.Groups {
 			c.Groups[i].Controls = ProcessAddition(alt, g.Controls)
@@ -109,108 +103,4 @@ func ModifyParts(p catalog.Part, controlParts []catalog.Part) []catalog.Part {
 		parts = append(parts, part)
 	}
 	return parts
-}
-
-// FindAlter finds alter manipulation attribute in the profile import chain
-func FindAlter(call profile.Call, p *profile.Profile) (*profile.Alter, error) {
-
-	ec := make(chan error)
-	altCh := make(chan *profile.Alter)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	for _, i := range p.Imports {
-		err := ValidateHref(i.Href)
-		if err != nil {
-			return nil, err
-		}
-		basePath := i.Href.String()
-		go func(i profile.Import) {
-			traverseProfile(ctx, call, p, altCh, ec, basePath)
-		}(i)
-	}
-
-	select {
-	case alt := <-altCh:
-		return alt, nil
-	case err := <-ec:
-		return nil, err
-	case <-ctx.Done():
-		return nil, timeoutErr(call)
-	}
-
-}
-
-func traverseProfile(ctx context.Context, call profile.Call, p *profile.Profile, altCh chan *profile.Alter, errCh chan error, basePath string) {
-
-	if p == nil {
-		errCh <- fmt.Errorf("profile cannot be nil")
-		return
-	}
-	if p.Modify == nil {
-		errCh <- fmt.Errorf("modify is nil")
-		return
-	}
-	for _, alt := range p.Modify.Alterations {
-		if alt.ControlId == call.ControlId {
-			altCh <- &alt
-			return
-		}
-		if alt.SubcontrolId == call.SubcontrolId {
-			altCh <- &alt
-			return
-		}
-	}
-
-	p, err := SetBasePath(p, basePath)
-	if err != nil {
-		errCh <- err
-		return
-	}
-
-	for _, imp := range p.Imports {
-		err := ValidateHref(imp.Href)
-		if err != nil {
-			errCh <- err
-			return
-		}
-		go func(imp profile.Import) {
-			if imp.Href == nil {
-				errCh <- fmt.Errorf("import href cannot be nil")
-				return
-			}
-			path, err := GetFilePath(imp.Href.String())
-			if err != nil {
-				errCh <- err
-				return
-			}
-			f, err := os.Open(path)
-			if err != nil {
-				errCh <- err
-				return
-			}
-			defer f.Close()
-			o, err := oscal.New(f)
-			if err != nil {
-				errCh <- err
-				return
-			}
-			if o.Profile == nil {
-				logrus.Warn("catalog found")
-				return
-			}
-			traverseProfile(ctx, call, o.Profile, altCh, errCh, basePath)
-		}(imp)
-
-	}
-
-}
-
-func timeoutErr(call profile.Call) error {
-	if call.ControlId != "" {
-		return fmt.Errorf("unable to find control id %s in the profile import chain, needs review", call.ControlId)
-	}
-	if call.SubcontrolId != "" {
-		return fmt.Errorf("unable to find sub-control id %s in the profile import chain, needs review", call.SubcontrolId)
-	}
-	return nil
 }

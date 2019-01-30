@@ -5,24 +5,31 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/docker/oscalkit/impl"
 	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
+	"github.com/sirupsen/logrus"
 )
 
 // CreateCatalogsFromProfile maps profile controls to multiple catalogs
 func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog, error) {
 
+	t := time.Now()
 	done := 0
 	errChan := make(chan error)
 	catalogChan := make(chan *catalog.Catalog)
 	var outputCatalogs []*catalog.Catalog
-	// profileArg, err := AppendAlterations(profileArg)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	logrus.Info("fetching alterations...")
+	alterations, err := GetAlters(profileArg)
+	if err != nil {
+		return nil, err
+	}
+	logrus.Info("fetching alterations from import chain complete")
+
+	logrus.Debug("processing alteration and parameters... \nmapping to controls...")
 	// Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
 		err := ValidateHref(profileImport.Href)
@@ -41,7 +48,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 				// Prepare a new catalog object to merge into the final List of OutputCatalogs
 				if profileArg.Modify != nil {
 					nc := impl.NISTCatalog{}
-					importedCatalog = ProcessAlteration(profileArg.Modify.Alterations, importedCatalog)
+					importedCatalog = ProcessAlterations(alterations, importedCatalog)
 					importedCatalog = ProcessSetParam(profileArg.Modify.ParamSettings, importedCatalog, &nc)
 				}
 				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport)
@@ -69,6 +76,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 				outputCatalogs = append(outputCatalogs, newCatalog)
 			}
 			if done == len(profileArg.Imports) {
+				logrus.Infof("successfully mapped controls in %f seconds", time.Since(t).Seconds())
 				return outputCatalogs, nil
 			}
 		}
