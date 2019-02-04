@@ -37,6 +37,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			return nil, err
 		}
 		go func(profileImport profile.Import) {
+			catalogHelper := impl.NISTCatalog{}
 			c := make(chan *catalog.Catalog)
 			e := make(chan error)
 			ctx, cancel := context.WithCancel(context.Background())
@@ -51,7 +52,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 					importedCatalog = ProcessAlterations(alterations, importedCatalog)
 					importedCatalog = ProcessSetParam(profileArg.Modify.ParamSettings, importedCatalog, &nc)
 				}
-				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport)
+				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport, &catalogHelper)
 				if err != nil {
 					errChan <- err
 					return
@@ -82,62 +83,81 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 		}
 	}
 }
+func getSubControl(call profile.Call, ctrls []catalog.Control, helper impl.Catalog) (catalog.Subcontrol, error) {
+	for _, ctrl := range ctrls {
+		if ctrl.Id == helper.GetControl(call.SubcontrolId) {
+			for _, subctrl := range ctrl.Subcontrols {
+				if subctrl.Id == call.SubcontrolId {
+					return subctrl, nil
+				}
+			}
+		}
+	}
+	return catalog.Subcontrol{}, fmt.Errorf("could not find subcontrol %s in catalog", call.SubcontrolId)
+}
 
 // GetMappedCatalogControlsFromImport gets mapped controls in catalog per profile import
-func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import) (catalog.Catalog, error) {
+func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import, catalogHelper impl.Catalog) (catalog.Catalog, error) {
 	newCatalog := catalog.Catalog{
 		Title:  importedCatalog.Title,
 		Groups: []catalog.Group{},
 	}
+
 	for _, group := range importedCatalog.Groups {
-		// Prepare a new group to append matching controls into.
 		newGroup := catalog.Group{
 			Title:    group.Title,
 			Controls: []catalog.Control{},
 		}
-		//Append controls to the new group if matches
-		for _, catalogControl := range group.Controls {
-			/**
-			wrapped it around a function to achieve immutability
-			profile.Include is a pointer hence, dereferencing
-			*/
-			func(include profile.Include) {
-				for controlIndex, call := range include.IdSelectors {
-					if strings.ToLower(catalogControl.Id) == strings.ToLower(call.ControlId) {
-						newControl := catalog.Control{
-							Id:          catalogControl.Id,
-							Class:       catalogControl.Class,
-							Title:       catalogControl.Title,
-							Subcontrols: []catalog.Subcontrol{},
-							Params:      catalogControl.Params,
-							Parts:       catalogControl.Parts,
+		for _, ctrl := range group.Controls {
+			for _, call := range profileImport.Include.IdSelectors {
+				if call.ControlId == "" {
+					if strings.ToLower(ctrl.Id) == strings.ToLower(catalogHelper.GetControl(call.SubcontrolId)) {
+						ctrlExistsInGroup := false
+						sc, err := getSubControl(call, group.Controls, &impl.NISTCatalog{})
+						if err != nil {
+							return catalog.Catalog{}, err
 						}
-						// For subcontrols, find again in entire profile
-						for _, catalogSubControl := range catalogControl.Subcontrols {
-							for subcontrolIndex, subcontrol := range include.IdSelectors {
-								// If found append the subcontrol into the control attribute
-								if strings.ToLower(catalogSubControl.Id) == strings.ToLower(subcontrol.SubcontrolId) {
-									newControl.Subcontrols = append(newControl.Subcontrols, catalog.Subcontrol{
-										Id:    catalogSubControl.Id,
-										Class: catalogSubControl.Class,
-										Title: catalogSubControl.Title,
-										Parts: catalogSubControl.Parts,
-									})
-									// Remove that subcontrol from profile. (for less computation)
-									include.IdSelectors = append(include.IdSelectors[:subcontrolIndex], include.IdSelectors[subcontrolIndex+1:]...)
-									break
-								}
+						for i, mappedCtrl := range newGroup.Controls {
+							if mappedCtrl.Id == strings.ToLower(catalogHelper.GetControl(call.SubcontrolId)) {
+								ctrlExistsInGroup = true
+								newGroup.Controls[i].Subcontrols = append(newGroup.Controls[i].Subcontrols, sc)
 							}
 						}
-						// Finally append the control in the group.
-						newGroup.Controls = append(newGroup.Controls, newControl)
-						// Remove controlId from profile as well. (for less computation)
-						include.IdSelectors = append(include.IdSelectors[:controlIndex], profileImport.Include.IdSelectors[controlIndex+1:]...)
-						break
+						if !ctrlExistsInGroup {
+							newGroup.Controls = append(newGroup.Controls,
+								catalog.Control{
+									Id:          ctrl.Id,
+									Class:       ctrl.Class,
+									Title:       ctrl.Title,
+									Params:      ctrl.Params,
+									Parts:       ctrl.Parts,
+									Subcontrols: []catalog.Subcontrol{sc},
+								})
+						}
 					}
 				}
-
-			}(*profileImport.Include)
+				if strings.ToLower(call.ControlId) == strings.ToLower(ctrl.Id) {
+					ctrlExists := false
+					for _, x := range newGroup.Controls {
+						if x.Id == ctrl.Id {
+							ctrlExists = true
+							continue
+						}
+					}
+					if !ctrlExists {
+						newGroup.Controls = append(newGroup.Controls,
+							catalog.Control{
+								Id:          ctrl.Id,
+								Class:       ctrl.Class,
+								Title:       ctrl.Title,
+								Subcontrols: []catalog.Subcontrol{},
+								Params:      ctrl.Params,
+								Parts:       ctrl.Parts,
+							},
+						)
+					}
+				}
+			}
 		}
 		if len(newGroup.Controls) > 0 {
 			newCatalog.Groups = append(newCatalog.Groups, newGroup)
