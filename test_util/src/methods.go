@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"reflect"
 	"strings"
 
 	"github.com/docker/oscalkit/types/oscal"
@@ -15,42 +14,56 @@ import (
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
-// StructExaminer To Verify The Structure
-func StructExaminer(t reflect.Type, depth int) {
-	fmt.Println("\nType is", t.Name(), "and kind is", t.Kind())
-	switch t.Kind() {
-	case reflect.Array, reflect.Chan, reflect.Map, reflect.Ptr, reflect.Slice:
-		fmt.Println("Contained type:")
-		StructExaminer(t.Elem(), depth+1)
-	case reflect.Struct:
-		for i := 0; i < t.NumField(); i++ {
-			f := t.Field(i)
-			fmt.Print(f.Name+" "+f.Type.Name(), f.Type.Kind())
-			if f.Tag != "" {
-				fmt.Println(" " + f.Tag)
-			}
-		}
-	}
-}
-
-// ProtocolsMapping Method To Parse All The Controls From Catalog.go
+// ProtocolsMapping Method To Parse The generated .go file and save the
+// mapping of ID, Class & Titles
 func ProtocolsMapping(check []catalog.Catalog) map[string][]string {
 
-	SecurityControls := make(map[string][]string)
+	securityControls := make(map[string][]string)
+	for catalogCount := 0; catalogCount < len(check); catalogCount++ {
+		for groupsCount := 0; groupsCount < len(check[catalogCount].Groups); groupsCount++ {
+			for controlsCount := 0; controlsCount < len(check[catalogCount].Groups[groupsCount].Controls); controlsCount++ {
+				if _, ok := securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id]; ok {
+				} else {
+					securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id], check[catalogCount].Groups[groupsCount].Controls[controlsCount].Class)
+					securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id], string(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Title))
+				}
 
-	for CatalogCount := 0; CatalogCount < len(check); CatalogCount++ {
-		for GroupsCount := 0; GroupsCount < len(check[CatalogCount].Groups); GroupsCount++ {
-			for ControlsCount := 0; ControlsCount < len(check[CatalogCount].Groups[GroupsCount].Controls); ControlsCount++ {
-				SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Id] = append(SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Id], check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Class)
-				SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Id] = append(SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Id], string(check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Title))
-				for SubControlsCount := 0; SubControlsCount < len(check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Subcontrols); SubControlsCount++ {
-					SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Subcontrols[SubControlsCount].Id] = append(SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Subcontrols[SubControlsCount].Id], check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Subcontrols[SubControlsCount].Class)
-					SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Subcontrols[SubControlsCount].Id] = append(SecurityControls[check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Subcontrols[SubControlsCount].Id], string(check[CatalogCount].Groups[GroupsCount].Controls[ControlsCount].Subcontrols[SubControlsCount].Title))
+				for controlPartCount := 0; controlPartCount < len(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts); controlPartCount++ {
+					if _, ok := securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id]; ok {
+					} else {
+						if check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id != "" {
+							securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id], check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Class)
+							securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id], string(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Title))
+						} else if check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id == "" && check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Class == "assessment" {
+							securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id], check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Class)
+							securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Id], string(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Parts[controlPartCount].Title))
+						}
+					}
+				}
+
+				for subControlsCount := 0; subControlsCount < len(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols); subControlsCount++ {
+					if _, ok := securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id]; ok {
+					} else {
+						securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id], check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Class)
+						securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id], string(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Title))
+					}
+					for subControlsPartCount := 0; subControlsPartCount < len(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts); subControlsPartCount++ {
+						if _, ok := securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id]; ok {
+						} else {
+							if check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id != "" {
+								securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id], check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Class)
+								securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id], string(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Title))
+							} else if check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id == "" && check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Class == "assessment" {
+								securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id], check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Class)
+								securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id] = append(securityControls[check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Id+"?"+check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Id], string(check[catalogCount].Groups[groupsCount].Controls[controlsCount].Subcontrols[subControlsCount].Parts[subControlsPartCount].Title))
+							}
+						}
+					}
 				}
 			}
 		}
 	}
-	return SecurityControls
+	return securityControls
 }
 
 // GetCatalog gets a catalog
@@ -77,7 +90,8 @@ func GetProfile(r io.Reader) (*profile.Profile, error) {
 	return o.Profile, nil
 }
 
-// controlInProfile checks if the control provided exists in the provided profile or not
+// controlInProfile accepts a Control or SubcontrolID and an array of all
+// the controls & subcontrols present in the profile.
 func controlInProfile(controlID string, profile []string) bool {
 	for _, value := range profile {
 		if value == controlID {
@@ -87,16 +101,30 @@ func controlInProfile(controlID string, profile []string) bool {
 	return false
 }
 
+// ParentControlCheck checks if the subcontrol's parent controls exists
+// in the provided array on parent controls
+func ParentControlCheck(subcontrol string, parentcontrols []string) bool {
+
+	subControlTrim := strings.Split(subcontrol, ".")
+
+	for _, value := range parentcontrols {
+		if value == subControlTrim[0] {
+			return true
+		}
+	}
+	return false
+}
+
 // DownloadCatalog writes the JSON of the provided URL into a catalog.json file
 func DownloadCatalog(url string) (string, error) {
-	save := strings.Split(url, "/")
+	urlSplit := strings.Split(url, "/")
 	tmpDir, err := ioutil.TempDir(".", "oscaltesttmp")
 	if err != nil {
 		log.Fatal(err)
 	}
-	filename := tmpDir + "/" + save[len(save)-1]
-	println("Catalog will be downloaded to: " + filename)
-	catalog, err := os.Create(filename)
+	fileName := tmpDir + "/" + urlSplit[len(urlSplit)-1]
+	println("Catalog will be downloaded to: " + fileName)
+	catalog, err := os.Create(fileName)
 	if err != nil {
 		return "", err
 	}
@@ -114,49 +142,65 @@ func DownloadCatalog(url string) (string, error) {
 	return tmpDir, nil
 }
 
-// ProfileParsing method to parse the profile and return the controls and subcontrols
+// ProfileParsing method to parse the profile and return the controls and subcontrols ID's
 func ProfileParsing(parsedProfile *profile.Profile) []string {
 
-	SecurityControls := make([]string, 0)
+	securityControls := make([]string, 0)
 
-	for i := 0; i < len(parsedProfile.Imports); i++ {
-		for j := 0; j < len(parsedProfile.Imports[i].Include.IdSelectors); j++ {
-			if parsedProfile.Imports[i].Include.IdSelectors[j].ControlId != "" {
-				SecurityControls = append(SecurityControls, parsedProfile.Imports[i].Include.IdSelectors[j].ControlId)
+	for importCount := 0; importCount < len(parsedProfile.Imports); importCount++ {
+		for idSelectorCount := 0; idSelectorCount < len(parsedProfile.Imports[importCount].Include.IdSelectors); idSelectorCount++ {
+			if parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].ControlId != "" {
+				securityControls = append(securityControls, parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].ControlId)
 			}
-			if parsedProfile.Imports[i].Include.IdSelectors[j].SubcontrolId != "" {
-				SecurityControls = append(SecurityControls, parsedProfile.Imports[i].Include.IdSelectors[j].SubcontrolId)
+			if parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].SubcontrolId != "" {
+				securityControls = append(securityControls, parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].SubcontrolId)
 			}
 		}
 	}
-	return SecurityControls
+	return securityControls
 }
 
-// ProfileProcessing is used to get to the catalog referenced in the profile and parse it into a map
-func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
-	SecurityControlsDetails := make(map[string][]string)
+// ParentControls to get the list of all parent controls in the profile
+func ParentControls(parsedProfile *profile.Profile) []string {
+	parentControlsList := make([]string, 0)
 
-	for l := 0; l < len(parsedProfile.Imports); l++ {
-		println("Import:", parsedProfile.Imports[l].Href.String())
+	for importCount := 0; importCount < len(parsedProfile.Imports); importCount++ {
+		temp := ParseImport(parsedProfile, parsedProfile.Imports[importCount].Href.Path, "Parent")
+		parentControlsList = appendslice(parentControlsList, temp)
+	}
+
+	parentControlsList = unique(parentControlsList)
+
+	return parentControlsList
+}
+
+// ProfileProcessing is used to generate the mapping of ID Class & Title of
+// all the controls subcontrols and parts
+func ProfileProcessing(parsedProfile *profile.Profile, ListParentControls []string) map[string][]string {
+	securityControlsDetails := make(map[string][]string)
+
+	for importCounts := 0; importCounts < len(parsedProfile.Imports); importCounts++ {
+		println("Import:", parsedProfile.Imports[importCounts].Href.String())
 		dirName := "test_util/artifacts/"
 		var err error
-		if strings.Contains(parsedProfile.Imports[l].Href.String(), "http") {
-			dirName, err = DownloadCatalog(parsedProfile.Imports[l].Href.String())
+		if strings.Contains(parsedProfile.Imports[importCounts].Href.String(), "http") {
+			dirName, err = DownloadCatalog(parsedProfile.Imports[importCounts].Href.String())
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
-		save := strings.Split(parsedProfile.Imports[l].Href.Path, "/")
-		filename := dirName + "/" + save[len(save)-1]
-		f, err := os.Open(filename)
+		urlSplit := strings.Split(parsedProfile.Imports[importCounts].Href.Path, "/")
+		fileName := dirName + "/" + urlSplit[len(urlSplit)-1]
+		f, err := os.Open(fileName)
 		if err != nil {
 			log.Fatal(err)
 		}
 		check, _ := ProfileCatalogCheck(f)
 		if check == "Catalog" {
 
-			ProfileControls := ParseImport(parsedProfile, parsedProfile.Imports[l].Href.Path)
-			catalogPath := dirName + "/" + save[len(save)-1]
+			profileControls := ParseImport(parsedProfile, parsedProfile.Imports[importCounts].Href.Path, "all")
+
+			catalogPath := dirName + "/" + urlSplit[len(urlSplit)-1]
 			f, err := os.Open(catalogPath)
 			if err != nil {
 				log.Fatal(err)
@@ -166,57 +210,99 @@ func ProfileProcessing(parsedProfile *profile.Profile) map[string][]string {
 			if err != nil {
 				log.Fatal(err)
 			}
-			CatalogControlsDetails := make(map[string][]string)
 
-			for i := 0; i < len(parsedCatalog.Groups); i++ {
-				for j := 0; j < len(parsedCatalog.Groups[i].Controls); j++ {
-					if controlInProfile(parsedCatalog.Groups[i].Controls[j].Id, ProfileControls) {
-						CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Id] = append(CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Id], parsedCatalog.Groups[i].Controls[j].Class)
-						CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Id] = append(CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Id], string(parsedCatalog.Groups[i].Controls[j].Title))
+			catalogControlsDetails := ParseCatalog(parsedCatalog, profileControls, ListParentControls)
+
+			partsProfileControls := ProfileParsing(parsedProfile)
+
+			parts := ParseParts(parsedProfile, partsProfileControls)
+
+			catalogControlsDetails = appendAlterations(catalogControlsDetails, parts)
+
+			println("Size of Catalog: ", len(catalogControlsDetails))
+			if len(securityControlsDetails) == 0 {
+				securityControlsDetails = appendMaps(securityControlsDetails, catalogControlsDetails)
+			} else if len(securityControlsDetails) > 0 {
+				securityControlsDetails = appendMaps(securityControlsDetails, catalogControlsDetails)
+				securityControlsDetails = uniqueMaps(securityControlsDetails, catalogControlsDetails)
+			}
+			println("Size of securityControls: ", len(securityControlsDetails))
+
+		} else if check == "Profile" {
+
+			fmt.Println("profile path: " + urlSplit[len(urlSplit)-1])
+			f, err := os.Open(dirName + "/" + urlSplit[len(urlSplit)-1])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			ProfileHref, err := GetProfile(f)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			ParsedProfile := ProfileProcessing(ProfileHref, ListParentControls)
+			ParsedProfileControls := ParseImport(parsedProfile, parsedProfile.Imports[importCounts].Href.Path, "all")
+
+			partsProfileControls := ProfileParsing(parsedProfile)
+
+			parts := ParseParts(parsedProfile, partsProfileControls)
+
+			println("Recursive count = ", len(ParsedProfile))
+			println("Count of profile = ", len(ParsedProfileControls))
+
+			println("Common = ", len(CommonMap(ParsedProfileControls, ParsedProfile)))
+			securityControlsDetails = appendMaps(securityControlsDetails, CommonMap(ParsedProfileControls, ParsedProfile))
+
+			securityControlsDetails = appendAlterations(securityControlsDetails, parts)
+
+			println("Final Count = ", len(securityControlsDetails))
+		}
+	}
+
+	return securityControlsDetails
+}
+
+// ParseCatalog accepts a catalog struct and return the mapping of Control,
+// Subcontrols & Parts. ID, Class & Titles
+func ParseCatalog(parsedCatalog *catalog.Catalog, profileControls []string, ListParentControls []string) map[string][]string {
+	catalogControlsDetails := make(map[string][]string)
+
+	for groupCount := 0; groupCount < len(parsedCatalog.Groups); groupCount++ {
+		for controlCount := 0; controlCount < len(parsedCatalog.Groups[groupCount].Controls); controlCount++ {
+			if controlInProfile(parsedCatalog.Groups[groupCount].Controls[controlCount].Id, profileControls) {
+				catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id], parsedCatalog.Groups[groupCount].Controls[controlCount].Class)
+				catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id], string(parsedCatalog.Groups[groupCount].Controls[controlCount].Title))
+				for controlPartCount := 0; controlPartCount < len(parsedCatalog.Groups[groupCount].Controls[controlCount].Parts); controlPartCount++ {
+					if parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id != "" {
+						catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id], parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Class)
+						catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id], string(parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Title))
+					} else if parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id == "" && parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Class == "assessment" {
+						catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id], parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Class)
+						catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Id], string(parsedCatalog.Groups[groupCount].Controls[controlCount].Parts[controlPartCount].Title))
 					}
-					for k := 0; k < len(parsedCatalog.Groups[i].Controls[j].Subcontrols); k++ {
-						if controlInProfile(parsedCatalog.Groups[i].Controls[j].Subcontrols[k].Id, ProfileControls) {
-							CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Subcontrols[k].Id] = append(CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Subcontrols[k].Id], parsedCatalog.Groups[i].Controls[j].Subcontrols[k].Class)
-							CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Subcontrols[k].Id] = append(CatalogControlsDetails[parsedCatalog.Groups[i].Controls[j].Subcontrols[k].Id], string(parsedCatalog.Groups[i].Controls[j].Subcontrols[k].Title))
+				}
+			}
+
+			for subControlCount := 0; subControlCount < len(parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols); subControlCount++ {
+				if controlInProfile(parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id, profileControls) && ParentControlCheck(parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id, ListParentControls) {
+					catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id], parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Class)
+					catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id], string(parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Title))
+					for subControlPartCount := 0; subControlPartCount < len(parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts); subControlPartCount++ {
+						if parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id != "" {
+							catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id], parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Class)
+							catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id], string(parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Title))
+						} else if parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id == "" && parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Class == "assessment" {
+
+							catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id], parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Class)
+							catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id] = append(catalogControlsDetails[parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Id+"?"+parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Id], string(parsedCatalog.Groups[groupCount].Controls[controlCount].Subcontrols[subControlCount].Parts[subControlPartCount].Title))
 						}
 					}
 				}
 			}
-			println("Size of Catalog: ", len(CatalogControlsDetails))
-			if len(SecurityControlsDetails) == 0 {
-				SecurityControlsDetails = appendMaps(SecurityControlsDetails, CatalogControlsDetails)
-			} else if len(SecurityControlsDetails) > 0 {
-				SecurityControlsDetails = appendMaps(SecurityControlsDetails, CatalogControlsDetails)
-				SecurityControlsDetails = uniqueMaps(SecurityControlsDetails, CatalogControlsDetails)
-			}
-
-			println("Size of SecurityControls: ", len(SecurityControlsDetails))
-		} else if check == "Profile" {
-
-			fmt.Println("profile path: " + save[len(save)-1])
-			f, err := os.Open(dirName + save[len(save)-1])
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			parsedProfile1, err := GetProfile(f)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			save := ProfileProcessing(parsedProfile1)
-			save1 := ParseImport(parsedProfile, parsedProfile.Imports[l].Href.Path)
-
-			println(len(save))
-			println(len(save1))
-
-			SecurityControlsDetails = appendMaps(SecurityControlsDetails, CommonMap(save1, save))
-			println(len(SecurityControlsDetails))
-			// parsedProfile and parsedProfile1 common and save in SecurityControls
 		}
 	}
-
-	return SecurityControlsDetails
+	return catalogControlsDetails
 }
 
 // ProfileCatalogCheck checks if the path provided is for a profile or a catolog
@@ -234,72 +320,106 @@ func ProfileCatalogCheck(r io.Reader) (string, error) {
 	return "Invalid File", nil
 }
 
-// CommonMap returns the elements in Map that are also present in slice
-func CommonMap(slice1 []string, CatalogControlsDetails map[string][]string) map[string][]string {
-	Result := make(map[string][]string)
-	for _, s1element := range slice1 {
-		if _, ok := CatalogControlsDetails[s1element]; ok {
-			save := CatalogControlsDetails[s1element]
-			CatalogControlsDetails[s1element] = append(CatalogControlsDetails[s1element], save[0])
-			CatalogControlsDetails[s1element] = append(CatalogControlsDetails[s1element], save[1])
-		}
-	}
-	return Result
-}
+// CommonMap returns the elements in Map that are also present in profile
+func CommonMap(profile []string, catalogControlsDetails map[string][]string) map[string][]string {
 
-// RemoveDuplicateSlice returns the elements after removing duplicates
-func RemoveDuplicateSlice(slice1 []string, slice2 []string) []string {
-	result := make([]string, 0)
-	count := 0
-	for _, s2element := range slice2 {
-		for _, s1element := range slice1 {
-			if s2element != s1element {
-				count++
+	commonMapping := make(map[string][]string)
+
+	for key, mapValue := range catalogControlsDetails {
+		for _, sliceValue := range profile {
+			subControlTrim := strings.Split(key, "?")
+
+			if sliceValue == key {
+				commonMapping[key] = append(commonMapping[key], mapValue[0])
+				commonMapping[key] = append(commonMapping[key], mapValue[1])
+			} else if sliceValue == subControlTrim[0] {
+				commonMapping[key] = append(commonMapping[key], mapValue[0])
+				commonMapping[key] = append(commonMapping[key], mapValue[1])
 			}
 		}
-		if count > 0 {
-			result = append(result, s2element)
-		}
-		count = 0
 	}
-	return result
+	return commonMapping
 }
 
-// ParseImport method to parse the profile and return the controls and subcontrols
-func ParseImport(parsedProfile *profile.Profile, link string) []string {
+// ParseImport method to parse the profile and return the controls and subcontrols or only controls
+func ParseImport(parsedProfile *profile.Profile, link string, token string) []string {
 
-	SecurityControls := make([]string, 0)
-
-	for i := 0; i < len(parsedProfile.Imports); i++ {
-		if parsedProfile.Imports[i].Href.Path == link {
-			for j := 0; j < len(parsedProfile.Imports[i].Include.IdSelectors); j++ {
-				if parsedProfile.Imports[i].Include.IdSelectors[j].ControlId != "" {
-					SecurityControls = append(SecurityControls, parsedProfile.Imports[i].Include.IdSelectors[j].ControlId)
+	securityControls := make([]string, 0)
+	for importCount := 0; importCount < len(parsedProfile.Imports); importCount++ {
+		if parsedProfile.Imports[importCount].Href.Path == link {
+			for idSelectorCount := 0; idSelectorCount < len(parsedProfile.Imports[importCount].Include.IdSelectors); idSelectorCount++ {
+				if parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].ControlId != "" {
+					securityControls = append(securityControls, parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].ControlId)
 				}
-				if parsedProfile.Imports[i].Include.IdSelectors[j].SubcontrolId != "" {
-					SecurityControls = append(SecurityControls, parsedProfile.Imports[i].Include.IdSelectors[j].SubcontrolId)
+				if parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].SubcontrolId != "" && token != "Parent" {
+					securityControls = append(securityControls, parsedProfile.Imports[importCount].Include.IdSelectors[idSelectorCount].SubcontrolId)
 				}
 			}
 		}
 	}
-	return SecurityControls
+
+	return securityControls
+}
+
+// ParseParts method to parse the profile and return the mapping of all the parts
+func ParseParts(parsedProfile *profile.Profile, list []string) map[string][]string {
+
+	securityControls := make(map[string][]string)
+
+	for modifyCount := 0; modifyCount < len(parsedProfile.Modify.Alterations); modifyCount++ {
+		for alterCount := 0; alterCount < len(parsedProfile.Modify.Alterations[modifyCount].Additions); alterCount++ {
+			for partCount := 0; partCount < len(parsedProfile.Modify.Alterations[modifyCount].Additions[alterCount].Parts); partCount++ {
+				for _, s1Element := range list {
+					if parsedProfile.Modify.Alterations[modifyCount].ControlId == s1Element {
+						if parsedProfile.Modify.Alterations[modifyCount].ControlId != "" && parsedProfile.Modify.Alterations[modifyCount].Additions[alterCount].Parts[partCount].Class == "guidance" {
+							securityControls[parsedProfile.Modify.Alterations[modifyCount].ControlId+"?"+parsedProfile.Modify.Alterations[modifyCount].ControlId+"_gdn"] = append(securityControls[parsedProfile.Modify.Alterations[modifyCount].ControlId+"?"+parsedProfile.Modify.Alterations[modifyCount].ControlId+"_gdn"], parsedProfile.Modify.Alterations[modifyCount].Additions[alterCount].Parts[partCount].Class)
+						}
+					} else if parsedProfile.Modify.Alterations[modifyCount].SubcontrolId == s1Element {
+						if parsedProfile.Modify.Alterations[modifyCount].SubcontrolId != "" && parsedProfile.Modify.Alterations[modifyCount].Additions[alterCount].Parts[partCount].Class == "guidance" {
+							securityControls[parsedProfile.Modify.Alterations[modifyCount].SubcontrolId+"?"+parsedProfile.Modify.Alterations[modifyCount].SubcontrolId+"_gdn"] = append(securityControls[parsedProfile.Modify.Alterations[modifyCount].SubcontrolId+"?"+parsedProfile.Modify.Alterations[modifyCount].SubcontrolId+"_gdn"], parsedProfile.Modify.Alterations[modifyCount].Additions[alterCount].Parts[partCount].Class)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return securityControls
+}
+
+// appendslice appends two slices
+func appendslice(slice []string, slice1 []string) []string {
+
+	for sliceCount := 0; sliceCount < len(slice1); sliceCount++ {
+		slice = append(slice, slice1[sliceCount])
+	}
+
+	return slice
 }
 
 // AreMapsSame compares the values of two  same length maps and returns true if both the maps have the same key value pairs
-func AreMapsSame(profileControlsDetails map[string][]string, codeGeneratedMapping map[string][]string) bool {
+func AreMapsSame(profileControlsDetails map[string][]string, codeGeneratedMapping map[string][]string, token string) bool {
 	for key := range profileControlsDetails {
-		if !reflect.DeepEqual(profileControlsDetails[key], codeGeneratedMapping[key]) {
-			println("Mapping for " + key + " incorrect.")
-			return false
+		if !strings.Contains(key, "?") && token == "controls" {
+			if profileControlsDetails[key][0] != codeGeneratedMapping[key][0] && profileControlsDetails[key][1] != codeGeneratedMapping[key][1] {
+				println("Mapping for " + key + " incorrect.")
+				return false
+			}
+		} else if strings.Contains(key, "?") && token == "parts" {
+			if profileControlsDetails[key][0] != codeGeneratedMapping[key][0] && profileControlsDetails[key][1] != codeGeneratedMapping[key][1] {
+				println("Mapping for " + key + " incorrect.")
+				return false
+			}
 		}
 	}
 	return true
 }
 
-func unique(intSlice []string) []string {
+// unique returns unique values in the slice
+func unique(slice []string) []string {
 	keys := make(map[string]bool)
 	list := []string{}
-	for _, entry := range intSlice {
+	for _, entry := range slice {
 		if _, value := keys[entry]; !value {
 			keys[entry] = true
 			list = append(list, entry)
@@ -308,22 +428,54 @@ func unique(intSlice []string) []string {
 	return list
 }
 
-func appendMaps(SecurityControlsDetails map[string][]string, CatalogControlsDetails map[string][]string) map[string][]string {
+// appendMaps appends two maps
+func appendMaps(securityControlsDetails map[string][]string, catalogControlsDetails map[string][]string) map[string][]string {
 
-	for k, v := range CatalogControlsDetails {
-		SecurityControlsDetails[k] = v
+	for key, value := range catalogControlsDetails {
+		securityControlsDetails[key] = value
 	}
 
-	return SecurityControlsDetails
+	return securityControlsDetails
 }
 
-func uniqueMaps(SecurityControlsDetails map[string][]string, CatalogControlsDetails map[string][]string) map[string][]string {
+func appendAlterations(securityControlsDetails map[string][]string, PartsDetails map[string][]string) map[string][]string {
 
-	for k, v := range CatalogControlsDetails {
-		if _, ok := SecurityControlsDetails[k]; !ok {
-			SecurityControlsDetails[k] = v
+	for key, value := range PartsDetails {
+		if _, ok := securityControlsDetails[key]; ok {
+			delete(securityControlsDetails, key)
+			securityControlsDetails[key+"_1"] = value
+			securityControlsDetails[key+"_2"] = value
 		}
 	}
 
-	return SecurityControlsDetails
+	return securityControlsDetails
+}
+
+func uniqueMaps(securityControlsDetails map[string][]string, catalogControlsDetails map[string][]string) map[string][]string {
+
+	for key, value := range catalogControlsDetails {
+		if _, ok := securityControlsDetails[key]; !ok {
+			securityControlsDetails[key] = value
+		}
+	}
+
+	return securityControlsDetails
+}
+
+// Count to take count of either parts of controls & subcontrols
+func Count(securityControlsDetails map[string][]string, token string) int {
+
+	count := 0
+
+	for key := range securityControlsDetails {
+		if token == "parts" {
+			count++
+		} else if token == "controls" {
+			if !strings.Contains(key, "?") {
+				count++
+			}
+		}
+	}
+
+	return count
 }
