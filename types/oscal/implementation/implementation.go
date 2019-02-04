@@ -36,7 +36,7 @@ type ComponentConfiguration struct {
 type Parameter struct {
 	ParameterID    string        `xml:"parameter-id,attr,omitempty" json:"parameterId,omitempty"`
 	ValueID        string        `xml:"value-id,attr,omitempty" json:"valueId,omitempty"`
-	Guidance       string        `xml:"guidance,attr,omitempty" json:"guidance,omitempty"`
+	Guidance       []string      `xml:"guidance,attr,omitempty" json:"guidance,omitempty"`
 	AssessedValue  AssessedValue `xml:"assessed-value,attr,omitempty" json:"assessedValue,omitempty"`
 	PossibleValues []string      `xml:"possbile-values,attr,omitempty" json:"possibleValues,omitempty"`
 	DefaultValue   string        `xml:"default-value,attr,omitempty" json:"defaultValue,omitempty"`
