@@ -40,6 +40,7 @@ jobs:
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
+      - checkout
       - run: docker login -u $HUB_USERNAME -p $HUB_PASSWORD
       - run: curl -sL https://git.io/goreleaser | bash
 
