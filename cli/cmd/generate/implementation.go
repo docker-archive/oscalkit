@@ -27,11 +27,6 @@ var Implementation = cli.Command{
 	Usage: "generates go code for implementation against provided profile and excel sheet",
 	Flags: []cli.Flag{
 		cli.StringFlag{
-			Name:        "profile, p",
-			Usage:       "profile to intersect against",
-			Destination: &profile,
-		},
-		cli.StringFlag{
 			Name:        "excel, e",
 			Usage:       "excel sheet to get component configs",
 			Destination: &excelSheet,
@@ -50,9 +45,6 @@ var Implementation = cli.Command{
 		},
 	},
 	Before: func(c *cli.Context) error {
-		if profile == "" {
-			return cli.NewExitError("oscalkit generate is missing the --profile flag", 1)
-		}
 		if excelSheet == "" {
 			return cli.NewExitError("oscalkit implementation is missing --excel flag", 1)
 		}
@@ -64,19 +56,6 @@ var Implementation = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
-		profileF, err := generator.GetFilePath(profile)
-		if err != nil {
-			return cli.NewExitError(err.Error(), 1)
-		}
-		f, err := os.Open(profileF)
-		if err != nil {
-			return cli.NewExitError(fmt.Sprintf("cannot open profile %v", err), 1)
-		}
-		defer f.Close()
-		profile, err := generator.ReadProfile(f)
-		if err != nil {
-			return err
-		}
 		excelF, err := generator.GetFilePath(excelSheet)
 		if err != nil {
 			return err
@@ -107,7 +86,7 @@ var Implementation = cli.Command{
 		}
 
 		catalog := impl.NISTCatalog{ID: "NIST_SP-800-53"}
-		implementationData := impl.GenerateImplementation(records, profile, &catalog)
+		implementationData := impl.GenerateImplementation(records, &catalog)
 		t, err := templates.GetImplementationTemplate()
 		if err != nil {
 			return fmt.Errorf("cannot get implementation template err %v", err)
