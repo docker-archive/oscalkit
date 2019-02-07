@@ -31,12 +31,12 @@ You can download the appropriate `oscalkit` command-line utility for your system
 
 > Running the `oscalkit` Docker container requires either bind-mounting the directory containing your source files or passing file contents in to the command via stdin.
 
-    $ docker pull docker/oscalkit:0.1.0
-    $ docker run -it --rm -v $PWD:/data -w /data docker/oscalkit:0.1.0 convert oscal-core.xml
+    $ docker pull docker/oscalkit:0.2.0
+    $ docker run -it --rm -v $PWD:/data -w /data docker/oscalkit:0.2.0 convert oscal-core.xml
 
 via stdin:
 
-    $ docker run -it --rm docker/oscalkit:0.1.0 convert < oscal-core.xml
+    $ docker run -it --rm docker/oscalkit:0.2.0 convert < oscal-core.xml
 
 ## Usage
 
@@ -48,7 +48,7 @@ USAGE:
    oscalkit [global options] command [command options] [arguments...]
 
 VERSION:
-   0.2.0-e178ab9-dev (Built: 2019-01-14)
+   0.2.0
 
 
 COMMANDS:
