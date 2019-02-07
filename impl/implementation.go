@@ -18,6 +18,7 @@ const (
 	// rowIndex Starting point for valid rows (neglects titles)
 	rowIndex         = 3
 	delimiter        = "|"
+	profileDelimiter = "->"
 	componentIDRegex = `cpe:[0-9].[0-9]:[a-z]:docker:[a-z-]*:(\d+\.)?(\d+\.)?(\*|\d+)`
 	// componentNameRow is the index for getting component name
 	componentNameRow = 1
@@ -27,110 +28,105 @@ const (
 
 type guidMap map[string]uuid.UUID
 type cdMap map[string]implementation.ComponentDefinition
-
 type component struct {
-	id             string
-	compNameIndex  int
-	name           string
-	uuidIndex      int
-	narrativeIndex int
-	definition     cdMap
+	id                   string
+	compNameIndex        int
+	name                 string
+	parameterIDIndex     int
+	parameterStringIndex int
+	uuidIndex            int
+	narrativeIndex       int
+	definition           cdMap
+	hasParameterMapping  bool
+}
+
+var profileMap = map[string]string{
+	"FedRAMP_High":     "uuid-fedramp-high-20180806-195540",
+	"FedRAMP_HIGH":     "uuid-fedramp-high-20180806-195540",
+	"FedRAMP_Moderate": "uuid-fedramp-moderate-20180806-195542",
+	"FedRAMP_moderate": "uuid-fedramp-moderate-20180806-195542",
 }
 
 // GenerateImplementation generates implementation from component excel sheet
-func GenerateImplementation(CSVS [][]string, p *profile.Profile, c Catalog) implementation.Implementation {
-
+func GenerateImplementation(CSVS [][]string, c Catalog) implementation.Implementation {
 	var cdMapList = make([]cdMap, 0)
-
 	components := []component{
 		{
-			id:             getComponentID(CSVS[componentNameRow][17]),
-			name:           "UCP",
-			compNameIndex:  17,
-			uuidIndex:      18,
-			narrativeIndex: 19,
-			definition:     make(cdMap),
+			id:                   getComponentID(CSVS[componentNameRow][17]),
+			name:                 "UCP",
+			compNameIndex:        17,
+			parameterIDIndex:     18,
+			parameterStringIndex: 19,
+			uuidIndex:            20,
+			narrativeIndex:       21,
+			definition:           make(cdMap),
+			hasParameterMapping:  true,
 		},
 		{
-			id:             getComponentID(CSVS[componentNameRow][20]),
-			name:           "DTR",
-			compNameIndex:  20,
-			uuidIndex:      21,
-			narrativeIndex: 22,
-			definition:     make(cdMap),
+			id:                  getComponentID(CSVS[componentNameRow][22]),
+			name:                "DTR",
+			compNameIndex:       22,
+			uuidIndex:           23,
+			narrativeIndex:      24,
+			definition:          make(cdMap),
+			hasParameterMapping: false,
 		},
 		{
-			id:             getComponentID(CSVS[componentNameRow][14]),
-			name:           "Engine",
-			compNameIndex:  14,
-			uuidIndex:      15,
-			narrativeIndex: 16,
-			definition:     make(cdMap),
+			id:                  getComponentID(CSVS[componentNameRow][14]),
+			name:                "Engine",
+			compNameIndex:       14,
+			uuidIndex:           15,
+			narrativeIndex:      16,
+			definition:          make(cdMap),
+			hasParameterMapping: false,
 		},
 	}
-
 	for _, comp := range components {
-		cdMapList = append(cdMapList, fillCDMap(CSVS, comp.compNameIndex, comp.definition, comp.uuidIndex, comp.narrativeIndex, comp.id, p, c))
+		//comp.compNameIndex, comp.definition, comp.uuidIndex, comp.narrativeIndex, comp.parameterIDIndex, comp.parameterStringIndex, comp.id
+		cdMapList = append(cdMapList, fillCDMap(CSVS, comp, c))
 	}
-
-	return CompileImplementation(cdMapList, CSVS, c, p, components)
-
+	return CompileImplementation(cdMapList, CSVS, c, components)
 }
 
-func fillCDMap(CSVS [][]string, compNameIndex int, compDef cdMap, uuidIndex int, narrativeIndex int, compID string, p *profile.Profile, c Catalog) cdMap {
+func fillCDMap(CSVS [][]string, comp component, c Catalog) cdMap {
 	checkAgainstGUID := make(map[string]uuid.UUID)
 	for i := rowIndex; i < totalControlsInExcel; i++ {
 		applicableControl := CSVS[i][controlIndex]
 		if applicableControl == "" {
 			continue
 		}
-		applicableNarrative := CSVS[i][narrativeIndex]
-		ListOfComponentConfigName := strings.Split(CSVS[i][compNameIndex], delimiter)
+		applicableNarrative := CSVS[i][comp.narrativeIndex]
+		parameterID := CSVS[i][comp.parameterIDIndex]
+		parameterString := CSVS[i][comp.parameterStringIndex]
+		ListOfComponentConfigName := strings.Split(CSVS[i][comp.compNameIndex], delimiter)
 		for compIndex, componentConfigName := range ListOfComponentConfigName {
 			componentConfigName = strings.TrimSpace(componentConfigName)
 			if componentConfigName == "" {
 				continue
 			}
-			if _, ok := compDef[componentConfigName]; !ok {
+			if _, ok := comp.definition[componentConfigName]; !ok {
 
-				guid := strings.Split(CSVS[i][uuidIndex], delimiter)[compIndex]
+				guid := strings.Split(CSVS[i][comp.uuidIndex], delimiter)[compIndex]
 				guid = strings.TrimSpace(guid)
-				CreateComponentDefinition(checkAgainstGUID, compDef, componentConfigName, p, c, applicableControl, applicableNarrative, guid, compID)
+				CreateComponentDefinition(checkAgainstGUID, comp.definition, componentConfigName, c, applicableControl, applicableNarrative, guid, comp.id, parameterID, parameterString)
 			} else {
-				securityCheck := compDef[componentConfigName]
+				securityCheck := comp.definition[componentConfigName]
 				guid := checkAgainstGUID[componentConfigName]
-				temp := AppendParameterInImplementation(securityCheck, guid, p, c, applicableControl)
-				temp = AppendControlInImplementation(securityCheck, guid, c, applicableControl)
-				compDef[componentConfigName] = temp
+				temp := AppendControlInImplementation(securityCheck, guid, c, applicableControl)
+				comp.definition[componentConfigName] = temp
 			}
 		}
 	}
-	return compDef
+	return comp.definition
 }
 
 // CreateComponentDefinition creates a component definition
-func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, p *profile.Profile, c Catalog, control, narrative, guid string, cdID string) {
+func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, c Catalog, control, narrative, guid string, cdID string, parameterID, parameterString string) {
 
 	componentConfGUID, _ := uuid.FromString(guid)
 	gm[componentConfName] = componentConfGUID
 	controlConfiguration := implementation.ControlConfiguration{
 		ConfigurationIDRef: componentConfGUID.String(),
-	}
-	var parameters []implementation.Parameter
-	if p.Modify != nil {
-		for _, param := range p.Modify.ParamSettings {
-			if param.Id == "" {
-				continue
-			}
-			if c.GetControl(param.Id) == c.GetControl(control) {
-				if existsInParams(param.Id, parameters) {
-					continue
-				}
-				guidance := getGuidance(p.Modify.Alterations, param.Id)
-				x := GenerateImplementationParameter(param, guidance)
-				parameters = append(parameters, x)
-			}
-		}
 	}
 	controlConfiguration.ProvisioningMechanisms = []implementation.ProvisioningMechanism{
 		implementation.ProvisioningMechanism{
@@ -143,20 +139,12 @@ func CreateComponentDefinition(gm guidMap, cdm cdMap, componentConfName string, 
 			},
 		},
 	}
-	controlConfiguration.Parameters = parameters
 	cdm[componentConfName] = implementation.ComponentDefinition{
 		ID: cdID,
 		ComponentConfigurations: []*implementation.ComponentConfiguration{
 			CreateComponentConfiguration(componentConfGUID, componentConfName, narrative),
 		},
-		ImplementsProfiles: []*implementation.ImplementsProfile{
-			&implementation.ImplementsProfile{
-				ProfileID: p.ID,
-				ControlConfigurations: []implementation.ControlConfiguration{
-					controlConfiguration,
-				},
-			},
-		},
+		ImplementsProfiles: []*implementation.ImplementsProfile{},
 		ControlImplementations: []*implementation.ControlImplementation{
 			&implementation.ControlImplementation{
 				ControlConfigurations: []implementation.ControlConfiguration{
@@ -184,31 +172,6 @@ func CreateComponentConfiguration(guid uuid.UUID, componentConfName, narrative s
 	}
 }
 
-// AppendParameterInImplementation Appends parameter in the relative guid
-func AppendParameterInImplementation(cd implementation.ComponentDefinition, guid uuid.UUID, p *profile.Profile, c Catalog, control string) implementation.ComponentDefinition {
-	for i := range cd.ImplementsProfiles {
-		for j := range cd.ImplementsProfiles[i].ControlConfigurations {
-			if guid.String() == cd.ImplementsProfiles[i].ControlConfigurations[j].ConfigurationIDRef {
-				for _, param := range p.Modify.ParamSettings {
-					if param.Id == "" {
-						continue
-					}
-					if existsInParams(param.Id, cd.ImplementsProfiles[i].ControlConfigurations[j].Parameters) {
-						continue
-					}
-					if c.GetControl(param.Id) == c.GetControl(control) {
-						guidance := getGuidance(p.Modify.Alterations, param.Id)
-						x := GenerateImplementationParameter(param, guidance)
-						cd.ImplementsProfiles[i].ControlConfigurations[j].Parameters = append(cd.ImplementsProfiles[i].ControlConfigurations[j].Parameters, x)
-					}
-				}
-			}
-		}
-	}
-	return cd
-
-}
-
 // AppendControlInImplementation appends a control in the implementation
 func AppendControlInImplementation(cd implementation.ComponentDefinition, guid uuid.UUID, c Catalog, control string) implementation.ComponentDefinition {
 	for i := range cd.ControlImplementations {
@@ -231,11 +194,10 @@ func AppendControlInImplementation(cd implementation.ComponentDefinition, guid u
 }
 
 // CompileImplementation compiles all checks from maps to implementation json
-func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *profile.Profile, components []component) implementation.Implementation {
+func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, components []component) implementation.Implementation {
 
-	return implementation.Implementation{
+	x := implementation.Implementation{
 		ComponentDefinitions: func() []implementation.ComponentDefinition {
-
 			var cds []implementation.ComponentDefinition
 			for _, cd := range cdList {
 				compD := implementation.ComponentDefinition{
@@ -263,7 +225,8 @@ func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *prof
 					ControlImplementations: func() []*implementation.ControlImplementation {
 						arr := []*implementation.ControlImplementation{
 							&implementation.ControlImplementation{
-								ControlIds: []implementation.ControlId{},
+								ControlIds:            []implementation.ControlId{},
+								ControlConfigurations: []implementation.ControlConfiguration{},
 							},
 						}
 						for i := 3; i < totalControlsInExcel; i++ {
@@ -285,43 +248,17 @@ func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *prof
 								CatalogIDRef: cat.GetID(),
 							})
 						}
-						for _, def := range cd {
-							for _, ci := range def.ImplementsProfiles {
-								for _, cc := range ci.ControlConfigurations {
-									arr[0].ControlConfigurations = append(arr[0].ControlConfigurations, cc)
-								}
-							}
-						}
 
-						for j, x := range arr[0].ControlConfigurations {
-							for _, def := range cd {
-								for _, ci := range def.ControlImplementations {
-									for _, cc := range ci.ControlConfigurations {
-										if cc.ConfigurationIDRef == x.ConfigurationIDRef {
-											arr[0].ControlConfigurations[j].ProvisioningMechanisms = cc.ProvisioningMechanisms
-										}
-									}
-								}
+						for _, v := range cd {
+							for _, x := range v.ControlImplementations {
+								arr[0].ControlConfigurations = append(
+									arr[0].ControlConfigurations,
+									x.ControlConfigurations...,
+								)
 							}
 						}
 						return arr
 					}(),
-					ImplementsProfiles: []*implementation.ImplementsProfile{
-						&implementation.ImplementsProfile{
-							ProfileID: p.ID,
-							ControlConfigurations: func() []implementation.ControlConfiguration {
-								var arr []implementation.ControlConfiguration
-								for _, v := range cd {
-									for _, x := range v.ImplementsProfiles {
-										for _, y := range x.ControlConfigurations {
-											arr = append(arr, y)
-										}
-									}
-								}
-								return arr
-							}(),
-						},
-					},
 				}
 
 				cds = append(cds, compD)
@@ -329,6 +266,8 @@ func CompileImplementation(cdList []cdMap, CSVS [][]string, cat Catalog, p *prof
 			return cds
 		}(),
 	}
+	i := fillImplementsProfile(&x, components, CSVS)
+	return *i
 }
 
 //Catalog catalog interface to determine control id pattern
@@ -402,7 +341,6 @@ func existsInParams(pID string, p []implementation.Parameter) bool {
 }
 
 func existsInControls(cID string, controls []implementation.ControlId) bool {
-
 	for _, x := range controls {
 		if x.ControlID == cID {
 			return true

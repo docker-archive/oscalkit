@@ -1,10 +1,16 @@
 package templates
 
-import "html/template"
+import (
+	"html/template"
+)
 
-//GetImplementationTemplate gets implementation template for implementation go struct file
+// GetImplementationTemplate gets implementation template for implementation go struct file
 func GetImplementationTemplate() (*template.Template, error) {
-	return template.New("").Parse(implementationTemplate)
+	return template.New("").Funcs(map[string]interface{}{"norm": Normalize}).Parse(implementationTemplate)
+}
+
+func Normalize(s string) template.HTML {
+	return template.HTML(s)
 }
 
 const implementationTemplate = `
@@ -60,7 +66,7 @@ var ImplementationGenerated = implementation.Implementation{
 												ValueID: "{{.ValueID}}",
 												PossibleValues: []string{
 													{{range .PossibleValues}}
-														"{{.}}",
+														"{{norm .}}",
 													{{end}}
 												},												
 											},
