@@ -32,7 +32,7 @@ jobs:
           destination: raw-test-output
       - store_test_results:
           path: /tmp/test-results
-  
+
   deploy:
     docker:
       - image: circleci/golang:1.11
@@ -40,21 +40,19 @@ jobs:
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
-      - run: sudo apt-get install -y rpm
       - run: docker login -u $HUB_USERNAME -p $HUB_PASSWORD
-      - deploy:
-          name: goreleaser
-          command: |
-            if [[ -n ${CIRCLE_TAG} ]]; then
-              curl -sL https://git.io/goreleaser | bash
-            fi
-        
+      - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
   version: 2
   test_and_deploy:
     jobs:
-      - test
+      - test:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: master
       - deploy:
           requires:
             - test
