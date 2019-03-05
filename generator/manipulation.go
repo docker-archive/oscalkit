@@ -97,9 +97,9 @@ func ModifyParts(p catalog.Part, controlParts []catalog.Part) []catalog.Part {
 			continue
 		}
 		id := part.Id
-		part.Id = fmt.Sprintf("%s_%d", id, i+1)
+		part.Id = fmt.Sprintf("%s_%d", id, i)
 		parts = append(parts, part)
-		part.Id = fmt.Sprintf("%s_%d", id, i+2)
+		part.Id = fmt.Sprintf("%s_%d", id, i+1)
 		parts = append(parts, part)
 	}
 	return parts
