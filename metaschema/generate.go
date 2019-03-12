@@ -18,6 +18,14 @@ const (
 	metaschemaBaseDir = "OSCAL/schema/metaschema/%s"
 )
 
+var (
+	pkgName = map[string]string{
+		"catalog":              "catalog",
+		"profile":              "profile",
+		"system-security-plan": "ssp",
+	}
+)
+
 func main() {
 	rmCmd := exec.Command("rm", "-rf", "OSCAL/")
 	if err := rmCmd.Run(); err != nil {
@@ -29,12 +37,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	metaschemaPaths := []string{
-		"oscal-catalog-metaschema.xml",
-		"oscal-profile-metaschema.xml",
+	metaschemaPaths := map[string]string{
+		"catalog": "oscal-catalog-metaschema.xml",
+		"ssp":     "oscal-ssp-metaschema.xml",
+		// "profile": "oscal-profile-metaschema.xml",
 	}
 
-	for _, metaschemaPath := range metaschemaPaths {
+	for pkg, metaschemaPath := range metaschemaPaths {
 		f, err := os.Open(fmt.Sprintf(metaschemaBaseDir, metaschemaPath))
 		if err != nil {
 			log.Fatal(err)
@@ -45,6 +54,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		meta.Root = pkg
 
 		if err := metaschema.GenerateTypes(meta); err != nil {
 			log.Fatalf("Error generating go types for metaschema: %s", err)

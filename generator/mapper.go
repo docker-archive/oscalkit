@@ -129,7 +129,7 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 									Id:          ctrl.Id,
 									Class:       ctrl.Class,
 									Title:       ctrl.Title,
-									Params:      ctrl.Params,
+									Parameters:  ctrl.Parameters,
 									Parts:       ctrl.Parts,
 									Subcontrols: []catalog.Subcontrol{sc},
 								})
@@ -151,7 +151,7 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 								Class:       ctrl.Class,
 								Title:       ctrl.Title,
 								Subcontrols: []catalog.Subcontrol{},
-								Params:      ctrl.Params,
+								Parameters:  ctrl.Parameters,
 								Parts:       ctrl.Parts,
 							},
 						)

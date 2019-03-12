@@ -27,7 +27,7 @@ func NewControl(id, title string, opts *ControlOpts) Control {
 	if opts != nil {
 		ctrl.Subcontrols = opts.Subcontrols
 		ctrl.Parts = opts.Parts
-		ctrl.Params = opts.Params
+		ctrl.Parameters = opts.Params
 	}
 	return ctrl
 }
