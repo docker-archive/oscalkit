@@ -39,8 +39,8 @@ func main() {
 
 	metaschemaPaths := map[string]string{
 		"catalog": "oscal-catalog-metaschema.xml",
+		"profile": "oscal-profile-metaschema.xml",
 		"ssp":     "oscal-ssp-metaschema.xml",
-		// "profile": "oscal-profile-metaschema.xml",
 	}
 
 	for pkg, metaschemaPath := range metaschemaPaths {
