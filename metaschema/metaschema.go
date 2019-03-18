@@ -37,7 +37,7 @@ var ShowDocsOptions = []ShowDocs{
 type Metaschema struct {
 	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/metaschema/1.0 METASCHEMA"`
 	Top     string   `xml:"top,attr"`
-	Use     string   `xml:"use,attr"`
+	Root    string   `xml:"root,attr"`
 
 	// SchemaName describes the scope of application of the data format. For
 	// example "OSCAL Catalog"

@@ -11,9 +11,11 @@ type Catalog struct {
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Declares a major/minor version for this metaschema
-	ModelVersion string        `xml:"model-version,attr,omitempty" json:"modelVersion,omitempty"`
+	ModelVersion string `xml:"model-version,attr,omitempty" json:"modelVersion,omitempty"`
+
 	Title        Title         `xml:"title,omitempty" json:"title,omitempty"`
 	Declarations *Declarations `xml:"declarations,omitempty" json:"declarations,omitempty"`
+	Metadata     *Metadata     `xml:"metadata,omitempty" json:"metadata,omitempty"`
 	References   *References   `xml:"references,omitempty" json:"references,omitempty"`
 	Sections     []Section     `xml:"section,omitempty" json:"sections,omitempty"`
 	Groups       []Group       `xml:"group,omitempty" json:"groups,omitempty"`
@@ -26,11 +28,13 @@ type Section struct {
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
-	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
+	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
+
 	Title      Title       `xml:"title,omitempty" json:"title,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
 	Sections   []Section   `xml:"section,omitempty" json:"sections,omitempty"`
-	Prose      *Prose      `xml:",any" json:"prose,omitempty"`
+
+	Prose *Prose `xml:",any" json:"prose,omitempty"`
 }
 
 // A group of controls, or of groups of controls.
@@ -39,11 +43,12 @@ type Group struct {
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
-	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
+	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
+
 	Title      Title       `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
-	Params     []Param     `xml:"param,omitempty" json:"params,omitempty"`
+	Parameters []Param     `xml:"param,omitempty" json:"params,omitempty"`
 	Parts      []Part      `xml:"part,omitempty" json:"parts,omitempty"`
 	Groups     []Group     `xml:"group,omitempty" json:"groups,omitempty"`
 	Controls   []Control   `xml:"control,omitempty" json:"controls,omitempty"`
@@ -57,12 +62,13 @@ type Control struct {
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
-	Class       string       `xml:"class,attr,omitempty" json:"class,omitempty"`
+	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
+
 	Title       Title        `xml:"title,omitempty" json:"title,omitempty"`
 	Props       []Prop       `xml:"prop,omitempty" json:"props,omitempty"`
 	Links       []Link       `xml:"link,omitempty" json:"links,omitempty"`
 	References  *References  `xml:"references,omitempty" json:"references,omitempty"`
-	Params      []Param      `xml:"param,omitempty" json:"params,omitempty"`
+	Parameters  []Param      `xml:"param,omitempty" json:"params,omitempty"`
 	Parts       []Part       `xml:"part,omitempty" json:"parts,omitempty"`
 	Subcontrols []Subcontrol `xml:"subcontrol,omitempty" json:"subcontrols,omitempty"`
 }
@@ -73,12 +79,13 @@ type Subcontrol struct {
 	// Unique identifier
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
-	Class      string      `xml:"class,attr,omitempty" json:"class,omitempty"`
+	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
+
 	Title      Title       `xml:"title,omitempty" json:"title,omitempty"`
 	Props      []Prop      `xml:"prop,omitempty" json:"props,omitempty"`
 	Links      []Link      `xml:"link,omitempty" json:"links,omitempty"`
 	References *References `xml:"references,omitempty" json:"references,omitempty"`
-	Params     []Param     `xml:"param,omitempty" json:"params,omitempty"`
+	Parameters []Param     `xml:"param,omitempty" json:"params,omitempty"`
 	Parts      []Part      `xml:"part,omitempty" json:"parts,omitempty"`
 }
 
@@ -91,7 +98,8 @@ type Param struct {
 	// Identifies the property or object within the control; a semantic hint
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 	// Another parameter invoking this one
-	DependsOn    string       `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
+	DependsOn string `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
+
 	Label        Label        `xml:"label,omitempty" json:"label,omitempty"`
 	Descriptions []Desc       `xml:"desc,omitempty" json:"descs,omitempty"`
 	Constraints  []Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
@@ -110,7 +118,8 @@ type Guideline struct {
 type Select struct {
 
 	// When selecting, a requirement such as one or more
-	HowMany      string   `xml:"how-many,attr,omitempty" json:"howMany,omitempty"`
+	HowMany string `xml:"how-many,attr,omitempty" json:"howMany,omitempty"`
+
 	Alternatives []Choice `xml:"choice,omitempty" json:"choices,omitempty"`
 }
 
@@ -121,10 +130,12 @@ type Part struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifies the property or object within the control; a semantic hint
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
+
 	Title Title  `xml:"title,omitempty" json:"title,omitempty"`
 	Props []Prop `xml:"prop,omitempty" json:"props,omitempty"`
 	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	Parts []Part `xml:"part,omitempty" json:"parts,omitempty"`
+
 	Prose *Prose `xml:",any" json:"prose,omitempty"`
 }
 
@@ -132,7 +143,8 @@ type Part struct {
 type References struct {
 
 	// Unique identifier
-	Id    string `xml:"id,attr,omitempty" json:"id,omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
+
 	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	Refs  []Ref  `xml:"ref,omitempty" json:"refs,omitempty"`
 }
@@ -142,9 +154,55 @@ type References struct {
 type Ref struct {
 
 	// Unique identifier
-	Id        string     `xml:"id,attr,omitempty" json:"id,omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
+
 	Citations []Citation `xml:"citation,omitempty" json:"citations,omitempty"`
-	Prose     *Prose     `xml:",any" json:"prose,omitempty"`
+
+	Prose *Prose `xml:",any" json:"prose,omitempty"`
+}
+
+//
+type Metadata struct {
+}
+
+//
+type Party struct {
+}
+
+//
+type Person struct {
+}
+
+//
+type Org struct {
+}
+
+//
+type Hlink struct {
+}
+
+//
+type Address struct {
+}
+
+//
+type Notes struct {
+}
+
+//
+type Resource struct {
+}
+
+//
+type Role struct {
+}
+
+//
+type ExtraMeta struct {
+}
+
+//
+type MetaGroup struct {
 }
 
 // Either a reference to a declarations file, or a set of declarations
@@ -209,3 +267,63 @@ type Citation struct {
 	Href  Href   `xml:"href,attr,omitempty" json:"href,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
+
+//
+type Author string
+
+//
+type PublicationDate string
+
+//
+type Version string
+
+//
+type DocId string
+
+//
+type PersonId string
+
+//
+type OrgId string
+
+//
+type PersonName string
+
+//
+type OrgName string
+
+//
+type FullName string
+
+//
+type ShortName string
+
+//
+type AddrLine string
+
+//
+type City string
+
+//
+type State string
+
+//
+type PostalCode string
+
+//
+type Country string
+
+//
+type Email string
+
+//
+type Phone string
+
+//
+type Url string
+
+//
+type Hash string
+
+//
+type Meta string

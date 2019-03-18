@@ -50,7 +50,7 @@ func GenerateTypes(metaschema *Metaschema) error {
 		return err
 	}
 
-	packageName := strings.ToLower(metaschema.Use)
+	packageName := strings.ToLower(metaschema.Root)
 	f, err := os.Create(fmt.Sprintf("../types/oscal/%s/%s.go", packageName, packageName))
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func packageImport(named string, metaschema Metaschema) string {
 	}
 
 	if im := metaschema.ImportedMetaschema; im != nil {
-		return im.Use + "."
+		return im.Root + "."
 	}
 
 	return ""
@@ -131,7 +131,7 @@ func getImports(metaschema Metaschema) string {
 	imports.WriteString("\t\"encoding/xml\"\n")
 
 	if im := metaschema.ImportedMetaschema; im != nil {
-		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Use)))
+		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Root)))
 	}
 
 	imports.WriteString(")")
