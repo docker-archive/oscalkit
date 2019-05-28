@@ -4,7 +4,7 @@
 
 > In development. Since the OSCAL standard is still under active development, parsing errors may occur if running the included CLI tool against OSCAL documents that are developed against iterations of the schemas that aren't supported. Individual [Releases](https://github.com/docker/oscalkit/releases) of `oscalkit` will indicate in the notes which commits in the usnistgov/OSCAL repo against which the tool has been tested.
 
-Barebones Go SDK for the [Open Security Controls Assessment Language (OSCAL)](https://csrc.nist.gov/Projects/Open-Security-Controls-Assessment-Language) which is in development by the [National Institute of Standards and Technology (NIST)](https://www.nist.gov/). A CLI tool is also included for processing OSCAL documents, converting between OSCAL-formatted XML, JSON and YAML and for converting from [OpenControl](http://opencontrol.cfapps.io/) projects in to OSCAL. The tool also supports Go source code generation from OSCAL formatted catalog and profile artifacts.
+Barebones Go SDK for the [Open Security Controls Assessment Language (OSCAL)](https://csrc.nist.gov/Projects/Open-Security-Controls-Assessment-Language) which is in development by the [National Institute of Standards and Technology (NIST)](https://www.nist.gov/). A CLI tool is also included for processing OSCAL documents, converting between OSCAL-formatted XML, JSON and YAML and for converting from [OpenControl](https://open-control.org/) projects in to OSCAL. The tool also supports Go source code generation from OSCAL formatted catalog and profile artifacts.
 
 Documentation for the OSCAL standard can be found at https://pages.nist.gov/OSCAL.
 
