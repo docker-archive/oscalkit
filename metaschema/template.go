@@ -119,7 +119,7 @@ func packageImport(named string, metaschema Metaschema) string {
 		}
 	}
 
-	if im := metaschema.ImportedMetaschema; im != nil {
+	for _, im := range metaschema.ImportedMetaschema {
 		return im.Root + "."
 	}
 
@@ -131,7 +131,7 @@ func getImports(metaschema Metaschema) string {
 	imports.WriteString("import (\n")
 	imports.WriteString("\t\"encoding/xml\"\n")
 
-	if im := metaschema.ImportedMetaschema; im != nil {
+	for _, im := range metaschema.ImportedMetaschema {
 		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Root)))
 	}
 

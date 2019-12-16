@@ -62,7 +62,7 @@ type Metaschema struct {
 	// DefineFlag is one or more flag definitions
 	DefineFlag []DefineFlag `xml:"define-flag"`
 
-	ImportedMetaschema *Metaschema
+	ImportedMetaschema []Metaschema
 }
 
 // DefineAssembly is a definition for for an object or element that contains
