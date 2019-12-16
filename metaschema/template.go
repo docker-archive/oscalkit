@@ -132,7 +132,7 @@ func getImports(metaschema Metaschema) string {
 	imports.WriteString("\t\"encoding/xml\"\n")
 
 	for _, im := range metaschema.ImportedMetaschema {
-		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", strings.ToLower(im.Root)))
+		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", strings.ReplaceAll(strings.ToLower(im.Root), "-", "_")))
 	}
 
 	imports.WriteString(")")
