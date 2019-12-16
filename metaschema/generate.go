@@ -15,7 +15,7 @@ import (
 
 const (
 	oscalRepo         = "https://github.com/usnistgov/OSCAL.git"
-	metaschemaBaseDir = "OSCAL/schema/metaschema/%s"
+	metaschemaBaseDir = "OSCAL/src/metaschema/%s"
 )
 
 var (
@@ -38,9 +38,9 @@ func main() {
 	}
 
 	metaschemaPaths := map[string]string{
-		"catalog": "oscal-catalog-metaschema.xml",
-		"profile": "oscal-profile-metaschema.xml",
-		"ssp":     "oscal-ssp-metaschema.xml",
+		"catalog": "oscal_catalog_metaschema.xml",
+		"profile": "oscal_profile_metaschema.xml",
+		"ssp":     "oscal_ssp_metaschema.xml",
 	}
 
 	for pkg, metaschemaPath := range metaschemaPaths {
