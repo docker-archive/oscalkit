@@ -2,6 +2,7 @@ package metaschema
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"go/format"
 	"os"
@@ -63,7 +64,7 @@ func GenerateTypes(metaschema *Metaschema) error {
 
 	p, err := format.Source(buf.Bytes())
 	if err != nil {
-		return err
+		return errors.New(err.Error() + " in following file:\n" + string(buf.Bytes()))
 	}
 
 	_, err = f.Write(p)
