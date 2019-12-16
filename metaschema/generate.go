@@ -32,7 +32,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cloneCmd := exec.Command("git", "clone", oscalRepo)
+	cloneCmd := exec.Command("git", "clone", "--depth", "1", oscalRepo)
 	if err := cloneCmd.Run(); err != nil {
 		log.Fatal(err)
 	}
