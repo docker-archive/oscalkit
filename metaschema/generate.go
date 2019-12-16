@@ -76,8 +76,11 @@ func decode(r io.Reader) (*metaschema.Metaschema, error) {
 		return nil, fmt.Errorf("Error decoding metaschema: %s", err)
 	}
 
-	if meta.Import != nil && meta.Import.Href != nil && meta.Import.Href.URL != nil {
-		imf, err := os.Open(fmt.Sprintf(metaschemaBaseDir, meta.Import.Href.URL.String()))
+	for _, imported := range meta.Import {
+		if imported.Href == nil {
+			return nil, fmt.Errorf("import element in %s is missing 'href' attribute", r)
+		}
+		imf, err := os.Open(fmt.Sprintf(metaschemaBaseDir, imported.Href.URL.String()))
 		if err != nil {
 			return nil, err
 		}

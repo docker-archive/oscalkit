@@ -51,7 +51,7 @@ type Metaschema struct {
 	Remarks *Remarks `xml:"remarks,omitempty"`
 
 	// Import is a URI to an external metaschema
-	Import *Import `xml:"import,omitempty"`
+	Import []Import `xml:"import"`
 
 	// DefineAssembly is one or more assembly definitions
 	DefineAssembly []DefineAssembly `xml:"define-assembly"`
