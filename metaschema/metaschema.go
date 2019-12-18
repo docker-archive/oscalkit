@@ -289,6 +289,32 @@ func (f *Field) RequiresPointer() bool {
 	return f.Def.RequiresPointer()
 }
 
+func (f *Field) GoName() string {
+	if f.Named != "" {
+		return strcase.ToCamel(f.Named)
+	}
+	return strcase.ToCamel(f.Def.Name)
+}
+
+func (f *Field) GoMemLayout() string {
+	if f.GroupAs != nil {
+		return "[]"
+	} else if f.RequiresPointer() {
+		return "*"
+	}
+	return ""
+}
+
+func (f *Field) XmlName() string {
+	if f.GroupAs != nil {
+		return f.GroupAs.Name
+	} else if f.Named != "" {
+		return f.Named
+	} else {
+		return f.Def.Name
+	}
+}
+
 type Flag struct {
 	Name     string   `xml:"name,attr"`
 	AsType   datatype `xml:"as-type,attr"`

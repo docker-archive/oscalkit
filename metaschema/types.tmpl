@@ -26,14 +26,7 @@ type {{toCamel .Name}} struct {
   {{if .Model}}
     {{ range .Model.Field}}
       // {{ .GoComment }}
-      {{- if .Def }}
-        {{- $groupAs := .GroupAs }}
-        {{- with .Def }}
-          {{ toCamel .Name}} {{if $groupAs}}[]{{else}}{{if .RequiresPointer}}*{{end}}{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ if $groupAs}}{{ $groupAs.Name }}{{else}}{{ .Name }}{{end}},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
-        {{- end }}
-      {{- else }}
-        {{ toCamel .Named}} {{if .RequiresPointer}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
-      {{- end}}
+      {{.GoName}} {{.GoMemLayout}}{{packageImport .Named $m}}{{.GoName}} `xml:"{{ .XmlName }},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
     {{- end}}
 
     {{- range .Model.Assembly}}
@@ -50,7 +43,8 @@ type {{toCamel .Name}} struct {
 
   {{- range .Model.Choice}}
   {{- range .Field}}
-  {{toCamel .Named}} {{if .RequiresPointer}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  // {{ .GoComment }}
+  {{.GoName}} {{.GoMemLayout}}{{packageImport .Named $m}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
   {{- end}}
 
   {{- range .Assembly}}
