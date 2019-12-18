@@ -115,26 +115,16 @@ type DefineFlag struct {
 }
 
 type Model struct {
-	Assembly   []Assembly   `xml:"assembly"`
-	Assemblies []Assemblies `xml:"assemblies"`
-	Field      []Field      `xml:"field"`
-	Fields     []Fields     `xml:"fields"`
-	Choice     []Choice     `xml:"choice"`
-	Prose      *struct{}    `xml:"prose"`
-	Any        *struct{}    `xml:"any"`
+	Assembly []Assembly `xml:"assembly"`
+	Field    []Field    `xml:"field"`
+	Fields   []Fields   `xml:"fields"`
+	Choice   []Choice   `xml:"choice"`
+	Prose    *struct{}  `xml:"prose"`
+	Any      *struct{}  `xml:"any"`
 }
 
 type Assembly struct {
 	Named string `xml:"named,attr"`
-
-	Description string   `xml:"description"`
-	Remarks     *Remarks `xml:"remarks"`
-}
-
-type Assemblies struct {
-	Named   string `xml:"named,attr"`
-	GroupAs string `xml:"group-as,attr"`
-	Address string `xml:"address,attr"`
 
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
@@ -168,10 +158,9 @@ type Flag struct {
 }
 
 type Choice struct {
-	Field      []Field      `xml:"field"`
-	Fields     []Fields     `xml:"fields"`
-	Assembly   []Assembly   `xml:"assembly"`
-	Assemblies []Assemblies `xml:"assemblies"`
+	Field    []Field    `xml:"field"`
+	Fields   []Fields   `xml:"fields"`
+	Assembly []Assembly `xml:"assembly"`
 }
 
 type Import struct {
