@@ -99,6 +99,10 @@ type DefineAssembly struct {
 	Examples    []Example `xml:"example"`
 }
 
+func (da *DefineAssembly) RepresentsRootElement() bool {
+	return da.Name == "catalog" || da.Name == "profile" || da.Name == "declarations"
+}
+
 type DefineField struct {
 	Name     string `xml:"name,attr"`
 	GroupAs  string `xml:"group-as,attr"`
