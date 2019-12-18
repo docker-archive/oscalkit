@@ -17,11 +17,10 @@ type {{toCamel .Name}} struct {
   {{- end}}
 {{- range .Flags}}
   // {{ .GoComment }}
-  {{- $dt := parseDatatype .Datatype $packageName}}
   {{- if and (eq "id" .Name) (eq "profile" $packageName)}}
   Id string `xml:"param-id,attr,omitempty" json:"id,omitempty"`
   {{- else}}
-  {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+  {{toCamel .Name}} {{.GoDatatype}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
   {{- end}}
 {{- end}}
   {{if .Model}}
@@ -79,8 +78,7 @@ type {{toCamel .Name}} struct {
 type {{toCamel .Name}} struct {
   {{- range .Flags}}
   // {{ .GoComment }}
-  {{- $dt := parseDatatype .Datatype $packageName -}}
-  {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+  {{toCamel .Name}} {{.GoDatatype}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
   {{end -}}
 
   Value string `xml:",chardata" json:"value,omitempty"`

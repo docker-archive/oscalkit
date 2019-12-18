@@ -13,33 +13,12 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-const (
-	DatatypeString  Datatype = "string"
-	DatatypeIDRef   Datatype = "IDREF"
-	DatatypeNCName  Datatype = "NCName"
-	DatatypeNMToken Datatype = "NMTOKEN"
-	DatatypeID      Datatype = "ID"
-	DatatypeAnyURI  Datatype = "anyURI"
-)
-
-type Datatype string
-
-var datatypes = map[Datatype]string{
-	DatatypeString:  "string",
-	DatatypeIDRef:   "string",
-	DatatypeNCName:  "string",
-	DatatypeNMToken: "string",
-	DatatypeID:      "string",
-	DatatypeAnyURI:  "Href",
-}
-
 func GenerateTypes(metaschema *Metaschema) error {
 	t, err := template.New("types.tmpl").Funcs(template.FuncMap{
 		"toLower":         strings.ToLower,
 		"toCamel":         strcase.ToCamel,
 		"toLowerCamel":    strcase.ToLowerCamel,
 		"plural":          inflection.Plural,
-		"parseDatatype":   parseDatatype,
 		"packageImport":   packageImport,
 		"getImports":      getImports,
 		"requiresPointer": requiresPointer,
@@ -70,15 +49,6 @@ func GenerateTypes(metaschema *Metaschema) error {
 	}
 
 	return nil
-}
-
-func parseDatatype(datatype string, packageName string) string {
-	if packageName != "catalog" {
-		if dt, ok := datatypes[Datatype(datatype)]; ok && dt != "string" {
-			return fmt.Sprintf("*catalog.%s", dt)
-		}
-	}
-	return datatypes[Datatype(datatype)]
 }
 
 func packageImport(named string, metaschema Metaschema) string {

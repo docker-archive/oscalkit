@@ -188,7 +188,7 @@ func (df *DefineField) RequiresPointer() bool {
 
 type DefineFlag struct {
 	Name     string   `xml:"name,attr"`
-	Datatype string   `xml:"datatype,attr"`
+	AsType   datatype `xml:"as-type,attr"`
 	ShowDocs ShowDocs `xml:"show-docs,attr"`
 
 	FormalName  string    `xml:"formal-name"`
@@ -241,9 +241,9 @@ func (f *Field) GoComment() string {
 }
 
 type Flag struct {
-	Name     string `xml:"name,attr"`
-	Datatype string `xml:"datatype,attr"`
-	Required string `xml:"required,attr"`
+	Name     string   `xml:"name,attr"`
+	AsType   datatype `xml:"as-type,attr"`
+	Required string   `xml:"required,attr"`
 
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
@@ -257,6 +257,18 @@ func (f *Flag) GoComment() string {
 		return f.Description
 	}
 	return f.Def.Description
+}
+
+func (f *Flag) GoDatatype() (string, error) {
+	dt := f.AsType
+	if dt == "" {
+		dt = f.Def.AsType
+	}
+
+	if goDatatypeMap[dt] == "" {
+		return "", fmt.Errorf("Unknown as-type='%s' found.", dt)
+	}
+	return goDatatypeMap[dt], nil
 }
 
 type Choice struct {
@@ -400,4 +412,25 @@ func (sd ShowDocs) UnmarshalXMLAttr(attr xml.Attr) error {
 	}
 
 	return fmt.Errorf("Show docs option \"%s\" is not a valid option", attr.Value)
+}
+
+type datatype string
+
+const (
+	datatypeString  datatype = "string"
+	datatypeIDRef   datatype = "IDREF"
+	datatypeNCName  datatype = "NCName"
+	datatypeNMToken datatype = "NMTOKEN"
+	datatypeID      datatype = "ID"
+	datatypeAnyURI  datatype = "anyURI"
+	datatypeURIRef  datatype = "uri-reference"
+)
+
+var goDatatypeMap = map[datatype]string{
+	datatypeString:  "string",
+	datatypeIDRef:   "string",
+	datatypeNCName:  "string",
+	datatypeNMToken: "string",
+	datatypeID:      "string",
+	datatypeURIRef:  "string",
 }
