@@ -65,6 +65,54 @@ type Metaschema struct {
 	ImportedMetaschema []Metaschema
 }
 
+func (metaschema *Metaschema) LinkDefinitions() error {
+	var err error
+	for _, da := range metaschema.DefineAssembly {
+		for i, f := range da.Flags {
+			if f.Ref != "" {
+				f.Def, err = metaschema.GetDefineFlag(f.Ref)
+				if err != nil {
+					return err
+				}
+				da.Flags[i] = f
+			}
+
+		}
+		for i, a := range da.Model.Assembly {
+			if a.Ref != "" {
+				a.Def, err = metaschema.GetDefineAssembly(a.Ref)
+				if err != nil {
+					return err
+				}
+				da.Model.Assembly[i] = a
+			}
+		}
+		for i, f := range da.Model.Field {
+			if f.Ref != "" {
+				f.Def, err = metaschema.GetDefineField(f.Ref)
+				if err != nil {
+					return err
+				}
+				da.Model.Field[i] = f
+
+			}
+		}
+	}
+
+	for _, df := range metaschema.DefineField {
+		for i, f := range df.Flags {
+			if f.Ref != "" {
+				f.Def, err = metaschema.GetDefineFlag(f.Ref)
+				if err != nil {
+					return err
+				}
+				df.Flags[i] = f
+			}
+		}
+	}
+	return nil
+}
+
 func (metaschema *Metaschema) GetDefineField(name string) (*DefineField, error) {
 	for _, v := range metaschema.DefineField {
 		if name == v.Name {
@@ -164,6 +212,7 @@ type Assembly struct {
 	Remarks     *Remarks `xml:"remarks"`
 	Ref         string   `xml:"ref,attr"`
 	GroupAs     *GroupAs `xml:"group-as"`
+	Def         *DefineAssembly
 }
 
 type Field struct {
@@ -174,6 +223,7 @@ type Field struct {
 	Remarks     *Remarks `xml:"remarks"`
 	Ref         string   `xml:"ref,attr"`
 	GroupAs     *GroupAs `xml:"group-as"`
+	Def         *DefineField
 }
 
 type Flag struct {
@@ -184,6 +234,8 @@ type Flag struct {
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
 	Values      []Value  `xml:"value"`
+	Ref         string   `xml:"ref,attr"`
+	Def         *DefineFlag
 }
 
 type Choice struct {

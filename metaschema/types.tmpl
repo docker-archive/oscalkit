@@ -32,9 +32,9 @@ type {{toCamel .Name}} struct {
 {{- end}}
   {{if .Model}}
     {{ range .Model.Field}}
-      {{- if .Ref }}
+      {{- if .Def }}
         {{- $groupAs := .GroupAs }}
-        {{- with $m.GetDefineField .Ref }}
+        {{- with .Def }}
           {{ toCamel .Name}} {{if $groupAs}}[]{{else}}{{if .RequiresPointer}}*{{end}}{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ if $groupAs}}{{ $groupAs.Name }}{{else}}{{ .Name }}{{end}},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
         {{- end }}
       {{- else }}
@@ -43,9 +43,9 @@ type {{toCamel .Name}} struct {
     {{- end}}
 
     {{- range .Model.Assembly}}
-      {{- if .Ref}}
+      {{- if .Def}}
         {{- $groupAs := .GroupAs }}
-        {{- with $m.GetDefineAssembly .Ref }}
+        {{- with .Def }}
           {{ toCamel .Name}} {{if $groupAs}}[]{{else}}*{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ if $groupAs }}{{$groupAs.Name}}{{else}}{{ .Name }}{{end}},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
         {{- end}}
       {{- else }}
