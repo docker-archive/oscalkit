@@ -5,7 +5,6 @@ require (
 	github.com/iancoleman/strcase v0.0.0-20180726023541-3605ed457bf7
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
-	github.com/mitchellh/go-wordwrap v1.0.0
 	github.com/santhosh-tekuri/jsonschema v0.0.0-20181206154329-5d49c9dfc783
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.3.0
