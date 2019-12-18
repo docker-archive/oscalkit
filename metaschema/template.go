@@ -42,7 +42,6 @@ func GenerateTypes(metaschema *Metaschema) error {
 		"plural":          inflection.Plural,
 		"wrapString":      wrapString,
 		"parseDatatype":   parseDatatype,
-		"commentFlag":     commentFlag,
 		"packageImport":   packageImport,
 		"getImports":      getImports,
 		"requiresPointer": requiresPointer,
@@ -88,14 +87,6 @@ func parseDatatype(datatype string, packageName string) string {
 		}
 	}
 	return datatypes[Datatype(datatype)]
-}
-
-func commentFlag(flagName string, metaschema Metaschema) []string {
-	df, err := metaschema.GetDefineFlag(flagName)
-	if err == nil {
-		return wrapString(df.Description)
-	}
-	return nil
 }
 
 func packageImport(named string, metaschema Metaschema) string {

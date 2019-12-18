@@ -238,6 +238,13 @@ type Flag struct {
 	Def         *DefineFlag
 }
 
+func (f *Flag) GoComment() string {
+	if f.Description != "" {
+		return f.Description
+	}
+	return f.Def.Description
+}
+
 type Choice struct {
 	Field    []Field    `xml:"field"`
 	Assembly []Assembly `xml:"assembly"`

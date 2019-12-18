@@ -19,10 +19,7 @@ type {{toCamel .Name}} struct {
   Title string `xml:"title,omitempty" json:"title,omitempty"`
   {{- end}}
 {{- range .Flags}}
-  {{- $cf := commentFlag .Name $m}}
-  {{- range $cf}}
-  // {{ . }}
-  {{- end}}
+  // {{ .GoComment }}
   {{- $dt := parseDatatype .Datatype $packageName}}
   {{- if and (eq "id" .Name) (eq "profile" $packageName)}}
   Id string `xml:"param-id,attr,omitempty" json:"id,omitempty"`
@@ -85,10 +82,7 @@ type {{toCamel .Name}} struct {
 {{- end}}
 type {{toCamel .Name}} struct {
   {{- range .Flags}}
-  {{- $cf := commentFlag .Name $m -}}
-  {{range $cf}}
-  // {{ . }}
-  {{end -}}
+  // {{ .GoComment }}
   {{- $dt := parseDatatype .Datatype $packageName -}}
   {{toCamel .Name}} {{if eq "" $dt}}string{{else}}{{$dt}}{{end}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
   {{end -}}
