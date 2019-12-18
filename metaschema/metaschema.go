@@ -125,6 +125,10 @@ type DefineField struct {
 	As          As        `xml:"as"`
 }
 
+func (df *DefineField) RequiresPointer() bool {
+	return len(df.Flags) > 0
+}
+
 type DefineFlag struct {
 	Name     string   `xml:"name,attr"`
 	Datatype string   `xml:"datatype,attr"`

@@ -145,7 +145,7 @@ func getImports(metaschema Metaschema) string {
 func requiresPointer(fieldName string, metaschema Metaschema) bool {
 	df, err := metaschema.GetDefineField(fieldName)
 	if err == nil {
-		return len(df.Flags) > 0
+		return df.RequiresPointer()
 	}
 	return false
 }
