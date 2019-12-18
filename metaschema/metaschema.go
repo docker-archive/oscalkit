@@ -137,6 +137,7 @@ type Field struct {
 
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
+	Ref         string   `xml:"ref,attr"`
 }
 
 type Fields struct {
