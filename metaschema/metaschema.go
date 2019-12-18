@@ -165,6 +165,7 @@ type Field struct {
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
 	Ref         string   `xml:"ref,attr"`
+	GroupAs     *GroupAs `xml:"group-as"`
 }
 
 type Fields struct {

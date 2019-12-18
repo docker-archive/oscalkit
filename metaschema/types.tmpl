@@ -33,8 +33,9 @@ type {{toCamel .Name}} struct {
   {{if .Model}}
     {{ range .Model.Field}}
       {{- if .Ref }}
+        {{- $groupAs := .GroupAs }}
         {{- with $m.GetDefineField .Ref }}
-          {{ toCamel .Name}} {{if .RequiresPointer}}*{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ .Name }},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+          {{ toCamel .Name}} {{if $groupAs}}[]{{else}}{{if .RequiresPointer}}*{{end}}{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ if $groupAs}}{{ $groupAs.Name }}{{else}}{{ .Name }}{{end}},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
         {{- end }}
       {{- else }}
         {{ toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
