@@ -32,7 +32,7 @@ type {{toCamel .Name}} struct {
           {{ toCamel .Name}} {{if $groupAs}}[]{{else}}{{if .RequiresPointer}}*{{end}}{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ if $groupAs}}{{ $groupAs.Name }}{{else}}{{ .Name }}{{end}},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
         {{- end }}
       {{- else }}
-        {{ toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+        {{ toCamel .Named}} {{if .RequiresPointer}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
       {{- end}}
     {{- end}}
 
@@ -50,7 +50,7 @@ type {{toCamel .Name}} struct {
 
   {{- range .Model.Choice}}
   {{- range .Field}}
-  {{toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+  {{toCamel .Named}} {{if .RequiresPointer}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
   {{- end}}
 
   {{- range .Assembly}}

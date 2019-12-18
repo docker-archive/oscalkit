@@ -98,6 +98,28 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 
 			}
 		}
+		for _, c := range da.Model.Choice {
+			for i, a := range c.Assembly {
+				if a.Ref != "" {
+					a.Def, err = metaschema.GetDefineAssembly(a.Ref)
+					if err != nil {
+						return err
+					}
+					c.Assembly[i] = a
+				}
+			}
+			for i, f := range c.Field {
+				if f.Ref != "" {
+					f.Def, err = metaschema.GetDefineField(f.Ref)
+					if err != nil {
+						return err
+					}
+					c.Field[i] = f
+
+				}
+			}
+
+		}
 	}
 
 	for _, df := range metaschema.DefineField {
@@ -257,6 +279,14 @@ func (f *Field) GoComment() string {
 		return f.Description
 	}
 	return f.Def.Description
+}
+
+func (f *Field) RequiresPointer() bool {
+	if f.Def == nil {
+		fmt.Println(f.Ref)
+		panic(f)
+	}
+	return f.Def.RequiresPointer()
 }
 
 type Flag struct {
