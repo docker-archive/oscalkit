@@ -45,9 +45,15 @@ type {{toCamel .Name}} struct {
   {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{plural .Named}},omitempty"`
   {{- end}}
 
-  {{- range .Model.Assembly}}
-  {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
-  {{- end}}
+    {{- range .Model.Assembly}}
+      {{- if .Ref}}
+        {{- with $m.GetDefineAssembly .Ref }}
+          {{ toCamel .Name}} *{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ .Name }},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+        {{- end}}
+      {{- else }}
+        {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
+      {{- end}}
+    {{- end}}
 
   {{- range .Model.Choice}}
   {{- range .Field}}

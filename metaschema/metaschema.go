@@ -74,6 +74,15 @@ func (metaschema *Metaschema) GetDefineField(name string) (*DefineField, error) 
 	return nil, fmt.Errorf("Could not find define-field element with name='%s'.", name)
 }
 
+func (metaschema *Metaschema) GetDefineAssembly(name string) (*DefineAssembly, error) {
+	for _, v := range metaschema.DefineAssembly {
+		if name == v.Name {
+			return &v, nil
+		}
+	}
+	return nil, fmt.Errorf("Could not find define-assembly element with name='%s'.", name)
+}
+
 // DefineAssembly is a definition for for an object or element that contains
 // structured content
 type DefineAssembly struct {
