@@ -42,10 +42,6 @@ type {{toCamel .Name}} struct {
       {{- end}}
     {{- end}}
 
-  {{- range .Model.Fields}}
-  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{plural .Named}},omitempty"`
-  {{- end}}
-
     {{- range .Model.Assembly}}
       {{- if .Ref}}
         {{- $groupAs := .GroupAs }}
@@ -60,10 +56,6 @@ type {{toCamel .Name}} struct {
   {{- range .Model.Choice}}
   {{- range .Field}}
   {{toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
-  {{- end}}
-
-  {{- range .Fields}}
-  {{toCamel .GroupAs}} []{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{plural .Named}},omitempty"`
   {{- end}}
 
   {{- range .Assembly}}
