@@ -93,7 +93,7 @@ func decode(r io.Reader) (*metaschema.Metaschema, error) {
 
 		meta.ImportedMetaschema = append(meta.ImportedMetaschema, *importedMeta)
 	}
-	meta.LinkDefinitions()
+	err := meta.LinkDefinitions()
 
-	return &meta, nil
+	return &meta, err
 }
