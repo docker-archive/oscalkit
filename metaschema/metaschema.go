@@ -120,6 +120,12 @@ func (metaschema *Metaschema) GetDefineField(name string) (*DefineField, error) 
 			return &v, nil
 		}
 	}
+	for _, m := range metaschema.ImportedMetaschema {
+		f, err := m.GetDefineField(name)
+		if err == nil {
+			return f, err
+		}
+	}
 	return nil, fmt.Errorf("Could not find define-field element with name='%s'.", name)
 }
 
@@ -129,13 +135,25 @@ func (metaschema *Metaschema) GetDefineAssembly(name string) (*DefineAssembly, e
 			return &v, nil
 		}
 	}
+	for _, m := range metaschema.ImportedMetaschema {
+		a, err := m.GetDefineAssembly(name)
+		if err == nil {
+			return a, err
+		}
+	}
 	return nil, fmt.Errorf("Could not find define-assembly element with name='%s'.", name)
 }
 
-func (Metaschema *Metaschema) GetDefineFlag(name string) (*DefineFlag, error) {
-	for _, v := range Metaschema.DefineFlag {
+func (metaschema *Metaschema) GetDefineFlag(name string) (*DefineFlag, error) {
+	for _, v := range metaschema.DefineFlag {
 		if name == v.Name {
 			return &v, nil
+		}
+	}
+	for _, m := range metaschema.ImportedMetaschema {
+		f, err := m.GetDefineFlag(name)
+		if err == nil {
+			return f, err
 		}
 	}
 	return nil, fmt.Errorf("Could not find define-flag element with name='%s'.", name)
