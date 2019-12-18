@@ -83,6 +83,15 @@ func (metaschema *Metaschema) GetDefineAssembly(name string) (*DefineAssembly, e
 	return nil, fmt.Errorf("Could not find define-assembly element with name='%s'.", name)
 }
 
+func (Metaschema *Metaschema) ContainsRootElement() bool {
+	for _, v := range Metaschema.DefineAssembly {
+		if v.RepresentsRootElement() {
+			return true
+		}
+	}
+	return false
+}
+
 // DefineAssembly is a definition for for an object or element that contains
 // structured content
 type DefineAssembly struct {
