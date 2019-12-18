@@ -19,7 +19,7 @@ type {{toCamel .Name}} struct {
   Title string `xml:"title,omitempty" json:"title,omitempty"`
   {{- end}}
 {{- range .Flags}}
-  {{- $cf := commentFlag .Name $m.DefineFlag}}
+  {{- $cf := commentFlag .Name $m}}
   {{- range $cf}}
   // {{ . }}
   {{- end}}
@@ -85,7 +85,7 @@ type {{toCamel .Name}} struct {
 {{- end}}
 type {{toCamel .Name}} struct {
   {{- range .Flags}}
-  {{- $cf := commentFlag .Name $m.DefineFlag -}}
+  {{- $cf := commentFlag .Name $m -}}
   {{range $cf}}
   // {{ . }}
   {{end -}}

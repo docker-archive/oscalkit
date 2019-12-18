@@ -90,8 +90,8 @@ func parseDatatype(datatype string, packageName string) string {
 	return datatypes[Datatype(datatype)]
 }
 
-func commentFlag(flagName string, flagDefs []DefineFlag) []string {
-	for _, df := range flagDefs {
+func commentFlag(flagName string, metaschema Metaschema) []string {
+	for _, df := range metaschema.DefineFlag {
 		if flagName == df.Name {
 			return wrapString(df.Description)
 		}
