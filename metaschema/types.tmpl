@@ -34,7 +34,7 @@ type {{toCamel .Name}} struct {
     {{ range .Model.Field}}
       {{- if .Ref }}
         {{- with $m.GetDefineField .Ref }}
-          {{ toCamel .Name}} {{if requiresPointer .Name $m}}*{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ .Name }},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+          {{ toCamel .Name}} {{if .RequiresPointer}}*{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ .Name }},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
         {{- end }}
       {{- else }}
         {{ toCamel .Named}} {{if requiresPointer .Named $m}}*{{end}}{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
