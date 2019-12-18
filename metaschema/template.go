@@ -11,7 +11,6 @@ import (
 
 	"github.com/iancoleman/strcase"
 	"github.com/jinzhu/inflection"
-	wordwrap "github.com/mitchellh/go-wordwrap"
 )
 
 const (
@@ -40,7 +39,6 @@ func GenerateTypes(metaschema *Metaschema) error {
 		"toCamel":         strcase.ToCamel,
 		"toLowerCamel":    strcase.ToLowerCamel,
 		"plural":          inflection.Plural,
-		"wrapString":      wrapString,
 		"parseDatatype":   parseDatatype,
 		"packageImport":   packageImport,
 		"getImports":      getImports,
@@ -72,12 +70,6 @@ func GenerateTypes(metaschema *Metaschema) error {
 	}
 
 	return nil
-}
-
-func wrapString(text string) []string {
-	text = strings.Join(strings.Fields(text), " ")
-
-	return strings.Split(wordwrap.WrapString(text, 80), "\n")
 }
 
 func parseDatatype(datatype string, packageName string) string {

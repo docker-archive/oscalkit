@@ -6,10 +6,7 @@ package {{ $packageName }}
 
 {{$m := . -}}
 {{range .DefineAssembly}}
-{{$x := wrapString .Description -}}
-{{- range $x -}}
-// {{ . }}
-{{end -}}
+  // {{ .Description }}
 type {{toCamel .Name}} struct {
   {{if .RepresentsRootElement }}
   XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 {{ .Name }}" json:"-"`
@@ -76,12 +73,9 @@ type {{toCamel .Name}} struct {
 {{end}}
 
 {{range .DefineField}}
+  // {{ .Description }}
 {{$l := len .Flags -}}
 {{if gt $l 0 -}}
-{{$x := wrapString .Description -}}
-{{- range $x -}}
-// {{ . }}
-{{- end}}
 type {{toCamel .Name}} struct {
   {{- range .Flags}}
   // {{ .GoComment }}
@@ -92,10 +86,6 @@ type {{toCamel .Name}} struct {
   Value string `xml:",chardata" json:"value,omitempty"`
 }
 {{- else}}
-{{$x := wrapString .Description -}}
-{{- range $x -}}
-// {{ . }}
-{{end -}}
 type {{toCamel .Name}} string
 {{end -}}
 {{end}}
