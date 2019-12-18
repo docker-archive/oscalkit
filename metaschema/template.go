@@ -91,12 +91,10 @@ func parseDatatype(datatype string, packageName string) string {
 }
 
 func commentFlag(flagName string, metaschema Metaschema) []string {
-	for _, df := range metaschema.DefineFlag {
-		if flagName == df.Name {
-			return wrapString(df.Description)
-		}
+	df, err := metaschema.GetDefineFlag(flagName)
+	if err == nil {
+		return wrapString(df.Description)
 	}
-
 	return nil
 }
 

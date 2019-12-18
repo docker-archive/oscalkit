@@ -83,6 +83,15 @@ func (metaschema *Metaschema) GetDefineAssembly(name string) (*DefineAssembly, e
 	return nil, fmt.Errorf("Could not find define-assembly element with name='%s'.", name)
 }
 
+func (Metaschema *Metaschema) GetDefineFlag(name string) (*DefineFlag, error) {
+	for _, v := range Metaschema.DefineFlag {
+		if name == v.Name {
+			return &v, nil
+		}
+	}
+	return nil, fmt.Errorf("Could not find define-flag element with name='%s'.", name)
+}
+
 func (Metaschema *Metaschema) ContainsRootElement() bool {
 	for _, v := range Metaschema.DefineAssembly {
 		if v.RepresentsRootElement() {
