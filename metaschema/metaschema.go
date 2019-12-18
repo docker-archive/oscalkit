@@ -263,6 +263,30 @@ func (a *Assembly) GoComment() string {
 	return a.Def.Description
 }
 
+func (a *Assembly) GoName() string {
+	if a.Named != "" {
+		return strcase.ToCamel(a.Named)
+	}
+	return strcase.ToCamel(a.Def.Name)
+}
+
+func (a *Assembly) GoMemLayout() string {
+	if a.GroupAs != nil {
+		return "[]"
+	}
+	return "*"
+}
+
+func (a *Assembly) XmlName() string {
+	if a.GroupAs != nil {
+		return a.GroupAs.Name
+	} else if a.Named != "" {
+		return a.Named
+	} else {
+		return a.Def.Name
+	}
+}
+
 type Field struct {
 	Named    string `xml:"named,attr"`
 	Required string `xml:"required,attr"`

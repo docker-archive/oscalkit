@@ -19,7 +19,7 @@ type VALIDATIONRoot struct {
 	// A name/value pair with optional explanatory remarks.
 	Annotation *Annotation `xml:"annotation,omitempty" json:"annotation,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
-	ResponsibleParty []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParty,omitempty"`
+	ResponsibleParty []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParties,omitempty"`
 }
 
 // Provides information about the publication and availability of the containing document.
@@ -44,20 +44,20 @@ type Metadata struct {
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// Defining a role to be assigned to a party
-	Role []Role `xml:"roles,omitempty" json:"role,omitempty"`
+	Role []Role `xml:"roles,omitempty" json:"roles,omitempty"`
 	// A responsible entity, either singular (an organization or person) or collective (multiple persons)
-	Party []Party `xml:"parties,omitempty" json:"party,omitempty"`
+	Party []Party `xml:"parties,omitempty" json:"parties,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
-	ResponsibleParty []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParty,omitempty"`
+	ResponsibleParty []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParties,omitempty"`
 }
 
 // A collection of citations and resource references.
 type BackMatter struct {
 
 	// A citation to resources, either external or internal (by means of internal cross-reference).
-	Citation []Citation `xml:"citations,omitempty" json:"citation,omitempty"`
+	Citation []Citation `xml:"citations,omitempty" json:"citations,omitempty"`
 	// A resource associated with the present document.
-	Resource []Resource `xml:"resources,omitempty" json:"resource,omitempty"`
+	Resource []Resource `xml:"resources,omitempty" json:"resources,omitempty"`
 }
 
 // A name/value pair with optional explanatory remarks.
@@ -89,11 +89,11 @@ type Party struct {
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A person, with contact information
-	Person []Person `xml:"persons,omitempty" json:"person,omitempty"`
+	Person []Person `xml:"persons,omitempty" json:"persons,omitempty"`
 	// An organization or legal entity (not a person), with contact information
 	Org *Org `xml:"org,omitempty" json:"org,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotation,omitempty"`
+	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A person, with contact information
@@ -122,9 +122,9 @@ type Person struct {
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A postal address.
-	Address []Address `xml:"addresses,omitempty" json:"address,omitempty"`
+	Address []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotation,omitempty"`
+	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // An organization or legal entity (not a person), with contact information
@@ -149,9 +149,9 @@ type Org struct {
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A postal address.
-	Address []Address `xml:"addresses,omitempty" json:"address,omitempty"`
+	Address []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotation,omitempty"`
+	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A pointer to an external copy of a document with optional hash for verification
@@ -199,7 +199,7 @@ type Resource struct {
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A pointer to an external copy of a document with optional hash for verification
-	Rlink []Rlink `xml:"rlinks,omitempty" json:"rlink,omitempty"`
+	Rlink []Rlink `xml:"rlinks,omitempty" json:"rlinks,omitempty"`
 }
 
 // Defining a role to be assigned to a party
@@ -221,7 +221,7 @@ type Role struct {
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotation,omitempty"`
+	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
@@ -239,7 +239,7 @@ type ResponsibleParty struct {
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotation,omitempty"`
+	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A citation to resources, either external or internal (by means of internal cross-reference).
