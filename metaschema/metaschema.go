@@ -215,6 +215,13 @@ type Assembly struct {
 	Def         *DefineAssembly
 }
 
+func (a *Assembly) GoComment() string {
+	if a.Description != "" {
+		return a.Description
+	}
+	return a.Def.Description
+}
+
 type Field struct {
 	Named    string `xml:"named,attr"`
 	Required string `xml:"required,attr"`
@@ -224,6 +231,13 @@ type Field struct {
 	Ref         string   `xml:"ref,attr"`
 	GroupAs     *GroupAs `xml:"group-as"`
 	Def         *DefineField
+}
+
+func (f *Field) GoComment() string {
+	if f.Description != "" {
+		return f.Description
+	}
+	return f.Def.Description
 }
 
 type Flag struct {

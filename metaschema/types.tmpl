@@ -29,6 +29,7 @@ type {{toCamel .Name}} struct {
 {{- end}}
   {{if .Model}}
     {{ range .Model.Field}}
+      // {{ .GoComment }}
       {{- if .Def }}
         {{- $groupAs := .GroupAs }}
         {{- with .Def }}
@@ -40,6 +41,7 @@ type {{toCamel .Name}} struct {
     {{- end}}
 
     {{- range .Model.Assembly}}
+      // {{ .GoComment }}
       {{- if .Def}}
         {{- $groupAs := .GroupAs }}
         {{- with .Def }}
