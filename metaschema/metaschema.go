@@ -138,6 +138,7 @@ type Assembly struct {
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
 	Ref         string   `xml:"ref,attr"`
+	GroupAs     *GroupAs `xml:"group-as"`
 }
 
 type Field struct {
@@ -171,6 +172,10 @@ type Choice struct {
 	Field    []Field    `xml:"field"`
 	Fields   []Fields   `xml:"fields"`
 	Assembly []Assembly `xml:"assembly"`
+}
+
+type GroupAs struct {
+	Name string `xml:"name,attr"`
 }
 
 type Import struct {

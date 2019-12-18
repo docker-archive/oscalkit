@@ -47,8 +47,9 @@ type {{toCamel .Name}} struct {
 
     {{- range .Model.Assembly}}
       {{- if .Ref}}
+        {{- $groupAs := .GroupAs }}
         {{- with $m.GetDefineAssembly .Ref }}
-          {{ toCamel .Name}} *{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ .Name }},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+          {{ toCamel .Name}} {{if $groupAs}}[]{{else}}*{{end}}{{packageImport .Name $m}}{{toCamel .Name}} `xml:"{{ if $groupAs }}{{$groupAs.Name}}{{else}}{{ .Name }}{{end}},omitempty" json:"{{toLowerCamel .Name}},omitempty"`
         {{- end}}
       {{- else }}
         {{toCamel .Named}} *{{packageImport .Named $m}}{{toCamel .Named}} `xml:"{{ .Named }},omitempty" json:"{{toLowerCamel .Named}},omitempty"`
