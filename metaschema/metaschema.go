@@ -3,6 +3,7 @@ package metaschema
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/iancoleman/strcase"
 	"net/url"
 )
 
@@ -269,6 +270,13 @@ func (f *Flag) GoDatatype() (string, error) {
 		return "", fmt.Errorf("Unknown as-type='%s' found.", dt)
 	}
 	return goDatatypeMap[dt], nil
+}
+
+func (f *Flag) GoName() string {
+	if f.Name != "" {
+		return strcase.ToCamel(f.Name)
+	}
+	return strcase.ToCamel(f.Def.Name)
 }
 
 type Choice struct {

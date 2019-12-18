@@ -20,7 +20,7 @@ type {{toCamel .Name}} struct {
   {{- if and (eq "id" .Name) (eq "profile" $packageName)}}
   Id string `xml:"param-id,attr,omitempty" json:"id,omitempty"`
   {{- else}}
-  {{toCamel .Name}} {{.GoDatatype}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+  {{.GoName}} {{.GoDatatype}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
   {{- end}}
 {{- end}}
   {{if .Model}}
@@ -78,7 +78,7 @@ type {{toCamel .Name}} struct {
 type {{toCamel .Name}} struct {
   {{- range .Flags}}
   // {{ .GoComment }}
-  {{toCamel .Name}} {{.GoDatatype}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
+  {{.GoName}} {{.GoDatatype}} `xml:"{{ .Name }},attr,omitempty" json:"{{toLowerCamel .Name}},omitempty"`
   {{end -}}
 
   Value string `xml:",chardata" json:"value,omitempty"`
