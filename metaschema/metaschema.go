@@ -76,9 +76,9 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 				if err != nil {
 					return err
 				}
+				f.Metaschema = metaschema
 				da.Flags[i] = f
 			}
-
 		}
 		for i, a := range da.Model.Assembly {
 			if a.Ref != "" {
@@ -86,6 +86,7 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 				if err != nil {
 					return err
 				}
+				a.Metaschema = metaschema
 				da.Model.Assembly[i] = a
 			}
 		}
@@ -95,8 +96,8 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 				if err != nil {
 					return err
 				}
+				f.Metaschema = metaschema
 				da.Model.Field[i] = f
-
 			}
 		}
 		for _, c := range da.Model.Choice {
@@ -106,6 +107,7 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 					if err != nil {
 						return err
 					}
+					a.Metaschema = metaschema
 					c.Assembly[i] = a
 				}
 			}
@@ -115,8 +117,8 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 					if err != nil {
 						return err
 					}
+					f.Metaschema = metaschema
 					c.Field[i] = f
-
 				}
 			}
 
@@ -140,6 +142,9 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 func (metaschema *Metaschema) GetDefineField(name string) (*DefineField, error) {
 	for _, v := range metaschema.DefineField {
 		if name == v.Name {
+			if v.Metaschema == nil {
+				v.Metaschema = metaschema
+			}
 			return &v, nil
 		}
 	}
@@ -155,6 +160,9 @@ func (metaschema *Metaschema) GetDefineField(name string) (*DefineField, error) 
 func (metaschema *Metaschema) GetDefineAssembly(name string) (*DefineAssembly, error) {
 	for _, v := range metaschema.DefineAssembly {
 		if name == v.Name {
+			if v.Metaschema == nil {
+				v.Metaschema = metaschema
+			}
 			return &v, nil
 		}
 	}
@@ -170,6 +178,9 @@ func (metaschema *Metaschema) GetDefineAssembly(name string) (*DefineAssembly, e
 func (metaschema *Metaschema) GetDefineFlag(name string) (*DefineFlag, error) {
 	for _, v := range metaschema.DefineFlag {
 		if name == v.Name {
+			if v.Metaschema == nil {
+				v.Metaschema = metaschema
+			}
 			return &v, nil
 		}
 	}
@@ -209,6 +220,7 @@ type DefineAssembly struct {
 	Remarks     *Remarks  `xml:"remarks"`
 	Model       *Model    `xml:"model"`
 	Examples    []Example `xml:"example"`
+	Metaschema  *Metaschema
 }
 
 func (da *DefineAssembly) RepresentsRootElement() bool {
@@ -226,6 +238,7 @@ type DefineField struct {
 	Remarks     *Remarks  `xml:"remarks"`
 	Examples    []Example `xml:"example"`
 	As          As        `xml:"as"`
+	Metaschema  *Metaschema
 }
 
 func (df *DefineField) RequiresPointer() bool {
@@ -241,6 +254,7 @@ type DefineFlag struct {
 	Description string    `xml:"description"`
 	Remarks     *Remarks  `xml:"remarks"`
 	Examples    []Example `xml:"example"`
+	Metaschema  *Metaschema
 }
 
 type Model struct {
@@ -259,6 +273,7 @@ type Assembly struct {
 	Ref         string   `xml:"ref,attr"`
 	GroupAs     *GroupAs `xml:"group-as"`
 	Def         *DefineAssembly
+	Metaschema  *Metaschema
 }
 
 func (a *Assembly) GoComment() string {
@@ -292,6 +307,16 @@ func (a *Assembly) XmlName() string {
 	}
 }
 
+func (a *Assembly) GoPackageName() string {
+	if a.Ref == "" {
+		return ""
+	} else if a.Def.Metaschema == a.Metaschema {
+		return ""
+	} else {
+		return a.Def.Metaschema.GoPackageName() + "."
+	}
+}
+
 type Field struct {
 	Named    string `xml:"named,attr"`
 	Required string `xml:"required,attr"`
@@ -301,6 +326,7 @@ type Field struct {
 	Ref         string   `xml:"ref,attr"`
 	GroupAs     *GroupAs `xml:"group-as"`
 	Def         *DefineField
+	Metaschema  *Metaschema
 }
 
 func (f *Field) GoComment() string {
@@ -323,6 +349,16 @@ func (f *Field) GoName() string {
 		return strcase.ToCamel(f.Named)
 	}
 	return strcase.ToCamel(f.Def.Name)
+}
+
+func (f *Field) GoPackageName() string {
+	if f.Ref == "" {
+		return ""
+	} else if f.Def.Metaschema == f.Metaschema {
+		return ""
+	} else {
+		return f.Def.Metaschema.GoPackageName() + "."
+	}
 }
 
 func (f *Field) GoMemLayout() string {
@@ -354,6 +390,7 @@ type Flag struct {
 	Values      []Value  `xml:"value"`
 	Ref         string   `xml:"ref,attr"`
 	Def         *DefineFlag
+	Metaschema  *Metaschema
 }
 
 func (f *Flag) GoComment() string {

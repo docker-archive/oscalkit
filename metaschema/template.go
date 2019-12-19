@@ -15,11 +15,10 @@ import (
 
 func GenerateTypes(metaschema *Metaschema) error {
 	t, err := template.New("types.tmpl").Funcs(template.FuncMap{
-		"toCamel":       strcase.ToCamel,
-		"toLowerCamel":  strcase.ToLowerCamel,
-		"plural":        inflection.Plural,
-		"packageImport": packageImport,
-		"getImports":    getImports,
+		"toCamel":      strcase.ToCamel,
+		"toLowerCamel": strcase.ToLowerCamel,
+		"plural":       inflection.Plural,
+		"getImports":   getImports,
 	}).ParseFiles("types.tmpl")
 	if err != nil {
 		return err
@@ -47,32 +46,6 @@ func GenerateTypes(metaschema *Metaschema) error {
 	}
 
 	return nil
-}
-
-func packageImport(named string, metaschema Metaschema) string {
-	for _, df := range metaschema.DefineFlag {
-		if df.Name == named {
-			return ""
-		}
-	}
-
-	for _, da := range metaschema.DefineAssembly {
-		if da.Name == named {
-			return ""
-		}
-	}
-
-	for _, df := range metaschema.DefineField {
-		if df.Name == named {
-			return ""
-		}
-	}
-
-	for _, im := range metaschema.ImportedMetaschema {
-		return im.Root + "."
-	}
-
-	return ""
 }
 
 func getImports(metaschema Metaschema) string {
