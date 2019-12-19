@@ -18,11 +18,11 @@ type NominalCatalog struct {
 type Param struct {
 
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Indicating the type or classification of the containing object
-	Class string `xml:",attr,omitempty" json:",omitempty"`
+	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 	// Another parameter invoking this one
-	DependsOn string `xml:",attr,omitempty" json:",omitempty"`
+	DependsOn string `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
 
 	// A short name for the parameter.
 	Label Label `xml:"label,omitempty" json:"label,omitempty"`
@@ -51,7 +51,7 @@ type Guideline struct {
 type Select struct {
 
 	// When selecting, a requirement such as one or more
-	HowMany string `xml:",attr,omitempty" json:",omitempty"`
+	HowMany string `xml:"how-many,attr,omitempty" json:"howMany,omitempty"`
 
 	// A value selection among several such options
 	Choice []Choice `xml:"alternatives,omitempty" json:"alternatives,omitempty"`
@@ -61,13 +61,13 @@ type Select struct {
 type Part struct {
 
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// Identifying the purpose and intended use of the property, part or other object.
-	Name string `xml:",attr,omitempty" json:",omitempty"`
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 	// A namespace qualifying the name.
-	Ns string `xml:",attr,omitempty" json:",omitempty"`
+	Ns string `xml:"ns,attr,omitempty" json:"ns,omitempty"`
 	// Indicating the type or classification of the containing object
-	Class string `xml:",attr,omitempty" json:",omitempty"`
+	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 
 	// A title for display and navigation
 	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
@@ -88,14 +88,14 @@ type Label string
 // Indicates and explains the purpose and use of a parameter
 type Usage struct {
 	// Unique identifier of the containing object
-	Id    string `xml:",attr,omitempty" json:",omitempty"`
+	Id    string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 
 // A formal or informal expression of a constraint or test
 type Constraint struct {
 	// A formal (executable) expression of a constraint
-	Test  string `xml:",attr,omitempty" json:",omitempty"`
+	Test  string `xml:"test,attr,omitempty" json:"test,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 

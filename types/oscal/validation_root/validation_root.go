@@ -64,11 +64,11 @@ type BackMatter struct {
 type Annotation struct {
 
 	// Identifying the purpose and intended use of the property, part or other object.
-	Name string `xml:",attr,omitempty" json:",omitempty"`
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 	// A namespace qualifying the name.
-	Ns string `xml:",attr,omitempty" json:",omitempty"`
+	Ns string `xml:"ns,attr,omitempty" json:"ns,omitempty"`
 	// Indicates the value of the characteristic.
 	Value string `xml:"value,attr,omitempty" json:"value,omitempty"`
 
@@ -80,7 +80,7 @@ type Annotation struct {
 type Party struct {
 
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// A value with a name, attributed to the containing control, part, or group.
 	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
@@ -158,9 +158,9 @@ type Org struct {
 type Rlink struct {
 
 	// A link to a document or document fragment (actual, nominal or projected)
-	Href string `xml:",attr,omitempty" json:",omitempty"`
+	Href string `xml:"href,attr,omitempty" json:"href,omitempty"`
 	// Describes the media type of the linked resource
-	MediaType string `xml:",attr,omitempty" json:",omitempty"`
+	MediaType string `xml:"media-type,attr,omitempty" json:"mediaType,omitempty"`
 
 	// A representation of a cryptographic digest generated over a resource using a hash algorithm.
 	Hash []Hash `xml:"hashes,omitempty" json:"hashes,omitempty"`
@@ -170,7 +170,7 @@ type Rlink struct {
 type Address struct {
 
 	// Indicates the type of address.
-	Type string `xml:",attr,omitempty" json:",omitempty"`
+	Type string `xml:"type,attr,omitempty" json:"type,omitempty"`
 
 	// A single line of an address.
 	AddrLine []AddrLine `xml:"postal-address,omitempty" json:"postalAddress,omitempty"`
@@ -188,7 +188,7 @@ type Address struct {
 type Resource struct {
 
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// A short textual description
 	Desc Desc `xml:"desc,omitempty" json:"desc,omitempty"`
@@ -206,7 +206,7 @@ type Resource struct {
 type Role struct {
 
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// A title for display and navigation
 	Title Title `xml:"title,omitempty" json:"title,omitempty"`
@@ -246,7 +246,7 @@ type ResponsibleParty struct {
 type Citation struct {
 
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// An address for retrieval of a citation
 	Target []Target `xml:"targets,omitempty" json:"targets,omitempty"`
@@ -263,13 +263,13 @@ type Citation struct {
 // A reference to a local or remote resource
 type Link struct {
 	// A link to a document or document fragment (actual, nominal or projected)
-	Href string `xml:",attr,omitempty" json:",omitempty"`
+	Href string `xml:"href,attr,omitempty" json:"href,omitempty"`
 
 	// Describes the type of relationship provided by the link. This can be an indicator of the link's purpose.
-	Rel string `xml:",attr,omitempty" json:",omitempty"`
+	Rel string `xml:"rel,attr,omitempty" json:"rel,omitempty"`
 
 	// Describes the media type of the linked resource
-	MediaType string `xml:",attr,omitempty" json:",omitempty"`
+	MediaType string `xml:"media-type,attr,omitempty" json:"mediaType,omitempty"`
 	Value     string `xml:",chardata" json:"value,omitempty"`
 }
 
@@ -292,23 +292,23 @@ type OscalVersion string
 // A document identifier qualified by an identifier .
 type DocId struct {
 	// Qualifies the kind of document identifier.
-	Type  string `xml:",attr,omitempty" json:",omitempty"`
+	Type  string `xml:"type,attr,omitempty" json:"type,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 
 // A value with a name, attributed to the containing control, part, or group.
 type Prop struct {
 	// Identifying the purpose and intended use of the property, part or other object.
-	Name string `xml:",attr,omitempty" json:",omitempty"`
+	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
 	// Unique identifier of the containing object
-	Id string `xml:",attr,omitempty" json:",omitempty"`
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// A namespace qualifying the name.
-	Ns string `xml:",attr,omitempty" json:",omitempty"`
+	Ns string `xml:"ns,attr,omitempty" json:"ns,omitempty"`
 
 	// Indicating the type or classification of the containing object
-	Class string `xml:",attr,omitempty" json:",omitempty"`
+	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 
@@ -319,14 +319,14 @@ type PartyId string
 // An identifier for a person (such as an ORCID) using a designated scheme.
 type PersonId struct {
 	// Indicating the type of identifier, address, email or other data item.
-	Type  string `xml:",attr,omitempty" json:",omitempty"`
+	Type  string `xml:"type,attr,omitempty" json:"type,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 
 // An identifier for an organization using a designated scheme.
 type OrgId struct {
 	// Indicating the type of identifier, address, email or other data item.
-	Type  string `xml:",attr,omitempty" json:",omitempty"`
+	Type  string `xml:"type,attr,omitempty" json:"type,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 
@@ -369,7 +369,7 @@ type Email string
 // Contact number by telephone
 type Phone struct {
 	// Indicates the type of phone number.
-	Type  string `xml:",attr,omitempty" json:",omitempty"`
+	Type  string `xml:"type,attr,omitempty" json:"type,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
 
@@ -384,7 +384,7 @@ type Desc string
 // A representation of a cryptographic digest generated over a resource using a hash algorithm.
 type Hash struct {
 	// Method by which a hash is derived
-	Algorithm string `xml:",attr,omitempty" json:",omitempty"`
+	Algorithm string `xml:"algorithm,attr,omitempty" json:"algorithm,omitempty"`
 	Value     string `xml:",chardata" json:"value,omitempty"`
 }
 
@@ -395,10 +395,10 @@ type Title string
 //
 type Base64 struct {
 	// Name of the file before it was encoded as Base64 to be embedded in a . This is the name that will be assigned to the file when the file is decoded.
-	Filename string `xml:",attr,omitempty" json:",omitempty"`
+	Filename string `xml:"filename,attr,omitempty" json:"filename,omitempty"`
 
 	// Describes the media type of the linked resource
-	MediaType string `xml:",attr,omitempty" json:",omitempty"`
+	MediaType string `xml:"media-type,attr,omitempty" json:"mediaType,omitempty"`
 	Value     string `xml:",chardata" json:"value,omitempty"`
 }
 

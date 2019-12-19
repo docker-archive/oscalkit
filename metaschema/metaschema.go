@@ -419,6 +419,13 @@ func (f *Flag) GoName() string {
 	return strcase.ToCamel(f.Def.Name)
 }
 
+func (f *Flag) XmlName() string {
+	if f.Name != "" {
+		return f.Name
+	}
+	return f.Def.Name
+}
+
 type Choice struct {
 	Field    []Field    `xml:"field"`
 	Assembly []Assembly `xml:"assembly"`
