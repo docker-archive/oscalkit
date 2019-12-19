@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/iancoleman/strcase"
 	"net/url"
+	"strings"
 )
 
 //go:generate go run generate.go
@@ -179,6 +180,10 @@ func (metaschema *Metaschema) GetDefineFlag(name string) (*DefineFlag, error) {
 		}
 	}
 	return nil, fmt.Errorf("Could not find define-flag element with name='%s'.", name)
+}
+
+func (metaschema *Metaschema) GoPackageName() string {
+	return strings.ToLower(metaschema.Root)
 }
 
 func (Metaschema *Metaschema) ContainsRootElement() bool {

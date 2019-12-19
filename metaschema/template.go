@@ -15,7 +15,6 @@ import (
 
 func GenerateTypes(metaschema *Metaschema) error {
 	t, err := template.New("types.tmpl").Funcs(template.FuncMap{
-		"toLower":       strings.ToLower,
 		"toCamel":       strcase.ToCamel,
 		"toLowerCamel":  strcase.ToLowerCamel,
 		"plural":        inflection.Plural,
@@ -26,7 +25,7 @@ func GenerateTypes(metaschema *Metaschema) error {
 		return err
 	}
 
-	packageName := strings.ToLower(metaschema.Root)
+	packageName := metaschema.GoPackageName()
 	f, err := os.Create(fmt.Sprintf("../types/oscal/%s/%s.go", packageName, packageName))
 	if err != nil {
 		return err
@@ -84,7 +83,7 @@ func getImports(metaschema Metaschema) string {
 	}
 
 	for _, im := range metaschema.ImportedMetaschema {
-		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", strings.ReplaceAll(strings.ToLower(im.Root), "-", "_")))
+		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", im.GoPackageName()))
 	}
 
 	imports.WriteString(")")
