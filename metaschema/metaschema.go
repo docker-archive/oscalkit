@@ -194,7 +194,7 @@ func (metaschema *Metaschema) GetDefineFlag(name string) (*DefineFlag, error) {
 }
 
 func (metaschema *Metaschema) GoPackageName() string {
-	return strings.ToLower(metaschema.Root)
+	return strings.ReplaceAll(strings.ToLower(metaschema.Root), "-", "_")
 }
 
 func (Metaschema *Metaschema) ContainsRootElement() bool {
