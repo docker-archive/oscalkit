@@ -6,7 +6,7 @@ package {{ $packageName }}
 
 {{$m := . -}}
 {{range .DefineAssembly}}
-  // {{ .Description }}
+  // {{ .GoComment }}
 type {{toCamel .Name}} struct {
   {{if .RepresentsRootElement }}
   XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 {{ .Name }}" json:"-"`
@@ -60,7 +60,7 @@ type {{toCamel .Name}} struct {
 {{end}}
 
 {{range .DefineField}}
-  // {{ .Description }}
+  // {{ .GoComment }}
 {{$l := len .Flags -}}
 {{- if gt $l 0 -}}
 type {{toCamel .Name}} struct {

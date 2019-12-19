@@ -227,6 +227,10 @@ func (da *DefineAssembly) RepresentsRootElement() bool {
 	return da.Name == "catalog" || da.Name == "profile" || da.Name == "declarations"
 }
 
+func (a *DefineAssembly) GoComment() string {
+	return handleMultiline(a.Description)
+}
+
 type DefineField struct {
 	Name     string `xml:"name,attr"`
 	GroupAs  string `xml:"group-as,attr"`
@@ -243,6 +247,10 @@ type DefineField struct {
 
 func (df *DefineField) RequiresPointer() bool {
 	return len(df.Flags) > 0
+}
+
+func (f *DefineField) GoComment() string {
+	return handleMultiline(f.Description)
 }
 
 type DefineFlag struct {
@@ -278,9 +286,9 @@ type Assembly struct {
 
 func (a *Assembly) GoComment() string {
 	if a.Description != "" {
-		return a.Description
+		return handleMultiline(a.Description)
 	}
-	return a.Def.Description
+	return a.Def.GoComment()
 }
 
 func (a *Assembly) GoName() string {
@@ -331,9 +339,9 @@ type Field struct {
 
 func (f *Field) GoComment() string {
 	if f.Description != "" {
-		return f.Description
+		return handleMultiline(f.Description)
 	}
-	return f.Def.Description
+	return f.Def.GoComment()
 }
 
 func (f *Field) RequiresPointer() bool {
@@ -395,14 +403,18 @@ type Flag struct {
 
 func (f *Flag) GoComment() string {
 	if f.Description != "" {
-		return f.Description
+		return handleMultiline(f.Description)
 	}
-	return f.Def.Description
+	return handleMultiline(f.Def.Description)
 }
 
 func (f *Flag) GoDatatype() (string, error) {
 	dt := f.AsType
 	if dt == "" {
+		if f.Ref == "" && f.Name == "position" {
+			// workaround bug: inline definition without type hint https://github.com/usnistgov/OSCAL/pull/570
+			return "string", nil
+		}
 		dt = f.Def.AsType
 	}
 
@@ -588,4 +600,8 @@ var goDatatypeMap = map[datatype]string{
 	datatypeNMToken: "string",
 	datatypeID:      "string",
 	datatypeURIRef:  "string",
+}
+
+func handleMultiline(comment string) string {
+	return strings.ReplaceAll(comment, "\n", "\n // ")
 }
