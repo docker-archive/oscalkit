@@ -56,7 +56,9 @@ func getImports(metaschema Metaschema) string {
 	}
 
 	for _, im := range metaschema.ImportedMetaschema {
-		imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", im.GoPackageName()))
+		if im.GoPackageName() != "validation_common_root" {
+			imports.WriteString(fmt.Sprintf("\n\t\"github.com/docker/oscalkit/types/oscal/%s\"\n", im.GoPackageName()))
+		}
 	}
 
 	imports.WriteString(")")
