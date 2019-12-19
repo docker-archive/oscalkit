@@ -345,10 +345,6 @@ func (f *Field) GoComment() string {
 }
 
 func (f *Field) RequiresPointer() bool {
-	if f.Def == nil {
-		fmt.Println(f.Ref)
-		panic(f)
-	}
 	return f.Def.RequiresPointer()
 }
 
@@ -411,7 +407,7 @@ func (f *Flag) GoComment() string {
 func (f *Flag) GoDatatype() (string, error) {
 	dt := f.AsType
 	if dt == "" {
-		if f.Ref == "" && f.Name == "position" {
+		if f.Ref == "" && (f.Name == "position" || f.Name == "asset-id" || f.Name == "use" || f.Name == "system") {
 			// workaround bug: inline definition without type hint https://github.com/usnistgov/OSCAL/pull/570
 			return "string", nil
 		}
@@ -584,22 +580,26 @@ func (sd ShowDocs) UnmarshalXMLAttr(attr xml.Attr) error {
 type datatype string
 
 const (
-	datatypeString  datatype = "string"
-	datatypeIDRef   datatype = "IDREF"
-	datatypeNCName  datatype = "NCName"
-	datatypeNMToken datatype = "NMTOKEN"
-	datatypeID      datatype = "ID"
-	datatypeAnyURI  datatype = "anyURI"
-	datatypeURIRef  datatype = "uri-reference"
+	datatypeString             datatype = "string"
+	datatypeIDRef              datatype = "IDREF"
+	datatypeNCName             datatype = "NCName"
+	datatypeNMToken            datatype = "NMTOKEN"
+	datatypeID                 datatype = "ID"
+	datatypeAnyURI             datatype = "anyURI"
+	datatypeURIRef             datatype = "uri-reference"
+	datatypeURI                datatype = "uri"
+	datatypeNonNegativeInteger datatype = "nonNegativeInteger"
 )
 
 var goDatatypeMap = map[datatype]string{
-	datatypeString:  "string",
-	datatypeIDRef:   "string",
-	datatypeNCName:  "string",
-	datatypeNMToken: "string",
-	datatypeID:      "string",
-	datatypeURIRef:  "string",
+	datatypeString:             "string",
+	datatypeIDRef:              "string",
+	datatypeNCName:             "string",
+	datatypeNMToken:            "string",
+	datatypeID:                 "string",
+	datatypeURIRef:             "string",
+	datatypeURI:                "string",
+	datatypeNonNegativeInteger: "uint64",
 }
 
 func handleMultiline(comment string) string {
