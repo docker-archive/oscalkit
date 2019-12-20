@@ -97,18 +97,26 @@ func (metaschema *Metaschema) linkFields(list []Field) error {
 	return nil
 }
 
+func (metaschema *Metaschema) linkFlags(list []Flag) error {
+	var err error
+	for i, f := range list {
+		if f.Ref != "" {
+			f.Def, err = metaschema.GetDefineFlag(f.Ref)
+			if err != nil {
+				return err
+			}
+			f.Metaschema = metaschema
+			list[i] = f
+		}
+	}
+	return nil
+}
+
 func (metaschema *Metaschema) LinkDefinitions() error {
 	var err error
 	for _, da := range metaschema.DefineAssembly {
-		for i, f := range da.Flags {
-			if f.Ref != "" {
-				f.Def, err = metaschema.GetDefineFlag(f.Ref)
-				if err != nil {
-					return err
-				}
-				f.Metaschema = metaschema
-				da.Flags[i] = f
-			}
+		if err = metaschema.linkFlags(da.Flags); err != nil {
+			return err
 		}
 		if err = metaschema.linkAssemblies(da.Model.Assembly); err != nil {
 			return err
@@ -127,14 +135,8 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 	}
 
 	for _, df := range metaschema.DefineField {
-		for i, f := range df.Flags {
-			if f.Ref != "" {
-				f.Def, err = metaschema.GetDefineFlag(f.Ref)
-				if err != nil {
-					return err
-				}
-				df.Flags[i] = f
-			}
+		if err = metaschema.linkFlags(df.Flags); err != nil {
+			return err
 		}
 	}
 	return nil
