@@ -82,6 +82,21 @@ func (metaschema *Metaschema) linkAssemblies(list []Assembly) error {
 	return nil
 }
 
+func (metaschema *Metaschema) linkFields(list []Field) error {
+	var err error
+	for i, f := range list {
+		if f.Ref != "" {
+			f.Def, err = metaschema.GetDefineField(f.Ref)
+			if err != nil {
+				return err
+			}
+			f.Metaschema = metaschema
+			list[i] = f
+		}
+	}
+	return nil
+}
+
 func (metaschema *Metaschema) LinkDefinitions() error {
 	var err error
 	for _, da := range metaschema.DefineAssembly {
@@ -98,31 +113,16 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 		if err = metaschema.linkAssemblies(da.Model.Assembly); err != nil {
 			return err
 		}
-		for i, f := range da.Model.Field {
-			if f.Ref != "" {
-				f.Def, err = metaschema.GetDefineField(f.Ref)
-				if err != nil {
-					return err
-				}
-				f.Metaschema = metaschema
-				da.Model.Field[i] = f
-			}
+		if err = metaschema.linkFields(da.Model.Field); err != nil {
+			return err
 		}
 		for _, c := range da.Model.Choice {
 			if err = metaschema.linkAssemblies(c.Assembly); err != nil {
 				return err
 			}
-			for i, f := range c.Field {
-				if f.Ref != "" {
-					f.Def, err = metaschema.GetDefineField(f.Ref)
-					if err != nil {
-						return err
-					}
-					f.Metaschema = metaschema
-					c.Field[i] = f
-				}
+			if err = metaschema.linkFields(c.Field); err != nil {
+				return err
 			}
-
 		}
 	}
 
