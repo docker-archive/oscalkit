@@ -19,7 +19,7 @@ type VALIDATIONRoot struct {
 	// A name/value pair with optional explanatory remarks.
 	Annotation *Annotation `xml:"annotation,omitempty" json:"annotation,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
-	ResponsibleParty []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParties,omitempty"`
+	ResponsibleParties []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParties,omitempty"`
 }
 
 // Provides information about the publication and availability of the containing document.
@@ -36,28 +36,28 @@ type Metadata struct {
 	// OSCAL model version.
 	OscalVersion OscalVersion `xml:"oscal-version,omitempty" json:"oscalVersion,omitempty"`
 	// A document identifier qualified by an identifier .
-	DocId []DocId `xml:"document-ids,omitempty" json:"documentIds,omitempty"`
+	DocumentIds []DocId `xml:"document-ids,omitempty" json:"documentIds,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Link []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// Defining a role to be assigned to a party
-	Role []Role `xml:"roles,omitempty" json:"roles,omitempty"`
+	Roles []Role `xml:"roles,omitempty" json:"roles,omitempty"`
 	// A responsible entity, either singular (an organization or person) or collective (multiple persons)
-	Party []Party `xml:"parties,omitempty" json:"parties,omitempty"`
+	Parties []Party `xml:"parties,omitempty" json:"parties,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
-	ResponsibleParty []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParties,omitempty"`
+	ResponsibleParties []ResponsibleParty `xml:"responsible-parties,omitempty" json:"responsibleParties,omitempty"`
 }
 
 // A collection of citations and resource references.
 type BackMatter struct {
 
 	// A citation to resources, either external or internal (by means of internal cross-reference).
-	Citation []Citation `xml:"citations,omitempty" json:"citations,omitempty"`
+	Citations []Citation `xml:"citations,omitempty" json:"citations,omitempty"`
 	// A resource associated with the present document.
-	Resource []Resource `xml:"resources,omitempty" json:"resources,omitempty"`
+	Resources []Resource `xml:"resources,omitempty" json:"resources,omitempty"`
 }
 
 // A name/value pair with optional explanatory remarks.
@@ -83,17 +83,17 @@ type Party struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Link []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A person, with contact information
-	Person []Person `xml:"persons,omitempty" json:"persons,omitempty"`
+	Persons []Person `xml:"persons,omitempty" json:"persons,omitempty"`
 	// An organization or legal entity (not a person), with contact information
 	Org *Org `xml:"org,omitempty" json:"org,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A person, with contact information
@@ -106,25 +106,25 @@ type Person struct {
 	// Affiliated organization
 	OrgName OrgName `xml:"org-name,omitempty" json:"orgName,omitempty"`
 	// An identifier for a person (such as an ORCID) using a designated scheme.
-	PersonId []PersonId `xml:"person-ids,omitempty" json:"personIds,omitempty"`
+	PersonIds []PersonId `xml:"person-ids,omitempty" json:"personIds,omitempty"`
 	// An identifier for an organization using a designated scheme.
-	OrgId []OrgId `xml:"organization-ids,omitempty" json:"organizationIds,omitempty"`
+	OrganizationIds []OrgId `xml:"organization-ids,omitempty" json:"organizationIds,omitempty"`
 	// Email address
-	Email []Email `xml:"email-addresses,omitempty" json:"emailAddresses,omitempty"`
+	EmailAddresses []Email `xml:"email-addresses,omitempty" json:"emailAddresses,omitempty"`
 	// Contact number by telephone
-	Phone []Phone `xml:"telephone-numbers,omitempty" json:"telephoneNumbers,omitempty"`
+	TelephoneNumbers []Phone `xml:"telephone-numbers,omitempty" json:"telephoneNumbers,omitempty"`
 	// URL for web site or Internet presence
-	Url []Url `xml:"URLs,omitempty" json:"uRLs,omitempty"`
+	URLs []Url `xml:"URLs,omitempty" json:"uRLs,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Link []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A postal address.
-	Address []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
+	Addresses []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // An organization or legal entity (not a person), with contact information
@@ -135,23 +135,23 @@ type Org struct {
 	// A common name, short name or acronym
 	ShortName ShortName `xml:"short-name,omitempty" json:"shortName,omitempty"`
 	// An identifier for an organization using a designated scheme.
-	OrgId []OrgId `xml:"organization-ids,omitempty" json:"organizationIds,omitempty"`
+	OrganizationIds []OrgId `xml:"organization-ids,omitempty" json:"organizationIds,omitempty"`
 	// Email address
-	Email []Email `xml:"email-addresses,omitempty" json:"emailAddresses,omitempty"`
+	EmailAddresses []Email `xml:"email-addresses,omitempty" json:"emailAddresses,omitempty"`
 	// Contact number by telephone
-	Phone []Phone `xml:"telephone-numbers,omitempty" json:"telephoneNumbers,omitempty"`
+	TelephoneNumbers []Phone `xml:"telephone-numbers,omitempty" json:"telephoneNumbers,omitempty"`
 	// URL for web site or Internet presence
-	Url []Url `xml:"URLs,omitempty" json:"uRLs,omitempty"`
+	URLs []Url `xml:"URLs,omitempty" json:"uRLs,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Link []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A postal address.
-	Address []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
+	Addresses []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A pointer to an external copy of a document with optional hash for verification
@@ -163,7 +163,7 @@ type Rlink struct {
 	MediaType string `xml:"media-type,attr,omitempty" json:"mediaType,omitempty"`
 
 	// A representation of a cryptographic digest generated over a resource using a hash algorithm.
-	Hash []Hash `xml:"hashes,omitempty" json:"hashes,omitempty"`
+	Hashes []Hash `xml:"hashes,omitempty" json:"hashes,omitempty"`
 }
 
 // A postal address.
@@ -173,7 +173,7 @@ type Address struct {
 	Type string `xml:"type,attr,omitempty" json:"type,omitempty"`
 
 	// A single line of an address.
-	AddrLine []AddrLine `xml:"postal-address,omitempty" json:"postalAddress,omitempty"`
+	PostalAddress []AddrLine `xml:"postal-address,omitempty" json:"postalAddress,omitempty"`
 	// City, town or geographical region for mailing address
 	City City `xml:"city,omitempty" json:"city,omitempty"`
 	// State, province or analogous geographical region for mailing address
@@ -193,13 +193,13 @@ type Resource struct {
 	// A short textual description
 	Desc Desc `xml:"desc,omitempty" json:"desc,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	//
 	Base64 *Base64 `xml:"base64,omitempty" json:"base64,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A pointer to an external copy of a document with optional hash for verification
-	Rlink []Rlink `xml:"rlinks,omitempty" json:"rlinks,omitempty"`
+	Rlinks []Rlink `xml:"rlinks,omitempty" json:"rlinks,omitempty"`
 }
 
 // Defining a role to be assigned to a party
@@ -215,13 +215,13 @@ type Role struct {
 	// A short textual description
 	Desc Desc `xml:"desc,omitempty" json:"desc,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Link []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
@@ -231,15 +231,15 @@ type ResponsibleParty struct {
 	RoleId string `xml:"role-id,attr,omitempty" json:"roleId,omitempty"`
 
 	// References a  defined in .
-	PartyId []PartyId `xml:"party-ids,omitempty" json:"partyIds,omitempty"`
+	PartyIds []PartyId `xml:"party-ids,omitempty" json:"partyIds,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Link []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
 
 // A citation to resources, either external or internal (by means of internal cross-reference).
@@ -249,15 +249,15 @@ type Citation struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// An address for retrieval of a citation
-	Target []Target `xml:"targets,omitempty" json:"targets,omitempty"`
+	Targets []Target `xml:"targets,omitempty" json:"targets,omitempty"`
 	// A title for display and navigation
 	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A short textual description
 	Desc Desc `xml:"desc,omitempty" json:"desc,omitempty"`
 	// A document identifier qualified by an identifier .
-	DocId []DocId `xml:"document-ids,omitempty" json:"documentIds,omitempty"`
+	DocumentIds []DocId `xml:"document-ids,omitempty" json:"documentIds,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 }
 
 // A reference to a local or remote resource

@@ -21,7 +21,7 @@ type Profile struct {
 	Metadata *validation_root.Metadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
 	// An Import element designates a catalog, profile, or other resource to be
 	//          included (referenced and potentially modified) by this profile.
-	Import []Import `xml:"imports,omitempty" json:"imports,omitempty"`
+	Imports []Import `xml:"imports,omitempty" json:"imports,omitempty"`
 	// A Merge element merges controls in resolution.
 	Merge *Merge `xml:"merge,omitempty" json:"merge,omitempty"`
 	// Set parameters or amend controls in resolution
@@ -62,11 +62,11 @@ type Merge struct {
 type Custom struct {
 
 	// Call a control by its ID
-	Call []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	Match []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
 	// As in catalogs, a group of (selected) controls or of groups of controls
-	Group []Group `xml:"groups,omitempty" json:"groups,omitempty"`
+	Groups []Group `xml:"groups,omitempty" json:"groups,omitempty"`
 }
 
 // As in catalogs, a group of (selected) controls or of groups of controls
@@ -80,26 +80,26 @@ type Group struct {
 	// A title for display and navigation
 	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Param []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
 	// A partition or component of a control or part
-	Part []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
 	// Call a control by its ID
-	Call []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	Match []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
 	// As in catalogs, a group of (selected) controls or of groups of controls
-	Group []Group `xml:"groups,omitempty" json:"groups,omitempty"`
+	Groups []Group `xml:"groups,omitempty" json:"groups,omitempty"`
 }
 
 // Set parameters or amend controls in resolution
 type Modify struct {
 
 	// A parameter setting, to be propagated to points of insertion
-	Set []Set `xml:"settings,omitempty" json:"settings,omitempty"`
+	Settings []Set `xml:"settings,omitempty" json:"settings,omitempty"`
 	// An Alter element specifies changes to be made to an included control when a profile is resolved.
-	Alter []Alter `xml:"alterations,omitempty" json:"alterations,omitempty"`
+	Alterations []Alter `xml:"alterations,omitempty" json:"alterations,omitempty"`
 }
 
 // Specifies which controls to include from the resource (source catalog) being
@@ -109,9 +109,9 @@ type Include struct {
 	// Include all controls from the imported resource (catalog)
 	All *All `xml:"all,omitempty" json:"all,omitempty"`
 	// Call a control by its ID
-	Call []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	Match []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
 }
 
 // Which controls to exclude from the resource (source catalog) being
@@ -119,9 +119,9 @@ type Include struct {
 type Exclude struct {
 
 	// Call a control by its ID
-	Call []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	Match []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
 }
 
 // A parameter setting, to be propagated to points of insertion
@@ -137,13 +137,13 @@ type Set struct {
 	// A placeholder for a missing value, in display.
 	Label nominal_catalog.Label `xml:"label,omitempty" json:"label,omitempty"`
 	// Indicates and explains the purpose and use of a parameter
-	Usage []nominal_catalog.Usage `xml:"descriptions,omitempty" json:"descriptions,omitempty"`
+	Descriptions []nominal_catalog.Usage `xml:"descriptions,omitempty" json:"descriptions,omitempty"`
 	// A formal or informal expression of a constraint or test
-	Constraint []nominal_catalog.Constraint `xml:"constraints,omitempty" json:"constraints,omitempty"`
+	Constraints []nominal_catalog.Constraint `xml:"constraints,omitempty" json:"constraints,omitempty"`
 	// A reference to a local or remote resource
-	Link []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
 	// A prose statement that provides a recommendation for the use of a parameter.
-	Guideline []nominal_catalog.Guideline `xml:"guidance,omitempty" json:"guidance,omitempty"`
+	Guidance []nominal_catalog.Guideline `xml:"guidance,omitempty" json:"guidance,omitempty"`
 	// Indicates a permissible value for a parameter or property
 	Value nominal_catalog.Value `xml:"value,omitempty" json:"value,omitempty"`
 	// Presenting a choice among alternatives
@@ -157,9 +157,9 @@ type Alter struct {
 	ControlId string `xml:"control-id,attr,omitempty" json:"controlId,omitempty"`
 
 	// Specifies elements to be removed from a control, in resolution
-	Remove []Remove `xml:"removals,omitempty" json:"removals,omitempty"`
+	Removals []Remove `xml:"removals,omitempty" json:"removals,omitempty"`
 	// Specifies contents to be added into controls, in resolution
-	Add []Add `xml:"additions,omitempty" json:"additions,omitempty"`
+	Additions []Add `xml:"additions,omitempty" json:"additions,omitempty"`
 }
 
 // Specifies contents to be added into controls, in resolution
@@ -173,15 +173,15 @@ type Add struct {
 	// A title for display and navigation
 	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Prop []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Link []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Param []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotation []validation_root.Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []validation_root.Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A partition or component of a control or part
-	Part []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
 }
 
 // A Combine element defines whether and how to combine multiple (competing)
