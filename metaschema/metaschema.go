@@ -67,6 +67,21 @@ type Metaschema struct {
 	ImportedMetaschema []Metaschema
 }
 
+func (metaschema *Metaschema) linkAssemblies(list []Assembly) error {
+	var err error
+	for i, a := range list {
+		if a.Ref != "" {
+			a.Def, err = metaschema.GetDefineAssembly(a.Ref)
+			if err != nil {
+				return err
+			}
+			a.Metaschema = metaschema
+			list[i] = a
+		}
+	}
+	return nil
+}
+
 func (metaschema *Metaschema) LinkDefinitions() error {
 	var err error
 	for _, da := range metaschema.DefineAssembly {
@@ -80,15 +95,8 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 				da.Flags[i] = f
 			}
 		}
-		for i, a := range da.Model.Assembly {
-			if a.Ref != "" {
-				a.Def, err = metaschema.GetDefineAssembly(a.Ref)
-				if err != nil {
-					return err
-				}
-				a.Metaschema = metaschema
-				da.Model.Assembly[i] = a
-			}
+		if err = metaschema.linkAssemblies(da.Model.Assembly); err != nil {
+			return err
 		}
 		for i, f := range da.Model.Field {
 			if f.Ref != "" {
@@ -101,15 +109,8 @@ func (metaschema *Metaschema) LinkDefinitions() error {
 			}
 		}
 		for _, c := range da.Model.Choice {
-			for i, a := range c.Assembly {
-				if a.Ref != "" {
-					a.Def, err = metaschema.GetDefineAssembly(a.Ref)
-					if err != nil {
-						return err
-					}
-					a.Metaschema = metaschema
-					c.Assembly[i] = a
-				}
+			if err = metaschema.linkAssemblies(c.Assembly); err != nil {
+				return err
 			}
 			for i, f := range c.Field {
 				if f.Ref != "" {
