@@ -35,6 +35,11 @@ var ShowDocsOptions = []ShowDocs{
 	ShowDocsXMLJSON,
 }
 
+type GoType interface {
+	GoName() string
+	GetMetaschema() *Metaschema
+}
+
 // Metaschema is the root metaschema element
 type Metaschema struct {
 	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/metaschema/1.0 METASCHEMA"`
@@ -65,6 +70,18 @@ type Metaschema struct {
 	DefineFlag []DefineFlag `xml:"define-flag"`
 
 	ImportedMetaschema []Metaschema
+	Dependencies       map[string]GoType
+}
+
+func (metaschema *Metaschema) registerDependency(name string, dependency GoType) {
+	if dependency.GetMetaschema() != metaschema {
+		if metaschema.Dependencies == nil {
+			metaschema.Dependencies = make(map[string]GoType)
+		}
+		if _, ok := metaschema.Dependencies[name]; !ok {
+			metaschema.Dependencies[name] = dependency
+		}
+	}
 }
 
 func (metaschema *Metaschema) linkAssemblies(list []Assembly) error {
@@ -76,6 +93,7 @@ func (metaschema *Metaschema) linkAssemblies(list []Assembly) error {
 				return err
 			}
 			a.Metaschema = metaschema
+			metaschema.registerDependency(a.Ref, a.Def)
 			list[i] = a
 		}
 	}
@@ -91,6 +109,7 @@ func (metaschema *Metaschema) linkFields(list []Field) error {
 				return err
 			}
 			f.Metaschema = metaschema
+			metaschema.registerDependency(f.Ref, f.Def)
 			list[i] = f
 		}
 	}
@@ -226,12 +245,20 @@ type DefineAssembly struct {
 	Metaschema  *Metaschema
 }
 
+func (da *DefineAssembly) GoName() string {
+	return strcase.ToCamel(da.Name)
+}
+
 func (da *DefineAssembly) RepresentsRootElement() bool {
 	return da.Name == "catalog" || da.Name == "profile" || da.Name == "declarations"
 }
 
 func (a *DefineAssembly) GoComment() string {
 	return handleMultiline(a.Description)
+}
+
+func (a *DefineAssembly) GetMetaschema() *Metaschema {
+	return a.Metaschema
 }
 
 type DefineField struct {
@@ -248,12 +275,20 @@ type DefineField struct {
 	Metaschema  *Metaschema
 }
 
+func (df *DefineField) GoName() string {
+	return strcase.ToCamel(df.Name)
+}
+
 func (df *DefineField) RequiresPointer() bool {
 	return len(df.Flags) > 0
 }
 
 func (f *DefineField) GoComment() string {
 	return handleMultiline(f.Description)
+}
+
+func (df *DefineField) GetMetaschema() *Metaschema {
+	return df.Metaschema
 }
 
 type DefineFlag struct {
@@ -266,6 +301,14 @@ type DefineFlag struct {
 	Remarks     *Remarks  `xml:"remarks"`
 	Examples    []Example `xml:"example"`
 	Metaschema  *Metaschema
+}
+
+func (df *DefineFlag) GoName() string {
+	return strcase.ToCamel(df.Name)
+}
+
+func (df *DefineFlag) GetMetaschema() *Metaschema {
+	return df.Metaschema
 }
 
 type Model struct {
@@ -298,7 +341,7 @@ func (a *Assembly) GoName() string {
 	if a.Named != "" {
 		return strcase.ToCamel(a.Named)
 	}
-	return strcase.ToCamel(a.Def.Name)
+	return a.Def.GoName()
 }
 
 func (a *Assembly) GoMemLayout() string {
@@ -355,7 +398,7 @@ func (f *Field) GoName() string {
 	if f.Named != "" {
 		return strcase.ToCamel(f.Named)
 	}
-	return strcase.ToCamel(f.Def.Name)
+	return f.Def.GoName()
 }
 
 func (f *Field) GoPackageName() string {
@@ -427,7 +470,7 @@ func (f *Flag) GoName() string {
 	if f.Name != "" {
 		return strcase.ToCamel(f.Name)
 	}
-	return strcase.ToCamel(f.Def.Name)
+	return f.Def.GoName()
 }
 
 func (f *Flag) XmlName() string {

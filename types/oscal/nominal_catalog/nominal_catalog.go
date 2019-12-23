@@ -31,7 +31,7 @@ type Param struct {
 	// A formal or informal expression of a constraint or test
 	Constraints []Constraint `xml:"constraints,omitempty" json:"constraints,omitempty"`
 	// A reference to a local or remote resource
-	Links []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// A prose statement that provides a recommendation for the use of a parameter.
 	Guidance []Guideline `xml:"guidance,omitempty" json:"guidance,omitempty"`
 	// A recommended parameter value or set of values.
@@ -70,13 +70,13 @@ type Part struct {
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 
 	// A title for display and navigation
-	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// Prose permits multiple paragraphs, lists, tables etc.
 	Prose Prose `xml:"prose,omitempty" json:"prose,omitempty"`
 	// A reference to a local or remote resource
-	Links []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// A partition or component of a control or part
 	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
 }
@@ -110,3 +110,9 @@ type Choice string
 // Prose permits multiple paragraphs, lists, tables etc.
 
 type Prose string
+
+type Link = validation_root.Link
+
+type Prop = validation_root.Prop
+
+type Title = validation_root.Title

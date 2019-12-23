@@ -16,9 +16,9 @@ type Catalog struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// Provides information about the publication and availability of the containing document.
-	Metadata *validation_root.Metadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
+	Metadata *Metadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
 	// Back matter including references and resources.
-	BackMatter *validation_root.BackMatter `xml:"back-matter,omitempty" json:"backMatter,omitempty"`
+	BackMatter *BackMatter `xml:"back-matter,omitempty" json:"backMatter,omitempty"`
 	// A group of controls, or of groups of controls.
 	Groups []Group `xml:"groups,omitempty" json:"groups,omitempty"`
 	// A structured information object representing a security or privacy control. Each security or privacy control within the Catalog is defined by a distinct control instance.
@@ -34,13 +34,13 @@ type Group struct {
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 
 	// A title for display and navigation
-	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Parameters []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
 	// A partition or component of a control or part
-	Parts []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
 	// A group of controls, or of groups of controls.
 	Groups []Group `xml:"groups,omitempty" json:"groups,omitempty"`
 	// A structured information object representing a security or privacy control. Each security or privacy control within the Catalog is defined by a distinct control instance.
@@ -56,17 +56,33 @@ type Control struct {
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 
 	// A title for display and navigation
-	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Links []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Parameters []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotations []validation_root.Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A partition or component of a control or part
-	Parts []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
 	// A structured information object representing a security or privacy control. Each security or privacy control within the Catalog is defined by a distinct control instance.
 	Controls []Control `xml:"controls,omitempty" json:"controls,omitempty"`
 }
+
+type Annotation = validation_root.Annotation
+
+type BackMatter = validation_root.BackMatter
+
+type Link = validation_root.Link
+
+type Metadata = validation_root.Metadata
+
+type Param = nominal_catalog.Param
+
+type Part = nominal_catalog.Part
+
+type Prop = validation_root.Prop
+
+type Title = validation_root.Title

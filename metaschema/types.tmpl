@@ -26,23 +26,23 @@ type {{toCamel .Name}} struct {
   {{if .Model}}
     {{ range .Model.Field}}
       // {{ .GoComment }}
-      {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoPackageName}}{{.GoName}} `xml:"{{ .XmlName }},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
+      {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{ .XmlName }},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
     {{- end}}
 
     {{- range .Model.Assembly}}
       // {{ .GoComment }}
-      {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoPackageName}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
+      {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
     {{- end}}
 
   {{- range .Model.Choice}}
   {{- range .Field}}
   // {{ .GoComment }}
-  {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoPackageName}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
+  {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
   {{- end}}
 
   {{- range .Assembly}}
   // {{ .GoComment }}
-  {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoPackageName}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
+  {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{toLowerCamel .XmlName}},omitempty"`
   {{- end}}
 
   {{- end}}
@@ -75,3 +75,7 @@ type {{toCamel .Name}} struct {
 type {{toCamel .Name}} string
 {{end -}}
 {{end}}
+
+{{ range .Dependencies }}
+type {{.GoName}} = {{ .GetMetaschema.GoPackageName }}.{{.GoName}}
+{{end }}

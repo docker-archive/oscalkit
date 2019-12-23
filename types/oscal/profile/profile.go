@@ -18,7 +18,7 @@ type Profile struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// Provides information about the publication and availability of the containing document.
-	Metadata *validation_root.Metadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
+	Metadata *Metadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
 	// An Import element designates a catalog, profile, or other resource to be
 	//          included (referenced and potentially modified) by this profile.
 	Imports []Import `xml:"imports,omitempty" json:"imports,omitempty"`
@@ -27,7 +27,7 @@ type Profile struct {
 	// Set parameters or amend controls in resolution
 	Modify *Modify `xml:"modify,omitempty" json:"modify,omitempty"`
 	// A collection of citations and resource references.
-	BackMatter *validation_root.BackMatter `xml:"back-matter,omitempty" json:"backMatter,omitempty"`
+	BackMatter *BackMatter `xml:"back-matter,omitempty" json:"backMatter,omitempty"`
 }
 
 // An Import element designates a catalog, profile, or other resource to be
@@ -78,13 +78,13 @@ type Group struct {
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 
 	// A title for display and navigation
-	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Parameters []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
 	// A partition or component of a control or part
-	Parts []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
 	// Call a control by its ID
 	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
 	// Select controls by (regular expression) match on ID
@@ -135,19 +135,19 @@ type Set struct {
 	DependsOn string `xml:"depends-on,attr,omitempty" json:"dependsOn,omitempty"`
 
 	// A placeholder for a missing value, in display.
-	Label nominal_catalog.Label `xml:"label,omitempty" json:"label,omitempty"`
+	Label Label `xml:"label,omitempty" json:"label,omitempty"`
 	// Indicates and explains the purpose and use of a parameter
-	Descriptions []nominal_catalog.Usage `xml:"descriptions,omitempty" json:"descriptions,omitempty"`
+	Descriptions []Usage `xml:"descriptions,omitempty" json:"descriptions,omitempty"`
 	// A formal or informal expression of a constraint or test
-	Constraints []nominal_catalog.Constraint `xml:"constraints,omitempty" json:"constraints,omitempty"`
+	Constraints []Constraint `xml:"constraints,omitempty" json:"constraints,omitempty"`
 	// A reference to a local or remote resource
-	Links []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// A prose statement that provides a recommendation for the use of a parameter.
-	Guidance []nominal_catalog.Guideline `xml:"guidance,omitempty" json:"guidance,omitempty"`
+	Guidance []Guideline `xml:"guidance,omitempty" json:"guidance,omitempty"`
 	// Indicates a permissible value for a parameter or property
-	Value nominal_catalog.Value `xml:"value,omitempty" json:"value,omitempty"`
+	Value Value `xml:"value,omitempty" json:"value,omitempty"`
 	// Presenting a choice among alternatives
-	Select *nominal_catalog.Select `xml:"select,omitempty" json:"select,omitempty"`
+	Select *Select `xml:"select,omitempty" json:"select,omitempty"`
 }
 
 // An Alter element specifies changes to be made to an included control when a profile is resolved.
@@ -171,17 +171,17 @@ type Add struct {
 	IdRef string `xml:"id-ref,attr,omitempty" json:"idRef,omitempty"`
 
 	// A title for display and navigation
-	Title validation_root.Title `xml:"title,omitempty" json:"title,omitempty"`
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []validation_root.Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Links []validation_root.Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Parameters []nominal_catalog.Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotations []validation_root.Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A partition or component of a control or part
-	Parts []nominal_catalog.Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
 }
 
 // A Combine element defines whether and how to combine multiple (competing)
@@ -242,3 +242,31 @@ type Remove struct {
 	ItemName string `xml:"item-name,attr,omitempty" json:"itemName,omitempty"`
 	Value    string `xml:",chardata" json:"value,omitempty"`
 }
+
+type Annotation = validation_root.Annotation
+
+type BackMatter = validation_root.BackMatter
+
+type Constraint = nominal_catalog.Constraint
+
+type Guideline = nominal_catalog.Guideline
+
+type Label = nominal_catalog.Label
+
+type Link = validation_root.Link
+
+type Metadata = validation_root.Metadata
+
+type Param = nominal_catalog.Param
+
+type Part = nominal_catalog.Part
+
+type Prop = validation_root.Prop
+
+type Select = nominal_catalog.Select
+
+type Title = validation_root.Title
+
+type Usage = nominal_catalog.Usage
+
+type Value = nominal_catalog.Value
