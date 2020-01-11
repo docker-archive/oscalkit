@@ -12,22 +12,23 @@ import (
 
 // ...
 const (
-	AsBoolean As = "boolean"
-	AsEmpty   As = "empty"
-	AsString  As = "string"
-	AsMixed   As = "mixed"
+	AsTypeBoolean         AsType = "boolean"
+	AsTypeEmpty           AsType = "empty"
+	AsTypeString          AsType = "string"
+	AsTypeMixed           AsType = "mixed"
+	AsTypeMarkupLine      AsType = "markup-line"
+	AsTypeMarkupMultiLine AsType = "markup-multiline"
+	AsTypeDate            AsType = "date"
+	AsTypeDateTimeTz      AsType = "dateTime-with-timezone"
+	AsTypeNcName          AsType = "NCName"
+	AsTypeEmail           AsType = "email"
+	AsTypeURI             AsType = "uri"
+	AsTypeBase64          AsType = "base64Binary"
 
 	ShowDocsXML     ShowDocs = "xml"
 	ShowDocsJSON    ShowDocs = "json"
 	ShowDocsXMLJSON ShowDocs = "xml json"
 )
-
-var FieldConstraints = []As{
-	AsBoolean,
-	AsEmpty,
-	AsString,
-	AsMixed,
-}
 
 var ShowDocsOptions = []ShowDocs{
 	ShowDocsXML,
@@ -271,7 +272,7 @@ type DefineField struct {
 	Description string    `xml:"description"`
 	Remarks     *Remarks  `xml:"remarks"`
 	Examples    []Example `xml:"example"`
-	As          As        `xml:"as"`
+	AsType      AsType    `xml:"as-type,attr"`
 	Metaschema  *Metaschema
 }
 
@@ -315,6 +316,7 @@ type Model struct {
 	Assembly []Assembly `xml:"assembly"`
 	Field    []Field    `xml:"field"`
 	Choice   []Choice   `xml:"choice"`
+	Prose    *struct{}  `xml:"prose"`
 	Any      *struct{}  `xml:"any"`
 }
 
@@ -592,20 +594,7 @@ func (h *Href) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
 	return xml.Attr{Name: name}, nil
 }
 
-type As string
-
-func (a As) UnmarshalXMLAttr(attr xml.Attr) error {
-	as := As(attr.Value)
-
-	for _, fieldConstraint := range FieldConstraints {
-		if as == fieldConstraint {
-			a = as
-			return nil
-		}
-	}
-
-	return fmt.Errorf("Field constraint \"%s\" is not a valid constraint", attr.Value)
-}
+type AsType string
 
 type ShowDocs string
 
