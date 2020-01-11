@@ -46,14 +46,6 @@ type {{toCamel .Name}} struct {
   {{- end}}
 
   {{- end}}
-
-  {{- if .Model.Prose}}
-  {{if eq $packageName "catalog"}}
-  Prose *Prose `xml:",any" json:"prose,omitempty"`
-  {{else}}
-  Prose *catalog.Prose `xml:",any" json:"prose,omitempty"`
-  {{end}}
-  {{- end}}
   {{end}}
 
 }

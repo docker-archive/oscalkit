@@ -315,7 +315,6 @@ type Model struct {
 	Assembly []Assembly `xml:"assembly"`
 	Field    []Field    `xml:"field"`
 	Choice   []Choice   `xml:"choice"`
-	Prose    *struct{}  `xml:"prose"`
 	Any      *struct{}  `xml:"any"`
 }
 
