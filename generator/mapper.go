@@ -83,17 +83,17 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 		}
 	}
 }
-func getSubControl(call profile.Call, ctrls []catalog.Control, helper impl.Catalog) (catalog.Subcontrol, error) {
+func getSubControl(call profile.Call, ctrls []catalog.Control, helper impl.Catalog) (catalog.Control, error) {
 	for _, ctrl := range ctrls {
-		if ctrl.Id == helper.GetControl(call.SubcontrolId) {
-			for _, subctrl := range ctrl.Subcontrols {
-				if subctrl.Id == call.SubcontrolId {
+		if ctrl.Id == helper.GetControl(call.ControlId) {
+			for _, subctrl := range ctrl.Controls {
+				if subctrl.Id == call.ControlId {
 					return subctrl, nil
 				}
 			}
 		}
 	}
-	return catalog.Subcontrol{}, fmt.Errorf("could not find subcontrol %s in catalog", call.SubcontrolId)
+	return catalog.Control{}, fmt.Errorf("could not find subcontrol %s in catalog", call.ControlId)
 }
 
 // GetMappedCatalogControlsFromImport gets mapped controls in catalog per profile import
@@ -111,27 +111,27 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 		for _, ctrl := range group.Controls {
 			for _, call := range profileImport.Include.IdSelectors {
 				if call.ControlId == "" {
-					if strings.ToLower(ctrl.Id) == strings.ToLower(catalogHelper.GetControl(call.SubcontrolId)) {
+					if strings.ToLower(ctrl.Id) == strings.ToLower(catalogHelper.GetControl(call.ControlId)) {
 						ctrlExistsInGroup := false
 						sc, err := getSubControl(call, group.Controls, &impl.NISTCatalog{})
 						if err != nil {
 							return catalog.Catalog{}, err
 						}
 						for i, mappedCtrl := range newGroup.Controls {
-							if mappedCtrl.Id == strings.ToLower(catalogHelper.GetControl(call.SubcontrolId)) {
+							if mappedCtrl.Id == strings.ToLower(catalogHelper.GetControl(call.ControlId)) {
 								ctrlExistsInGroup = true
-								newGroup.Controls[i].Subcontrols = append(newGroup.Controls[i].Subcontrols, sc)
+								newGroup.Controls[i].Controls = append(newGroup.Controls[i].Controls, sc)
 							}
 						}
 						if !ctrlExistsInGroup {
 							newGroup.Controls = append(newGroup.Controls,
 								catalog.Control{
-									Id:          ctrl.Id,
-									Class:       ctrl.Class,
-									Title:       ctrl.Title,
-									Parameters:  ctrl.Parameters,
-									Parts:       ctrl.Parts,
-									Subcontrols: []catalog.Subcontrol{sc},
+									Id:         ctrl.Id,
+									Class:      ctrl.Class,
+									Title:      ctrl.Title,
+									Parameters: ctrl.Parameters,
+									Parts:      ctrl.Parts,
+									Controls:   []catalog.Control{sc},
 								})
 						}
 					}
@@ -147,12 +147,12 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 					if !ctrlExists {
 						newGroup.Controls = append(newGroup.Controls,
 							catalog.Control{
-								Id:          ctrl.Id,
-								Class:       ctrl.Class,
-								Title:       ctrl.Title,
-								Subcontrols: []catalog.Subcontrol{},
-								Parameters:  ctrl.Parameters,
-								Parts:       ctrl.Parts,
+								Id:         ctrl.Id,
+								Class:      ctrl.Class,
+								Title:      ctrl.Title,
+								Controls:   []catalog.Control{},
+								Parameters: ctrl.Parameters,
+								Parts:      ctrl.Parts,
 							},
 						)
 					}

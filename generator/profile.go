@@ -88,10 +88,10 @@ func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, err
 // EquateAlter equates alter with call
 func EquateAlter(alt profile.Alter, call profile.Call) bool {
 
-	if alt.ControlId == "" && alt.SubcontrolId == call.SubcontrolId {
+	if alt.ControlId == "" && alt.ControlId == call.ControlId {
 		return true
 	}
-	if alt.SubcontrolId == "" && alt.ControlId == call.ControlId {
+	if alt.ControlId == "" && alt.ControlId == call.ControlId {
 		return true
 	}
 	return false

@@ -19,5 +19,5 @@ func main() {
 			os.RemoveAll(f)
 		}
 	}
-	SecurityControlsSubcontrolCheck(check, *profile)
+	SecurityControlsControlCheck(check, *profile)
 }

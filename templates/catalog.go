@@ -38,8 +38,8 @@ var ApplicableControls = []catalog.Catalog{
 											},
 									{{end}}
 								},
-								Subcontrols: []catalog.Subcontrol{
-									{{range .Subcontrols}}
+								Controls: []catalog.Control{
+									{{range .Controls}}
 									{
 										Id: 	"{{.Id}}",
 										Class: 	"{{.Class}}",

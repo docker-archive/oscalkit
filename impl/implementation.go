@@ -357,7 +357,7 @@ func getComponentID(componentName string) string {
 func getGuidance(alterations []profile.Alter, paramID string) []string {
 	subControlID := getSubControlIDFromParam(paramID)
 	for _, alter := range alterations {
-		if alter.SubcontrolId == subControlID {
+		if alter.ControlId == subControlID {
 			for _, addition := range alter.Additions {
 				for _, part := range addition.Parts {
 					if part.Class == "guidance" {

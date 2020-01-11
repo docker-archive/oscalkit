@@ -2,9 +2,9 @@ package catalog
 
 // ControlOpts to generate controls
 type ControlOpts struct {
-	Params      []Param
-	Parts       []Part
-	Subcontrols []Subcontrol
+	Params   []Param
+	Parts    []Part
+	Controls []Control
 }
 
 // NewPart creates a new part
@@ -25,7 +25,7 @@ func NewControl(id, title string, opts *ControlOpts) Control {
 		Title: Title(title),
 	}
 	if opts != nil {
-		ctrl.Subcontrols = opts.Subcontrols
+		ctrl.Controls = opts.Controls
 		ctrl.Parts = opts.Parts
 		ctrl.Parameters = opts.Params
 	}

@@ -30,8 +30,8 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 			}
 			controls[j] = ctrl
 		}
-		for k, subctrl := range controls[j].Subcontrols {
-			if subctrl.Id == alt.SubcontrolId {
+		for k, subctrl := range controls[j].Controls {
+			if subctrl.Id == alt.ControlId {
 				for _, add := range alt.Additions {
 					for _, p := range add.Parts {
 						appended := false
@@ -50,7 +50,7 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 
 				}
 			}
-			controls[j].Subcontrols[k] = subctrl
+			controls[j].Controls[k] = subctrl
 		}
 	}
 	return controls

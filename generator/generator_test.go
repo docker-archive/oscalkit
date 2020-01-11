@@ -196,10 +196,10 @@ func TestSubControlsMapping(t *testing.T) {
 							ControlId: "ac-2",
 						},
 						profile.Call{
-							SubcontrolId: "ac-2.1",
+							ControlId: "ac-2.1",
 						},
 						profile.Call{
-							SubcontrolId: "ac-2.2",
+							ControlId: "ac-2.2",
 						},
 					},
 				},
@@ -228,7 +228,7 @@ func TestSubControlsMapping(t *testing.T) {
 					}},
 				},
 				profile.Alter{
-					SubcontrolId: "ac-2.1",
+					ControlId: "ac-2.1",
 					Additions: []profile.Add{profile.Add{
 						Parts: []catalog.Part{
 							catalog.Part{
@@ -238,7 +238,7 @@ func TestSubControlsMapping(t *testing.T) {
 					}},
 				},
 				profile.Alter{
-					SubcontrolId: "ac-2.2",
+					ControlId: "ac-2.2",
 					Additions: []profile.Add{profile.Add{
 						Parts: []catalog.Part{
 							catalog.Part{
@@ -255,7 +255,7 @@ func TestSubControlsMapping(t *testing.T) {
 	if err != nil {
 		t.Error("error should be nil")
 	}
-	if c[0].Groups[0].Controls[1].Subcontrols[0].Id != "ac-2.1" {
+	if c[0].Groups[0].Controls[1].Controls[0].Id != "ac-2.1" {
 		t.Errorf("does not contain ac-2.1 in subcontrols")
 	}
 
@@ -288,7 +288,7 @@ func TestProcessAdditionWithSameClass(t *testing.T) {
 			},
 		},
 		profile.Alter{
-			SubcontrolId: "ac-10.1",
+			ControlId: "ac-10.1",
 			Additions: []profile.Add{
 				profile.Add{
 					Parts: []catalog.Part{
@@ -313,8 +313,8 @@ func TestProcessAdditionWithSameClass(t *testing.T) {
 								Class: class,
 							},
 						},
-						Subcontrols: []catalog.Subcontrol{
-							catalog.Subcontrol{
+						Controls: []catalog.Control{
+							catalog.Control{
 								Id: "ac-10.1",
 								Parts: []catalog.Part{
 									catalog.Part{
@@ -340,7 +340,7 @@ func TestProcessAdditionWithSameClass(t *testing.T) {
 					return
 				}
 			}
-			for i, sc := range c.Subcontrols {
+			for i, sc := range c.Controls {
 				expected := fmt.Sprintf("%s_%d", partID, i+1)
 				if sc.Parts[i].Id != expected {
 					t.Errorf("%s and %s are not identical", sc.Parts[i].Id, expected)
@@ -372,7 +372,7 @@ func TestProcessAdditionWithDifferentPartClass(t *testing.T) {
 			},
 		},
 		profile.Alter{
-			SubcontrolId: subctrlID,
+			ControlId: subctrlID,
 			Additions: []profile.Add{
 				profile.Add{
 					Parts: []catalog.Part{
@@ -397,8 +397,8 @@ func TestProcessAdditionWithDifferentPartClass(t *testing.T) {
 								Class: "c3",
 							},
 						},
-						Subcontrols: []catalog.Subcontrol{
-							catalog.Subcontrol{
+						Controls: []catalog.Control{
+							catalog.Control{
 								Id: subctrlID,
 								Parts: []catalog.Part{
 									catalog.Part{
@@ -417,7 +417,7 @@ func TestProcessAdditionWithDifferentPartClass(t *testing.T) {
 	if len(o.Groups[0].Controls[0].Parts) != 2 {
 		t.Error("parts for controls not getting added properly")
 	}
-	if len(o.Groups[0].Controls[0].Subcontrols[0].Parts) != 2 {
+	if len(o.Groups[0].Controls[0].Controls[0].Parts) != 2 {
 		t.Error("parts for sub-controls not getting added properly")
 	}
 
