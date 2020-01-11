@@ -597,7 +597,7 @@ type Selected string
 
 // If the selected security level is different from the base security level, this contains the justification for the change.
 
-type AdjustmentJustification string
+type AdjustmentJustification = Markup
 
 // A target-level of confidentiality for the system, based on the sensitivity of information within the system.
 

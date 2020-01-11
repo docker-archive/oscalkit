@@ -64,7 +64,11 @@ type {{toCamel .Name}} struct {
   Value string `xml:",chardata" json:"value,omitempty"`
 }
 {{- else}}
-type {{toCamel .Name}} string
+  {{- if .IsMarkup }}
+  type {{ .GoName }} = Markup
+  {{- else }}
+  type {{ .GoName }} string
+  {{- end}}
 {{end -}}
 {{end}}
 

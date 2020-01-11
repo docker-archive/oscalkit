@@ -109,7 +109,7 @@ type Choice string
 
 // Prose permits multiple paragraphs, lists, tables etc.
 
-type Prose string
+type Prose = Markup
 
 type Link = validation_root.Link
 

@@ -292,6 +292,10 @@ func (df *DefineField) GetMetaschema() *Metaschema {
 	return df.Metaschema
 }
 
+func (df *DefineField) IsMarkup() bool {
+	return df.AsType == AsTypeMarkupMultiLine
+}
+
 type DefineFlag struct {
 	Name     string   `xml:"name,attr"`
 	AsType   datatype `xml:"as-type,attr"`

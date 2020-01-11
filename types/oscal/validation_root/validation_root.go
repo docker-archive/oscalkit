@@ -408,8 +408,8 @@ type Target string
 
 // A description supporting the parent item.
 
-type Description string
+type Description = Markup
 
 // Additional commentary on the parent item.
 
-type Remarks string
+type Remarks = Markup
