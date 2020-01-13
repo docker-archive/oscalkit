@@ -314,7 +314,7 @@ func (*NISTCatalog) isSubControl(s string) bool {
 }
 
 // GenerateImplementationParameter GenerateImplementationParameter
-func GenerateImplementationParameter(param profile.SetParam, guidance []string) implementation.Parameter {
+func GenerateImplementationParameter(param catalog.Param, guidance []string) implementation.Parameter {
 	return implementation.Parameter{
 		ParameterID: param.Id,
 		PossibleValues: func() []string {
