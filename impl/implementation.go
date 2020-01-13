@@ -379,8 +379,6 @@ func getSubControlIDFromParam(paramID string) string {
 
 func getGuidanceFromPart(part *catalog.Prose) []string {
 	var guidance []string
-	for _, p := range part.P {
-		guidance = append(guidance, p.Raw)
-	}
+	guidance = append(guidance, part.Raw)
 	return guidance
 }

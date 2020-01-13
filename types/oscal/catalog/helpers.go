@@ -12,9 +12,7 @@ func NewPart(id, title, narrative string) Part {
 	return Part{
 		Id:    id,
 		Title: Title(title),
-		Prose: &Prose{
-			P: []P{P{Raw: narrative}},
-		},
+		Prose: &Prose{Raw: narrative},
 	}
 }
 
