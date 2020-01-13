@@ -67,9 +67,9 @@ func ProcessAlterations(alterations []profile.Alter, c *catalog.Catalog) *catalo
 }
 
 // ProcessSetParam processes set-param of a profile
-func ProcessSetParam(setParams []catalog.Param, c *catalog.Catalog, catalogHelper impl.Catalog) *catalog.Catalog {
+func ProcessSetParam(setParams []profile.Set, c *catalog.Catalog, catalogHelper impl.Catalog) *catalog.Catalog {
 	for _, sp := range setParams {
-		ctrlID := catalogHelper.GetControl(sp.Id)
+		ctrlID := catalogHelper.GetControl(sp.ParamId)
 		for i, g := range c.Groups {
 			for j, catalogCtrl := range g.Controls {
 				if ctrlID == catalogCtrl.Id {
@@ -77,7 +77,7 @@ func ProcessSetParam(setParams []catalog.Param, c *catalog.Catalog, catalogHelpe
 						if len(sp.Constraints) == 0 {
 							continue
 						}
-						c.Groups[i].Controls[j].Parts[k].ModifyProse(sp.Id, sp.Constraints[0].Value)
+						c.Groups[i].Controls[j].Parts[k].ModifyProse(sp.ParamId, sp.Constraints[0].Value)
 					}
 				}
 			}

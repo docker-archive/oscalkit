@@ -99,8 +99,8 @@ func getSubControl(call profile.Call, ctrls []catalog.Control, helper impl.Catal
 // GetMappedCatalogControlsFromImport gets mapped controls in catalog per profile import
 func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import, catalogHelper impl.Catalog) (catalog.Catalog, error) {
 	newCatalog := catalog.Catalog{
-		Title:  importedCatalog.Title,
-		Groups: []catalog.Group{},
+		Metadata: importedCatalog.Metadata,
+		Groups:   []catalog.Group{},
 	}
 
 	for _, group := range importedCatalog.Groups {
