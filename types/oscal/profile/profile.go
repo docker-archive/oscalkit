@@ -12,8 +12,6 @@ import (
 // Each OSCAL profile is defined by a Profile element
 type Profile struct {
 	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 profile" json:"-"`
-	ID      string   `xml:"id,attr,omitempty" json:"id,omitempty"`
-	Title   string   `xml:"title,omitempty" json:"title,omitempty"`
 	// Unique identifier of the containing object
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 

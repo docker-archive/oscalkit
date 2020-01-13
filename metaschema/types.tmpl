@@ -11,10 +11,6 @@ type {{toCamel .Name}} struct {
   {{if .RepresentsRootElement }}
   XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 {{ .Name }}" json:"-"`
   {{- end}}
-  {{- if eq "profile" .Name}}
-  ID string `xml:"id,attr,omitempty" json:"id,omitempty"`
-  Title string `xml:"title,omitempty" json:"title,omitempty"`
-  {{- end}}
 {{- range .Flags}}
   // {{ .GoComment }}
   {{- if and (eq "id" .Name) (eq "profile" $packageName)}}
