@@ -32,7 +32,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	logrus.Debug("processing alteration and parameters... \nmapping to controls...")
 	// Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
-		err := ValidateHref(profileImport.Href)
+		err := profileImport.ValidateHref()
 		if err != nil {
 			return nil, err
 		}
@@ -43,7 +43,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 			// ForEach Import's Href, Fetch the Catalog JSON file
-			getCatalogForImport(ctx, profileImport, c, e, profileImport.Href.String())
+			getCatalogForImport(ctx, profileImport, c, e, profileImport.Href)
 			select {
 			case importedCatalog := <-c:
 				// Prepare a new catalog object to merge into the final List of OutputCatalogs
@@ -168,12 +168,12 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 
 func getCatalogForImport(ctx context.Context, i profile.Import, c chan *catalog.Catalog, e chan error, basePath string) {
 	go func(i profile.Import) {
-		err := ValidateHref(i.Href)
+		err := i.ValidateHref()
 		if err != nil {
 			e <- fmt.Errorf("href cannot be nil")
 			return
 		}
-		path, err := GetFilePath(i.Href.String())
+		path, err := GetFilePath(i.Href)
 		if err != nil {
 			e <- err
 			return
