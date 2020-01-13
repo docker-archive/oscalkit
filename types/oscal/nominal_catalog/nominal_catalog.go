@@ -44,7 +44,7 @@ type Param struct {
 type Guideline struct {
 
 	// Prose permits multiple paragraphs, lists, tables etc.
-	Prose Prose `xml:"prose,omitempty" json:"prose,omitempty"`
+	Prose *Prose `xml:"prose,omitempty" json:"prose,omitempty"`
 }
 
 // Presenting a choice among alternatives
@@ -74,7 +74,7 @@ type Part struct {
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// Prose permits multiple paragraphs, lists, tables etc.
-	Prose Prose `xml:"prose,omitempty" json:"prose,omitempty"`
+	Prose *Prose `xml:"prose,omitempty" json:"prose,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// A partition or component of a control or part

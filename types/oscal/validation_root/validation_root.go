@@ -7,9 +7,9 @@ import ()
 type VALIDATIONRoot struct {
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// References a  defined in .
 	PartyId PartyId `xml:"party-id,omitempty" json:"partyId,omitempty"`
 	// Provides information about the publication and availability of the containing document.
@@ -42,7 +42,7 @@ type Metadata struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// Defining a role to be assigned to a party
 	Roles []Role `xml:"roles,omitempty" json:"roles,omitempty"`
 	// A responsible entity, either singular (an organization or person) or collective (multiple persons)
@@ -73,7 +73,7 @@ type Annotation struct {
 	Value string `xml:"value,attr,omitempty" json:"value,omitempty"`
 
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 }
 
 // A responsible entity, either singular (an organization or person) or collective (multiple persons)
@@ -87,7 +87,7 @@ type Party struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A person, with contact information
 	Persons []Person `xml:"persons,omitempty" json:"persons,omitempty"`
 	// An organization or legal entity (not a person), with contact information
@@ -120,7 +120,7 @@ type Person struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A postal address.
 	Addresses []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
 	// A name/value pair with optional explanatory remarks.
@@ -147,7 +147,7 @@ type Org struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A postal address.
 	Addresses []Address `xml:"addresses,omitempty" json:"addresses,omitempty"`
 	// A name/value pair with optional explanatory remarks.
@@ -197,7 +197,7 @@ type Resource struct {
 	//
 	Base64 *Base64 `xml:"base64,omitempty" json:"base64,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A pointer to an external copy of a document with optional hash for verification
 	Rlinks []Rlink `xml:"rlinks,omitempty" json:"rlinks,omitempty"`
 }
@@ -219,7 +219,7 @@ type Role struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
@@ -237,7 +237,7 @@ type ResponsibleParty struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }

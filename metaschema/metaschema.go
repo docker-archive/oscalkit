@@ -281,7 +281,7 @@ func (df *DefineField) GoName() string {
 }
 
 func (df *DefineField) RequiresPointer() bool {
-	return len(df.Flags) > 0
+	return len(df.Flags) > 0 || df.IsMarkup()
 }
 
 func (f *DefineField) GoComment() string {

@@ -32,7 +32,7 @@ type ImportProfile struct {
 	Href string `xml:"href,attr,omitempty" json:"href,omitempty"`
 
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 }
 
 // Contains the characteristics of the system, such as its name, purpose, and security impact level.
@@ -45,7 +45,7 @@ type SystemCharacteristics struct {
 	// A short name for the system, such as an acronym, that is suitable for display in a data table or summary list.
 	SystemNameShort SystemNameShort `xml:"system-name-short,omitempty" json:"systemNameShort,omitempty"`
 	// A free-text description of the system.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
@@ -55,7 +55,7 @@ type SystemCharacteristics struct {
 	// The overall information system sensitivity categorization, such as defined by .
 	SecuritySensitivityLevel SecuritySensitivityLevel `xml:"security-sensitivity-level,omitempty" json:"securitySensitivityLevel,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// Contains details about all information types that are stored, processed, or transmitted by the system, such as privacy information, and those defined in .
@@ -98,7 +98,7 @@ type InformationType struct {
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// An identifier qualified by the given identification  used, such as NIST SP 800-60.
 	InformationTypeIds []InformationTypeId `xml:"information-type-ids,omitempty" json:"informationTypeIds,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
@@ -121,7 +121,7 @@ type ConfidentialityImpact struct {
 	// The selected (Confidentiality, Integrity, or Availability) security impact level.
 	Selected Selected `xml:"selected,omitempty" json:"selected,omitempty"`
 	// If the selected security level is different from the base security level, this contains the justification for the change.
-	AdjustmentJustification AdjustmentJustification `xml:"adjustment-justification,omitempty" json:"adjustmentJustification,omitempty"`
+	AdjustmentJustification *AdjustmentJustification `xml:"adjustment-justification,omitempty" json:"adjustmentJustification,omitempty"`
 }
 
 // The expected level of impact resulting from the unauthorized modification of information.
@@ -134,7 +134,7 @@ type IntegrityImpact struct {
 	// The selected (Confidentiality, Integrity, or Availability) security impact level.
 	Selected Selected `xml:"selected,omitempty" json:"selected,omitempty"`
 	// If the selected security level is different from the base security level, this contains the justification for the change.
-	AdjustmentJustification AdjustmentJustification `xml:"adjustment-justification,omitempty" json:"adjustmentJustification,omitempty"`
+	AdjustmentJustification *AdjustmentJustification `xml:"adjustment-justification,omitempty" json:"adjustmentJustification,omitempty"`
 }
 
 // The expected level of impact resulting from the disruption of access to or use of information or the information system.
@@ -147,7 +147,7 @@ type AvailabilityImpact struct {
 	// The selected (Confidentiality, Integrity, or Availability) security impact level.
 	Selected Selected `xml:"selected,omitempty" json:"selected,omitempty"`
 	// If the selected security level is different from the base security level, this contains the justification for the change.
-	AdjustmentJustification AdjustmentJustification `xml:"adjustment-justification,omitempty" json:"adjustmentJustification,omitempty"`
+	AdjustmentJustification *AdjustmentJustification `xml:"adjustment-justification,omitempty" json:"adjustmentJustification,omitempty"`
 }
 
 // The overall level of expected impact resulting from unauthorized disclosure, modification, or loss of access to information.
@@ -168,7 +168,7 @@ type Status struct {
 	State string `xml:"state,attr,omitempty" json:"state,omitempty"`
 
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 }
 
 // A description of another authorized system from which this system inherits capabilities that satisfy security requirements. Another term for this concept is a .
@@ -188,7 +188,7 @@ type LeveragedAuthorization struct {
 	// The date this system received its authorization.
 	DateAuthorized DateAuthorized `xml:"date-authorized,omitempty" json:"dateAuthorized,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
@@ -197,13 +197,13 @@ type LeveragedAuthorization struct {
 type AuthorizationBoundary struct {
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Commentary about the system's authorization boundary that enhances the diagram.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A visual depiction of the system's authorization boundary.
@@ -217,7 +217,7 @@ type Diagram struct {
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
 	// A description of the diagram (e.g., alternate text). This can be used to support compliance with requirements from Section 508 of the United States Workforce Rehabilitation Act of 1973.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
@@ -225,20 +225,20 @@ type Diagram struct {
 	// A brief caption to annotate the diagram.
 	Caption Caption `xml:"caption,omitempty" json:"caption,omitempty"`
 	// Commentary about the diagram that enhances it.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 }
 
 // A description of the system's network architecture, optionally supplemented by diagrams that illustrate the network architecture.
 type NetworkArchitecture struct {
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A graphic that provides a visual representation the system, or some aspect of it.
@@ -249,13 +249,13 @@ type NetworkArchitecture struct {
 type DataFlow struct {
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A graphic that provides a visual representation the system, or some aspect of it.
@@ -270,7 +270,7 @@ type SystemImplementation struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A type of user that interacts with the system based on an associated role.
@@ -296,7 +296,7 @@ type User struct {
 	// A common name, short name or acronym
 	ShortName ShortName `xml:"short-name,omitempty" json:"shortName,omitempty"`
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
@@ -304,7 +304,7 @@ type User struct {
 	// A reference to the roles served by the user.
 	RoleIds []RoleId `xml:"role-ids,omitempty" json:"roleIds,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// Identifies a specific system privilege held by the user, along with an associated description and/or rationale for the privilege.
@@ -318,7 +318,7 @@ type AuthorizedPrivilege struct {
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// Describes a  function performed for a given authorized privilege by this user class.
 	FunctionsPerformed []FunctionPerformed `xml:"functions-performed,omitempty" json:"functionsPerformed,omitempty"`
 }
@@ -334,13 +334,13 @@ type Component struct {
 	ComponentType string `xml:"component-type,attr,omitempty" json:"componentType,omitempty"`
 
 	// A description of the component, including information about its function.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// Describes the operational status of the system.
@@ -358,7 +358,7 @@ type Service struct {
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
 	// A description of what the service provides.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
@@ -366,7 +366,7 @@ type Service struct {
 	// A summary of the technological or business purpose of the service.
 	Purpose Purpose `xml:"purpose,omitempty" json:"purpose,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// Information about the protocol used to provide a service.
@@ -396,7 +396,7 @@ type Interconnection struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
@@ -407,7 +407,7 @@ type Interconnection struct {
 type SystemInventory struct {
 
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A single managed inventory item within the system.
 	InventoryItems []InventoryItem `xml:"inventory-items,omitempty" json:"inventoryItems,omitempty"`
 }
@@ -421,13 +421,13 @@ type InventoryItem struct {
 	AssetId string `xml:"asset-id,attr,omitempty" json:"assetId,omitempty"`
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
@@ -449,7 +449,7 @@ type ImplementedComponent struct {
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
@@ -460,7 +460,7 @@ type ImplementedComponent struct {
 type ControlImplementation struct {
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// Describes how the system satisfies an individual control.
 	ImplementedRequirements []ImplementedRequirement `xml:"implemented-requirements,omitempty" json:"implementedRequirements,omitempty"`
 }
@@ -474,13 +474,13 @@ type ImplementedRequirement struct {
 	ControlId string `xml:"control-id,attr,omitempty" json:"controlId,omitempty"`
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 	// Defines how the referenced component implements a set of controls.
@@ -500,13 +500,13 @@ type Statement struct {
 	StatementId string `xml:"statement-id,attr,omitempty" json:"statementId,omitempty"`
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
 	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A reference to one or more roles with responsibility for performing a function relative to the control.
 	ResponsibleRoles []ResponsibleRole `xml:"responsible-roles,omitempty" json:"responsibleRoles,omitempty"`
 	// Defines how the referenced component implements a set of controls.
@@ -526,7 +526,7 @@ type ResponsibleRole struct {
 	// References a  defined in .
 	PartyIds []PartyId `xml:"party-ids,omitempty" json:"partyIds,omitempty"`
 	// Additional commentary on the parent item.
-	Remarks Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
 }
@@ -538,7 +538,7 @@ type ByComponent struct {
 	ComponentId string `xml:"component-id,attr,omitempty" json:"componentId,omitempty"`
 
 	// A description supporting the parent item.
-	Description Description `xml:"description,omitempty" json:"description,omitempty"`
+	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
