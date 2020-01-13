@@ -26,8 +26,8 @@ func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, err
 
 	if p.Modify == nil {
 		p.Modify = &profile.Modify{
-			Alterations:   []profile.Alter{},
-			ParamSettings: []profile.SetParam{},
+			Alterations: []profile.Alter{},
+			Settings:    []profile.SetParam{},
 		}
 	}
 	for _, alt := range p.Modify.Alterations {
@@ -105,8 +105,8 @@ func GetAlters(p *profile.Profile) ([]profile.Alter, error) {
 			found := false
 			if p.Modify == nil {
 				p.Modify = &profile.Modify{
-					Alterations:   []profile.Alter{},
-					ParamSettings: []profile.SetParam{},
+					Alterations: []profile.Alter{},
+					Settings:    []profile.SetParam{},
 				}
 			}
 			for _, alt := range p.Modify.Alterations {

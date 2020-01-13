@@ -50,7 +50,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 				if profileArg.Modify != nil {
 					nc := impl.NISTCatalog{}
 					importedCatalog = ProcessAlterations(alterations, importedCatalog)
-					importedCatalog = ProcessSetParam(profileArg.Modify.ParamSettings, importedCatalog, &nc)
+					importedCatalog = ProcessSetParam(profileArg.Modify.Settings, importedCatalog, &nc)
 				}
 				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport, &catalogHelper)
 				if err != nil {
