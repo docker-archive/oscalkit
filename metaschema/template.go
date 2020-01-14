@@ -10,14 +10,12 @@ import (
 	"text/template"
 
 	"github.com/iancoleman/strcase"
-	"github.com/jinzhu/inflection"
 )
 
 func GenerateTypes(metaschema *Metaschema) error {
 	t, err := template.New("types.tmpl").Funcs(template.FuncMap{
 		"toCamel":      strcase.ToCamel,
 		"toLowerCamel": strcase.ToLowerCamel,
-		"plural":       inflection.Plural,
 		"getImports":   getImports,
 	}).ParseFiles("types.tmpl")
 	if err != nil {
