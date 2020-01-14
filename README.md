@@ -210,7 +210,7 @@ Compile for Windows:
 
 ### Website and documentation
 
-Both the website and corresponding documentation are being developed in `docs/`. The content is developed using the [Hugo](https://gohugo.io/) framework. The static content is generated and published in `docs/public`, which is a separate Git worktree that is tied to the [`gh-pages`](https://github.com/docker/oscalkit/tree/gh-pages) branch and publically accessible via https://docker.github.io/oscalkit.
+Both the website and corresponding documentation are being developed in `docs/`. The content is developed using the [Hugo](https://gohugo.io/) framework. The static content is generated and published in `docs/public`, which is a separate Git worktree that is tied to the [`gh-pages`](https://github.com/docker/oscalkit/tree/gh-pages) branch and publicly accessible via https://docker.github.io/oscalkit.
 
 The GoDoc for the SDK can be found [here](https://godoc.org/github.com/docker/oscalkit).
 
