@@ -16,29 +16,29 @@ type {{toCamel .Name}} struct {
   {{- if and (eq "id" .Name) (eq "profile" $packageName)}}
   Id string `xml:"param-id,attr,omitempty" json:"id,omitempty"`
   {{- else}}
-  {{toCamel .XmlName}} {{.GoDatatype}} `xml:"{{.XmlName}},attr,omitempty" json:"{{.JsonName}},omitempty"`
+  {{toCamel .JsonName}} {{.GoDatatype}} `xml:"{{.XmlName}},attr,omitempty" json:"{{.JsonName}},omitempty"`
   {{- end}}
 {{- end}}
   {{if .Model}}
     {{ range .Model.Field}}
       // {{ .GoComment }}
-      {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{ .XmlName }},omitempty" json:"{{.JsonName}},omitempty"`
+      {{ toCamel .JsonName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{ .XmlName }},omitempty" json:"{{.JsonName}},omitempty"`
     {{- end}}
 
     {{- range .Model.Assembly}}
       // {{ .GoComment }}
-      {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{.JsonName}},omitempty"`
+      {{ toCamel .JsonName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{.JsonName}},omitempty"`
     {{- end}}
 
   {{- range .Model.Choice}}
   {{- range .Field}}
   // {{ .GoComment }}
-  {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{.JsonName}},omitempty"`
+  {{ toCamel .JsonName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{.JsonName}},omitempty"`
   {{- end}}
 
   {{- range .Assembly}}
   // {{ .GoComment }}
-  {{ toCamel .XmlName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{.JsonName}},omitempty"`
+  {{ toCamel .JsonName}} {{.GoMemLayout}}{{.GoName}} `xml:"{{.XmlName}},omitempty" json:"{{.JsonName}},omitempty"`
   {{- end}}
 
   {{- end}}
@@ -54,7 +54,7 @@ type {{toCamel .Name}} struct {
 type {{toCamel .Name}} struct {
   {{- range .Flags}}
   // {{ .GoComment }}
-  {{toCamel .XmlName}} {{.GoDatatype}} `xml:"{{.XmlName}},attr,omitempty" json:"{{.JsonName}},omitempty"`
+  {{toCamel .JsonName}} {{.GoDatatype}} `xml:"{{.XmlName}},attr,omitempty" json:"{{.JsonName}},omitempty"`
   {{end -}}
 
   Value string `xml:",chardata" json:"value,omitempty"`

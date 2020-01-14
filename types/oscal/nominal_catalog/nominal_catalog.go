@@ -27,13 +27,13 @@ type Param struct {
 	// A short name for the parameter.
 	Label Label `xml:"label,omitempty" json:"label,omitempty"`
 	// Indicates and explains the purpose and use of a parameter
-	Descriptions []Usage `xml:"descriptions,omitempty" json:"descriptions,omitempty"`
+	Descriptions []Usage `xml:"usage,omitempty" json:"descriptions,omitempty"`
 	// A formal or informal expression of a constraint or test
-	Constraints []Constraint `xml:"constraints,omitempty" json:"constraints,omitempty"`
+	Constraints []Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
 	// A reference to a local or remote resource
-	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	// A prose statement that provides a recommendation for the use of a parameter.
-	Guidance []Guideline `xml:"guidance,omitempty" json:"guidance,omitempty"`
+	Guidance []Guideline `xml:"guideline,omitempty" json:"guidance,omitempty"`
 	// A recommended parameter value or set of values.
 	Value Value `xml:"value,omitempty" json:"value,omitempty"`
 	// A set of parameter value choices, that may be picked from to set the parameter value.
@@ -54,7 +54,7 @@ type Select struct {
 	HowMany string `xml:"how-many,attr,omitempty" json:"howMany,omitempty"`
 
 	// A value selection among several such options
-	Alternatives []Choice `xml:"alternatives,omitempty" json:"alternatives,omitempty"`
+	Alternatives []Choice `xml:"choice,omitempty" json:"alternatives,omitempty"`
 }
 
 // A partition or component of a control or part
@@ -72,13 +72,13 @@ type Part struct {
 	// A title for display and navigation
 	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
 	// Prose permits multiple paragraphs, lists, tables etc.
 	Prose *Prose `xml:"prose,omitempty" json:"prose,omitempty"`
 	// A reference to a local or remote resource
-	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	// A partition or component of a control or part
-	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []Part `xml:"part,omitempty" json:"parts,omitempty"`
 }
 
 // A placeholder for a missing value, in display.

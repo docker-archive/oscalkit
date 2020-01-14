@@ -19,7 +19,7 @@ type Profile struct {
 	Metadata *Metadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
 	// An Import element designates a catalog, profile, or other resource to be
 	//          included (referenced and potentially modified) by this profile.
-	Imports []Import `xml:"imports,omitempty" json:"imports,omitempty"`
+	Imports []Import `xml:"import,omitempty" json:"imports,omitempty"`
 	// A Merge element merges controls in resolution.
 	Merge *Merge `xml:"merge,omitempty" json:"merge,omitempty"`
 	// Set parameters or amend controls in resolution
@@ -60,11 +60,11 @@ type Merge struct {
 type Custom struct {
 
 	// Call a control by its ID
-	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"call,omitempty" json:"id-selectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"pattern-selectors,omitempty"`
 	// As in catalogs, a group of (selected) controls or of groups of controls
-	Groups []Group `xml:"groups,omitempty" json:"groups,omitempty"`
+	Groups []Group `xml:"group,omitempty" json:"groups,omitempty"`
 }
 
 // As in catalogs, a group of (selected) controls or of groups of controls
@@ -78,26 +78,26 @@ type Group struct {
 	// A title for display and navigation
 	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Parameters []Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []Param `xml:"param,omitempty" json:"parameters,omitempty"`
 	// A partition or component of a control or part
-	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []Part `xml:"part,omitempty" json:"parts,omitempty"`
 	// Call a control by its ID
-	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"call,omitempty" json:"id-selectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"pattern-selectors,omitempty"`
 	// As in catalogs, a group of (selected) controls or of groups of controls
-	Groups []Group `xml:"groups,omitempty" json:"groups,omitempty"`
+	Groups []Group `xml:"group,omitempty" json:"groups,omitempty"`
 }
 
 // Set parameters or amend controls in resolution
 type Modify struct {
 
 	// A parameter setting, to be propagated to points of insertion
-	Settings []Set `xml:"settings,omitempty" json:"settings,omitempty"`
+	Settings []Set `xml:"set,omitempty" json:"settings,omitempty"`
 	// An Alter element specifies changes to be made to an included control when a profile is resolved.
-	Alterations []Alter `xml:"alterations,omitempty" json:"alterations,omitempty"`
+	Alterations []Alter `xml:"alter,omitempty" json:"alterations,omitempty"`
 }
 
 // Specifies which controls to include from the resource (source catalog) being
@@ -107,9 +107,9 @@ type Include struct {
 	// Include all controls from the imported resource (catalog)
 	All *All `xml:"all,omitempty" json:"all,omitempty"`
 	// Call a control by its ID
-	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"call,omitempty" json:"id-selectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"pattern-selectors,omitempty"`
 }
 
 // Which controls to exclude from the resource (source catalog) being
@@ -117,9 +117,9 @@ type Include struct {
 type Exclude struct {
 
 	// Call a control by its ID
-	IdSelectors []Call `xml:"id-selectors,omitempty" json:"idSelectors,omitempty"`
+	IdSelectors []Call `xml:"call,omitempty" json:"id-selectors,omitempty"`
 	// Select controls by (regular expression) match on ID
-	PatternSelectors []Match `xml:"pattern-selectors,omitempty" json:"patternSelectors,omitempty"`
+	PatternSelectors []Match `xml:"match,omitempty" json:"pattern-selectors,omitempty"`
 }
 
 // A parameter setting, to be propagated to points of insertion
@@ -135,13 +135,13 @@ type Set struct {
 	// A placeholder for a missing value, in display.
 	Label Label `xml:"label,omitempty" json:"label,omitempty"`
 	// Indicates and explains the purpose and use of a parameter
-	Descriptions []Usage `xml:"descriptions,omitempty" json:"descriptions,omitempty"`
+	Descriptions []Usage `xml:"usage,omitempty" json:"descriptions,omitempty"`
 	// A formal or informal expression of a constraint or test
-	Constraints []Constraint `xml:"constraints,omitempty" json:"constraints,omitempty"`
+	Constraints []Constraint `xml:"constraint,omitempty" json:"constraints,omitempty"`
 	// A reference to a local or remote resource
-	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	// A prose statement that provides a recommendation for the use of a parameter.
-	Guidance []Guideline `xml:"guidance,omitempty" json:"guidance,omitempty"`
+	Guidance []Guideline `xml:"guideline,omitempty" json:"guidance,omitempty"`
 	// Indicates a permissible value for a parameter or property
 	Value Value `xml:"value,omitempty" json:"value,omitempty"`
 	// Presenting a choice among alternatives
@@ -155,9 +155,9 @@ type Alter struct {
 	ControlId string `xml:"control-id,attr,omitempty" json:"controlId,omitempty"`
 
 	// Specifies elements to be removed from a control, in resolution
-	Removals []Remove `xml:"removals,omitempty" json:"removals,omitempty"`
+	Removals []Remove `xml:"remove,omitempty" json:"removals,omitempty"`
 	// Specifies contents to be added into controls, in resolution
-	Additions []Add `xml:"additions,omitempty" json:"additions,omitempty"`
+	Additions []Add `xml:"add,omitempty" json:"additions,omitempty"`
 }
 
 // Specifies contents to be added into controls, in resolution
@@ -171,15 +171,15 @@ type Add struct {
 	// A title for display and navigation
 	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
-	Properties []Prop `xml:"properties,omitempty" json:"properties,omitempty"`
+	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
-	Links []Link `xml:"links,omitempty" json:"links,omitempty"`
+	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
-	Parameters []Param `xml:"parameters,omitempty" json:"parameters,omitempty"`
+	Parameters []Param `xml:"param,omitempty" json:"parameters,omitempty"`
 	// A name/value pair with optional explanatory remarks.
-	Annotations []Annotation `xml:"annotations,omitempty" json:"annotations,omitempty"`
+	Annotations []Annotation `xml:"annotation,omitempty" json:"annotations,omitempty"`
 	// A partition or component of a control or part
-	Parts []Part `xml:"parts,omitempty" json:"parts,omitempty"`
+	Parts []Part `xml:"part,omitempty" json:"parts,omitempty"`
 }
 
 // A Combine element defines whether and how to combine multiple (competing)

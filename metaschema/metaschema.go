@@ -357,13 +357,14 @@ func (a *Assembly) GoMemLayout() string {
 }
 
 func (a *Assembly) JsonName() string {
+	if a.GroupAs != nil {
+		return a.GroupAs.Name
+	}
 	return strcase.ToLowerCamel(a.XmlName())
 }
 
 func (a *Assembly) XmlName() string {
-	if a.GroupAs != nil {
-		return a.GroupAs.Name
-	} else if a.Named != "" {
+	if a.Named != "" {
 		return a.Named
 	} else {
 		return a.Def.Name
@@ -430,13 +431,14 @@ func (f *Field) GoMemLayout() string {
 }
 
 func (f *Field) JsonName() string {
+	if f.GroupAs != nil {
+		return f.GroupAs.Name
+	}
 	return strcase.ToLowerCamel(f.XmlName())
 }
 
 func (f *Field) XmlName() string {
-	if f.GroupAs != nil {
-		return f.GroupAs.Name
-	} else if f.Named != "" {
+	if f.Named != "" {
 		return f.Named
 	} else {
 		return f.Def.Name
