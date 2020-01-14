@@ -10,12 +10,14 @@ import (
 
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
+	ssp "github.com/docker/oscalkit/types/oscal/system_security_plan"
 	yaml "gopkg.in/yaml.v2"
 )
 
 const (
 	OscalCatalog = "catalog"
 	OscalProfile = "profile"
+	OscalSSP     = "system-security-plan"
 )
 
 // OSCAL contains specific OSCAL components
@@ -24,6 +26,7 @@ type OSCAL struct {
 	Catalog *catalog.Catalog `json:"catalog,omitempty" yaml:"catalog,omitempty"`
 	// Declarations *Declarations `json:"declarations,omitempty" yaml:"declarations,omitempty"`
 	Profile *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
+	*ssp.SystemSecurityPlan
 }
 
 // MarshalXML marshals either a catalog or a profile
@@ -130,6 +133,12 @@ func New(r io.Reader) (*OSCAL, error) {
 					return nil, err
 				}
 				return &OSCAL{Profile: &profile}, nil
+			case OscalSSP:
+				var ssp ssp.SystemSecurityPlan
+				if err := d.DecodeElement(&ssp, &startElement); err != nil {
+					return nil, err
+				}
+				return &OSCAL{SystemSecurityPlan: &ssp}, nil
 			}
 		}
 	}

@@ -22,6 +22,12 @@ var Info = cli.Command{
 			defer os.Close()
 
 			o := os.OSCAL()
+			if o.SystemSecurityPlan != nil {
+				fmt.Println("OSCAL System Security Plan")
+				fmt.Println("ID:\t", o.SystemSecurityPlan.Id)
+				printMetadata(o.SystemSecurityPlan.Metadata)
+				return nil
+			}
 			if o.Profile != nil {
 				fmt.Println("OSCAL Profile (represents subset of controls from OSCAL catalog(s))")
 				fmt.Println("ID:\t", o.Profile.Id)
