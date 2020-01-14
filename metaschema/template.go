@@ -14,9 +14,8 @@ import (
 
 func GenerateTypes(metaschema *Metaschema) error {
 	t, err := template.New("types.tmpl").Funcs(template.FuncMap{
-		"toCamel":      strcase.ToCamel,
-		"toLowerCamel": strcase.ToLowerCamel,
-		"getImports":   getImports,
+		"toCamel":    strcase.ToCamel,
+		"getImports": getImports,
 	}).ParseFiles("types.tmpl")
 	if err != nil {
 		return err
