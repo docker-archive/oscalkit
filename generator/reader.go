@@ -37,13 +37,8 @@ func ReadCatalog(r io.Reader) (*catalog.Catalog, error) {
 
 }
 
-// ReadProfile reads profile from byte array
-func ReadProfile(r io.Reader) (*profile.Profile, error) {
-
-	o, err := oscal.New(r)
-	if err != nil {
-		return nil, fmt.Errorf("cannot read oscal profile from file. err: %v,", err)
-	}
+// ReadProfile reads profile from OSCAL
+func ReadProfile(o *oscal.OSCAL) (*profile.Profile, error) {
 	if o.Profile == nil {
 		return nil, fmt.Errorf("unable to marshall profile")
 	}

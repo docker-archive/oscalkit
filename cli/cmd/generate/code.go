@@ -8,6 +8,7 @@ import (
 	"regexp"
 
 	"github.com/docker/oscalkit/generator"
+	"github.com/docker/oscalkit/pkg/oscal_source"
 	"github.com/docker/oscalkit/templates"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/sirupsen/logrus"
@@ -53,22 +54,13 @@ var Code = cli.Command{
 			return cli.NewExitError(err, 1)
 		}
 
-		profilePath, err := generator.GetAbsolutePath(profilePath)
-		if err != nil {
-			return cli.NewExitError(fmt.Sprintf("cannot get absolute path, err: %v", err), 1)
-		}
-
-		_, err = os.Stat(profilePath)
-		if err != nil {
-			return cli.NewExitError(fmt.Sprintf("cannot fetch file, err %v", err), 1)
-		}
-		f, err := os.Open(profilePath)
+		osource, err := oscal_source.Open(profilePath)
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
-		defer f.Close()
+		defer osource.Close()
 
-		profile, err := generator.ReadProfile(f)
+		profile, err := generator.ReadProfile(osource.OSCAL())
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}

@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/docker/oscalkit/generator"
-	"github.com/docker/oscalkit/types/oscal"
+	"github.com/docker/oscalkit/pkg/oscal_source"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/urfave/cli"
 )
@@ -17,25 +15,13 @@ var Info = cli.Command{
 	ArgsUsage: "[file]",
 	Action: func(c *cli.Context) error {
 		for _, filePath := range c.Args() {
-			profilePath, err := generator.GetAbsolutePath(filePath)
+			os, err := oscal_source.Open(filePath)
 			if err != nil {
-				return cli.NewExitError(fmt.Sprintf("cannot get absolute path, err: %v", err), 1)
+				return cli.NewExitError(fmt.Sprintf("Could not open oscal file: %v", err), 1)
 			}
+			defer os.Close()
 
-			_, err = os.Stat(profilePath)
-			if err != nil {
-				return cli.NewExitError(fmt.Sprintf("cannot fetch file, err %v", err), 1)
-			}
-			f, err := os.Open(profilePath)
-			if err != nil {
-				return cli.NewExitError(err, 1)
-			}
-			defer f.Close()
-
-			o, err := oscal.New(f)
-			if err != nil {
-				return cli.NewExitError(err, 1)
-			}
+			o := os.OSCAL()
 			if o.Profile != nil {
 				fmt.Println("OSCAL Profile (represents subset of controls from OSCAL catalog(s))")
 				fmt.Println("ID:\t", o.Profile.Id)
