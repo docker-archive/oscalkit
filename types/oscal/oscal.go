@@ -13,6 +13,11 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+const (
+	OscalCatalog = "catalog"
+	OscalProfile = "profile"
+)
+
 // OSCAL contains specific OSCAL components
 type OSCAL struct {
 	XMLName xml.Name         `json:"-" yaml:"-"`
@@ -112,14 +117,14 @@ func New(r io.Reader) (*OSCAL, error) {
 		switch startElement := token.(type) {
 		case xml.StartElement:
 			switch startElement.Name.Local {
-			case "catalog":
+			case OscalCatalog:
 				var catalog catalog.Catalog
 				if err := d.DecodeElement(&catalog, &startElement); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			case "profile":
+			case OscalProfile:
 				var profile profile.Profile
 				if err := d.DecodeElement(&profile, &startElement); err != nil {
 					return nil, err
@@ -133,14 +138,14 @@ func New(r io.Reader) (*OSCAL, error) {
 	if err := json.Unmarshal(oscalBytes, &oscalT); err == nil {
 		for k, v := range oscalT {
 			switch k {
-			case "catalog":
+			case OscalCatalog:
 				var catalog catalog.Catalog
 				if err := json.Unmarshal(v, &catalog); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			case "profile":
+			case OscalProfile:
 				var profile profile.Profile
 				if err := json.Unmarshal(v, &profile); err != nil {
 					return nil, err
