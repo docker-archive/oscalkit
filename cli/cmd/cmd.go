@@ -37,6 +37,7 @@ func Execute() error {
 		return nil
 	}
 	app.Commands = []cli.Command{
+		Info,
 		convert.Convert,
 		Validate,
 		Sign,
