@@ -18,14 +18,6 @@ const (
 	metaschemaBaseDir = "OSCAL/src/metaschema/%s"
 )
 
-var (
-	pkgName = map[string]string{
-		"catalog":              "catalog",
-		"profile":              "profile",
-		"system-security-plan": "ssp",
-	}
-)
-
 func main() {
 	rmCmd := exec.Command("rm", "-rf", "OSCAL/")
 	if err := rmCmd.Run(); err != nil {
