@@ -14,10 +14,17 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+type DocumentType int
+
 const (
-	OscalCatalog = "catalog"
-	OscalProfile = "profile"
-	OscalSSP     = "system-security-plan"
+	CatalogDocument DocumentType = iota
+	ProfileDocument
+	SSPDocument
+	UnknownDocument = -1
+
+	catalogRootElement = "catalog"
+	profileRootElement = "profile"
+	sspRootElement     = "system-security-plan"
 )
 
 // OSCAL contains specific OSCAL components
@@ -27,6 +34,19 @@ type OSCAL struct {
 	// Declarations *Declarations `json:"declarations,omitempty" yaml:"declarations,omitempty"`
 	Profile *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
 	*ssp.SystemSecurityPlan
+	documentType DocumentType
+}
+
+func (o *OSCAL) DocumentType() DocumentType {
+	if o.Catalog != nil {
+		return CatalogDocument
+	} else if o.Profile != nil {
+		return ProfileDocument
+	} else if o.SystemSecurityPlan != nil {
+		return SSPDocument
+	} else {
+		return UnknownDocument
+	}
 }
 
 // MarshalXML marshals either a catalog or a profile
@@ -120,20 +140,20 @@ func New(r io.Reader) (*OSCAL, error) {
 		switch startElement := token.(type) {
 		case xml.StartElement:
 			switch startElement.Name.Local {
-			case OscalCatalog:
+			case catalogRootElement:
 				var catalog catalog.Catalog
 				if err := d.DecodeElement(&catalog, &startElement); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			case OscalProfile:
+			case profileRootElement:
 				var profile profile.Profile
 				if err := d.DecodeElement(&profile, &startElement); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Profile: &profile}, nil
-			case OscalSSP:
+			case sspRootElement:
 				var ssp ssp.SystemSecurityPlan
 				if err := d.DecodeElement(&ssp, &startElement); err != nil {
 					return nil, err
@@ -147,14 +167,14 @@ func New(r io.Reader) (*OSCAL, error) {
 	if err := json.Unmarshal(oscalBytes, &oscalT); err == nil {
 		for k, v := range oscalT {
 			switch k {
-			case OscalCatalog:
+			case catalogRootElement:
 				var catalog catalog.Catalog
 				if err := json.Unmarshal(v, &catalog); err != nil {
 					return nil, err
 				}
 				return &OSCAL{Catalog: &catalog}, nil
 
-			case OscalProfile:
+			case profileRootElement:
 				var profile profile.Profile
 				if err := json.Unmarshal(v, &profile); err != nil {
 					return nil, err
