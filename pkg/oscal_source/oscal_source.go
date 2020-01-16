@@ -2,19 +2,11 @@ package oscal_source
 
 import (
 	"fmt"
+	"github.com/docker/oscalkit/pkg/oscal/constants"
 	"github.com/docker/oscalkit/types/oscal"
 	"os"
 	"path/filepath"
 	"strings"
-)
-
-type DocumentFormat int
-
-const (
-	UnknownFormat DocumentFormat = iota
-	XmlFormat
-	JsonFormat
-	YamlFormat
 )
 
 // OSCALSource is intermediary that handles IO and low-level common operations consistently for oscalkit
@@ -54,15 +46,14 @@ func (s *OSCALSource) OSCAL() *oscal.OSCAL {
 	return s.oscal
 }
 
-func (s *OSCALSource) DocumentFormat() DocumentFormat {
+func (s *OSCALSource) DocumentFormat() constants.DocumentFormat {
 	if strings.HasSuffix(s.UserPath, ".xml") {
-		return XmlFormat
+		return constants.XmlFormat
 	} else if strings.HasSuffix(s.UserPath, ".json") {
-		return JsonFormat
+		return constants.JsonFormat
 	} else {
-		return UnknownFormat
+		return constants.UnknownFormat
 	}
-
 }
 
 // Close the OSCALSource
