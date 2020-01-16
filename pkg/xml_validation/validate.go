@@ -16,6 +16,10 @@ func Validate(schemaPath, inputFile string) error {
 	xmllintCmd.Stderr = xmllintCmdErr
 
 	if err := xmllintCmd.Run(); err != nil {
+		stderr := xmllintCmdErr.String()
+		if stderr == "" {
+			return err
+		}
 		return errors.New(xmllintCmdErr.String())
 	}
 	return nil
