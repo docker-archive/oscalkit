@@ -9,3 +9,12 @@ const (
 	JsonFormat
 	YamlFormat
 )
+
+type DocumentType int
+
+const (
+	UnknownDocument = iota
+	CatalogDocument
+	ProfileDocument
+	SSPDocument
+)

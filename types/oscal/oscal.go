@@ -8,20 +8,14 @@ import (
 	"io"
 	"io/ioutil"
 
+	"github.com/docker/oscalkit/pkg/oscal/constants"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
 	ssp "github.com/docker/oscalkit/types/oscal/system_security_plan"
 	yaml "gopkg.in/yaml.v2"
 )
 
-type DocumentType int
-
 const (
-	CatalogDocument DocumentType = iota
-	ProfileDocument
-	SSPDocument
-	UnknownDocument = -1
-
 	catalogRootElement = "catalog"
 	profileRootElement = "profile"
 	sspRootElement     = "system-security-plan"
@@ -34,18 +28,18 @@ type OSCAL struct {
 	// Declarations *Declarations `json:"declarations,omitempty" yaml:"declarations,omitempty"`
 	Profile *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
 	*ssp.SystemSecurityPlan
-	documentType DocumentType
+	documentType constants.DocumentType
 }
 
-func (o *OSCAL) DocumentType() DocumentType {
+func (o *OSCAL) DocumentType() constants.DocumentType {
 	if o.Catalog != nil {
-		return CatalogDocument
+		return constants.CatalogDocument
 	} else if o.Profile != nil {
-		return ProfileDocument
+		return constants.ProfileDocument
 	} else if o.SystemSecurityPlan != nil {
-		return SSPDocument
+		return constants.SSPDocument
 	} else {
-		return UnknownDocument
+		return constants.UnknownDocument
 	}
 }
 

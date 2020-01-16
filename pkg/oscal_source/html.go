@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"github.com/docker/oscalkit/pkg/bundled"
+	"github.com/docker/oscalkit/pkg/oscal/constants"
 	"github.com/docker/oscalkit/pkg/xslt"
-	"github.com/docker/oscalkit/types/oscal"
 )
 
 func (s *OSCALSource) HTML() (*bytes.Buffer, error) {
-	if s.OSCAL().DocumentType() != oscal.CatalogDocument {
+	if s.OSCAL().DocumentType() != constants.CatalogDocument {
 		return nil, errors.New("HTML is supported only for OSCAL Catalog")
 	}
 	transformation, err := bundled.HtmlXslt()

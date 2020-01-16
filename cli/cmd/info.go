@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/docker/oscalkit/pkg/oscal/constants"
 	"github.com/docker/oscalkit/pkg/oscal_source"
-	"github.com/docker/oscalkit/types/oscal"
 	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/urfave/cli"
 )
@@ -24,17 +24,17 @@ var Info = cli.Command{
 
 			o := os.OSCAL()
 			switch o.DocumentType() {
-			case oscal.SSPDocument:
+			case constants.SSPDocument:
 				fmt.Println("OSCAL System Security Plan")
 				fmt.Println("ID:\t", o.SystemSecurityPlan.Id)
 				printMetadata(o.SystemSecurityPlan.Metadata)
 				return nil
-			case oscal.ProfileDocument:
+			case constants.ProfileDocument:
 				fmt.Println("OSCAL Profile (represents subset of controls from OSCAL catalog(s))")
 				fmt.Println("ID:\t", o.Profile.Id)
 				printMetadata(o.Profile.Metadata)
 				return nil
-			case oscal.CatalogDocument:
+			case constants.CatalogDocument:
 				fmt.Println("OSCAL Catalog (represents library of control assessment objectives and activities)")
 				fmt.Println("ID:\t", o.Catalog.Id)
 				printMetadata(o.Catalog.Metadata)
