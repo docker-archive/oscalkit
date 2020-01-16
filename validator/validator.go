@@ -1,12 +1,10 @@
 package validator
 
 import (
-	"fmt"
-	"os"
 	"path/filepath"
 
+	"github.com/docker/oscalkit/pkg/json_validation"
 	"github.com/docker/oscalkit/pkg/xml_validation"
-	"github.com/santhosh-tekuri/jsonschema"
 	"github.com/sirupsen/logrus"
 )
 
@@ -39,25 +37,13 @@ func New(schemaFile string) Validator {
 // Validate validates one or more JSON files against a specific
 // JSON schema.
 func (j jsonValidator) Validate(file ...string) error {
-	schema, err := jsonschema.Compile(j.SchemaFile)
-	if err != nil {
-		return fmt.Errorf("Error compiling OSCAL schema: %v", err)
-	}
-
-	logrus.Debugf("Validating %s against OSCAL schema", file)
-
 	for _, f := range file {
-		rawFile, err := os.Open(f)
+		err := json_validation.Validate(j.SchemaFile, f)
 		if err != nil {
-			return fmt.Errorf("Error opening file: %s, %v", f, err)
+			logrus.Error(err)
+		} else {
+			logrus.Infof("%s is valid against JSON schema %s", f, j.SchemaFile)
 		}
-		defer rawFile.Close()
-
-		if err = schema.Validate(rawFile); err != nil {
-			return err
-		}
-
-		logrus.Infof("%s is valid against JSON schema %s", f, j.SchemaFile)
 	}
 
 	return nil
