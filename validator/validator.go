@@ -1,13 +1,12 @@
 package validator
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 
+	"github.com/docker/oscalkit/pkg/xml_validation"
 	"github.com/santhosh-tekuri/jsonschema"
 	"github.com/santhosh-tekuri/jsonschema/loader"
 	"github.com/sirupsen/logrus"
@@ -86,21 +85,13 @@ func (x xmlValidator) Validate(file ...string) error {
 		}
 		defer rawFile.Close()
 
-		xmllintCmd := exec.Command("xmllint", "--schema", x.SchemaFile, f, "--noout")
-
-		xmllintCmdOutput := &bytes.Buffer{}
-		xmllintCmdErr := &bytes.Buffer{}
-		xmllintCmd.Stdout = xmllintCmdOutput
-		xmllintCmd.Stderr = xmllintCmdErr
-
-		if err := xmllintCmd.Run(); err != nil {
-			logrus.Error(string(xmllintCmdErr.Bytes()))
-			continue
+		err = xml_validation.Validate(x.SchemaFile, f)
+		if err != nil {
+			logrus.Error(err)
+		} else {
+			logrus.Infof("%s is valid against XML schema %s", f, x.SchemaFile)
 		}
-
-		logrus.Infof("%s is valid against XML schema %s", f, x.SchemaFile)
 	}
-
 	return nil
 }
 
