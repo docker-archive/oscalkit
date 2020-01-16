@@ -5,6 +5,16 @@ import (
 	"github.com/docker/oscalkit/types/oscal"
 	"os"
 	"path/filepath"
+	"strings"
+)
+
+type DocumentFormat int
+
+const (
+	UnknownFormat DocumentFormat = iota
+	XmlFormat
+	JsonFormat
+	YamlFormat
 )
 
 // OSCALSource is intermediary that handles IO and low-level common operations consistently for oscalkit
@@ -42,6 +52,17 @@ func (s *OSCALSource) open() error {
 
 func (s *OSCALSource) OSCAL() *oscal.OSCAL {
 	return s.oscal
+}
+
+func (s *OSCALSource) DocumentFormat() DocumentFormat {
+	if strings.HasSuffix(s.UserPath, ".xml") {
+		return XmlFormat
+	} else if strings.HasSuffix(s.UserPath, ".json") {
+		return JsonFormat
+	} else {
+		return UnknownFormat
+	}
+
 }
 
 // Close the OSCALSource
