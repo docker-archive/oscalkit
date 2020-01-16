@@ -79,13 +79,7 @@ func (j jsonValidator) Validate(file ...string) error {
 // XML schema (.xsd). Wrapper around `xmllint`
 func (x xmlValidator) Validate(file ...string) error {
 	for _, f := range file {
-		rawFile, err := os.Open(f)
-		if err != nil {
-			return err
-		}
-		defer rawFile.Close()
-
-		err = xml_validation.Validate(x.SchemaFile, f)
+		err := xml_validation.Validate(x.SchemaFile, f)
 		if err != nil {
 			logrus.Error(err)
 		} else {
