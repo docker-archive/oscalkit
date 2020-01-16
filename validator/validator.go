@@ -2,18 +2,13 @@ package validator
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/docker/oscalkit/pkg/xml_validation"
 	"github.com/santhosh-tekuri/jsonschema"
-	"github.com/santhosh-tekuri/jsonschema/loader"
 	"github.com/sirupsen/logrus"
 )
-
-// Workaround for unpublished schemas referenced by http://csrc.nist.gov/ns/oscal
-var basePath string
 
 // Validator ...
 type Validator interface {
@@ -28,8 +23,6 @@ type xmlValidator struct {
 	SchemaFile string
 }
 
-type oscalLoader struct{}
-
 // New creates a Validator based on the specified schema file
 func New(schemaFile string) Validator {
 	switch filepath.Ext(schemaFile) {
@@ -43,14 +36,9 @@ func New(schemaFile string) Validator {
 	return nil
 }
 
-func (oscalLoader) Load(url string) (io.ReadCloser, error) {
-	return os.Open(filepath.Join(basePath, filepath.Base(url)))
-}
-
 // Validate validates one or more JSON files against a specific
 // JSON schema.
 func (j jsonValidator) Validate(file ...string) error {
-	basePath = filepath.Dir(j.SchemaFile)
 	schema, err := jsonschema.Compile(j.SchemaFile)
 	if err != nil {
 		return fmt.Errorf("Error compiling OSCAL schema: %v", err)
@@ -87,8 +75,4 @@ func (x xmlValidator) Validate(file ...string) error {
 		}
 	}
 	return nil
-}
-
-func init() {
-	loader.Register("http", oscalLoader{})
 }
