@@ -34,6 +34,7 @@ func main() {
 		"nominal_catalog": "oscal_control-common_metaschema.xml",
 		"catalog":         "oscal_catalog_metaschema.xml",
 		"profile":         "oscal_profile_metaschema.xml",
+		"implementation":  "oscal_implementation-common_metaschema.xml",
 		"ssp":             "oscal_ssp_metaschema.xml",
 	}
 
