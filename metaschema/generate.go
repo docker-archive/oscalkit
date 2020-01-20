@@ -36,6 +36,7 @@ func main() {
 		"profile":         "oscal_profile_metaschema.xml",
 		"implementation":  "oscal_implementation-common_metaschema.xml",
 		"ssp":             "oscal_ssp_metaschema.xml",
+		"component":       "oscal_component_metaschema.xml",
 	}
 
 	for _, metaschemaPath := range metaschemaPaths {
