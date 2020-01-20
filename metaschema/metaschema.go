@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/iancoleman/strcase"
 	"net/url"
+	"sort"
 	"strings"
 )
 
@@ -85,6 +86,9 @@ func (metaschema *Metaschema) ImportedDependencies() []*Metaschema {
 	for _, v := range result {
 		ret = append(ret, v)
 	}
+	sort.Slice(ret, func(i, j int) bool {
+		return strings.Compare(ret[i].GoPackageName(), ret[j].GoPackageName()) > 0
+	})
 	return ret
 }
 

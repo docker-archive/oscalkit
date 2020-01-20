@@ -4,9 +4,9 @@ package catalog
 import (
 	"encoding/xml"
 
-	"github.com/docker/oscalkit/types/oscal/nominal_catalog"
-
 	"github.com/docker/oscalkit/types/oscal/validation_root"
+
+	"github.com/docker/oscalkit/types/oscal/nominal_catalog"
 )
 
 // A collection of controls.
