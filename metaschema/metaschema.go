@@ -74,6 +74,20 @@ type Metaschema struct {
 	Dependencies       map[string]GoType
 }
 
+func (metaschema *Metaschema) ImportedDependencies() []*Metaschema {
+	result := make(map[string]*Metaschema)
+	for _, dep := range metaschema.Dependencies {
+		m := dep.GetMetaschema()
+		result[m.GoPackageName()] = m
+	}
+
+	ret := make([]*Metaschema, 0, len(result))
+	for _, v := range result {
+		ret = append(ret, v)
+	}
+	return ret
+}
+
 func (metaschema *Metaschema) registerDependency(name string, dependency GoType) {
 	if dependency.GetMetaschema() != metaschema {
 		if metaschema.Dependencies == nil {
