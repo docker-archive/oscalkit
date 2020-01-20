@@ -17,4 +17,5 @@ const (
 	CatalogDocument
 	ProfileDocument
 	SSPDocument
+	ComponentDocument
 )

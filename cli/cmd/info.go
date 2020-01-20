@@ -29,6 +29,10 @@ var Info = cli.Command{
 				fmt.Println("ID:\t", o.SystemSecurityPlan.Id)
 				printMetadata(o.SystemSecurityPlan.Metadata)
 				return nil
+			case constants.ComponentDocument:
+				fmt.Println("OSCAL Component (represents information about particular software asset/component)")
+				printMetadata(o.Component.Metadata)
+				return nil
 			case constants.ProfileDocument:
 				fmt.Println("OSCAL Profile (represents subset of controls from OSCAL catalog(s))")
 				fmt.Println("ID:\t", o.Profile.Id)

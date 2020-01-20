@@ -10,6 +10,7 @@ import (
 
 	"github.com/docker/oscalkit/pkg/oscal/constants"
 	"github.com/docker/oscalkit/types/oscal/catalog"
+	"github.com/docker/oscalkit/types/oscal/component_definition"
 	"github.com/docker/oscalkit/types/oscal/profile"
 	ssp "github.com/docker/oscalkit/types/oscal/system_security_plan"
 	yaml "gopkg.in/yaml.v2"
@@ -19,6 +20,7 @@ const (
 	catalogRootElement = "catalog"
 	profileRootElement = "profile"
 	sspRootElement     = "system-security-plan"
+	componentElement   = "component-definition"
 )
 
 // OSCAL contains specific OSCAL components
@@ -28,6 +30,7 @@ type OSCAL struct {
 	// Declarations *Declarations `json:"declarations,omitempty" yaml:"declarations,omitempty"`
 	Profile *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
 	*ssp.SystemSecurityPlan
+	Component    *component_definition.ComponentDefinition
 	documentType constants.DocumentType
 }
 
@@ -38,6 +41,8 @@ func (o *OSCAL) DocumentType() constants.DocumentType {
 		return constants.ProfileDocument
 	} else if o.SystemSecurityPlan != nil {
 		return constants.SSPDocument
+	} else if o.Component != nil {
+		return constants.ComponentDocument
 	} else {
 		return constants.UnknownDocument
 	}
@@ -153,6 +158,12 @@ func New(r io.Reader) (*OSCAL, error) {
 					return nil, err
 				}
 				return &OSCAL{SystemSecurityPlan: &ssp}, nil
+			case componentElement:
+				var component component_definition.ComponentDefinition
+				if err := d.DecodeElement(&component, &startElement); err != nil {
+					return nil, err
+				}
+				return &OSCAL{Component: &component}, nil
 			}
 		}
 	}
