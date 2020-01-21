@@ -28,10 +28,10 @@ type OSCAL struct {
 	XMLName xml.Name         `json:"-" yaml:"-"`
 	Catalog *catalog.Catalog `json:"catalog,omitempty" yaml:"catalog,omitempty"`
 	// Declarations *Declarations `json:"declarations,omitempty" yaml:"declarations,omitempty"`
-	Profile *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
-	*ssp.SystemSecurityPlan
-	Component    *component_definition.ComponentDefinition
-	documentType constants.DocumentType
+	Profile                 *profile.Profile `json:"profile,omitempty" yaml:"profile,omitempty"`
+	*ssp.SystemSecurityPlan `xml:"system-security-plan"`
+	Component               *component_definition.ComponentDefinition
+	documentType            constants.DocumentType
 }
 
 func (o *OSCAL) DocumentType() constants.DocumentType {
@@ -60,16 +60,15 @@ func (o *OSCAL) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		if err := e.Encode(o.Profile); err != nil {
 			return err
 		}
+	} else if o.SystemSecurityPlan != nil {
+		o.XMLName = o.SystemSecurityPlan.XMLName
+		if err := e.Encode(o.SystemSecurityPlan); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
-
-// dockerOptions ...
-// type dockerOptions struct {
-// 	dockerYAMLFilepath string
-// 	dockersDir         string
-// }
 
 // NewFromOC initializes an OSCAL type from raw docker data
 // func NewFromOC(options dockerOptions) (*OSCAL, error) {
