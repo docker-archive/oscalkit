@@ -269,7 +269,7 @@ func (da *DefineAssembly) GoName() string {
 }
 
 func (da *DefineAssembly) RepresentsRootElement() bool {
-	return da.Name == "catalog" || da.Name == "profile" || da.Name == "declarations"
+	return da.Name == "catalog" || da.Name == "profile" || da.Name == "declarations" || da.Name == "system-security-plan"
 }
 
 func (a *DefineAssembly) GoComment() string {

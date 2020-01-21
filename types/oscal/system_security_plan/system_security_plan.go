@@ -2,12 +2,14 @@
 package system_security_plan
 
 import (
+	"encoding/xml"
+
 	"github.com/docker/oscalkit/types/oscal/validation_root"
 )
 
 // A system security plan, such as those described in NIST SP 800-18
 type SystemSecurityPlan struct {
-
+	XMLName xml.Name `xml:"http://csrc.nist.gov/ns/oscal/1.0 system-security-plan" json:"-"`
 	// Unique identifier of the containing object
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
