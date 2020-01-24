@@ -58,13 +58,52 @@ func convertSystemCharacteristics(component common.Component) *ssp.SystemCharact
 	syschar.SystemIds = []ssp.SystemId{
 		ssp.SystemId{
 			IdentifierType: "https://fedramp.gov",
-			Value:          "F0kk0000000",
+			Value:          "F00000000",
 		},
 	}
 	syschar.SystemName = ssp.SystemName(component.GetName())
 	syschar.SystemNameShort = ssp.SystemNameShort(component.GetKey())
-
+	syschar.Description = &ssp.Description{
+		Raw: "<p>Automatically generated OSCAL SSP from OpenControl guidance for " + component.GetName() + "</p>",
+	}
+	syschar.SecuritySensitivityLevel = ssp.SecuritySensitivityLevel("low")
+	syschar.SystemInformation = staticSystemInformation()
+	syschar.SecurityImpactLevel = &ssp.SecurityImpactLevel{
+		SecurityObjectiveConfidentiality: ssp.SecurityObjectiveConfidentiality("fips-199-moderate"),
+		SecurityObjectiveIntegrity:       ssp.SecurityObjectiveIntegrity("fips-199-moderate"),
+		SecurityObjectiveAvailability:    ssp.SecurityObjectiveAvailability("fips-199-moderate"),
+	}
+	syschar.Status = &ssp.Status{
+		State: "operational",
+	}
+	syschar.AuthorizationBoundary = &ssp.AuthorizationBoundary{
+		Description: &ssp.Description{
+			Raw: "<p>A holistic, top-level explanation of the FedRAMP authorization boundary.</p>",
+		},
+	}
 	return &syschar
+}
+
+func staticSystemInformation() *ssp.SystemInformation {
+	var sysinf ssp.SystemInformation
+	sysinf.InformationTypes = []ssp.InformationType{
+		ssp.InformationType{
+			Name: "Information Type Name",
+			Description: &ssp.Description{
+				Raw: "<p>This item is useless nevertheless required.</p>",
+			},
+			ConfidentialityImpact: &ssp.ConfidentialityImpact{
+				Base: "fips-199-moderate",
+			},
+			IntegrityImpact: &ssp.IntegrityImpact{
+				Base: "fips-199-moderate",
+			},
+			AvailabilityImpact: &ssp.AvailabilityImpact{
+				Base: "fips-199-moderate",
+			},
+		},
+	}
+	return &sysinf
 }
 
 func writeSSP(plan ssp.SystemSecurityPlan, outputFile string) error {
