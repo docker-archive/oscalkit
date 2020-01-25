@@ -24,7 +24,7 @@ var Validate = cli.Command{
 		for _, filePath := range c.Args() {
 			os, err := oscal_source.Open(filePath)
 			if err != nil {
-				return cli.NewExitError(fmt.Sprintf("Could not open oscal file: %v", err), 1)
+				return cli.NewExitError(fmt.Sprintf("Could not open oscal file %s: %v", filePath, err), 1)
 			}
 			defer os.Close()
 
