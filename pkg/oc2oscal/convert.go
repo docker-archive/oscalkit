@@ -63,11 +63,28 @@ func convertControlImplementation(component common.Component) *ssp.ControlImplem
 	}
 	ci.ImplementedRequirements = make([]ssp.ImplementedRequirement, 0)
 	for _, sat := range component.GetAllSatisfies() {
+		id := convertControlId(sat.GetControlKey())
+
 		ci.ImplementedRequirements = append(ci.ImplementedRequirements, ssp.ImplementedRequirement{
-			ControlId: convertControlId(sat.GetControlKey()),
+			ControlId: id,
+			Annotations: []ssp.Annotation{
+				fedrampImplementationStatus(sat.GetImplementationStatus()),
+			},
 		})
 	}
 	return &ci
+}
+func fedrampImplementationStatus(status string) ssp.Annotation {
+	// Based on "Guide to OSCAL-based FedRAMP System Security Plans" (Version 1.0, November 27, 2019)
+	// 5.3. Implementation Status (page 53)
+	if status == "not applicable" {
+		status = "not-applicable"
+	}
+	return ssp.Annotation{
+		Name:  "implementation-status",
+		Ns:    "https://fedramp.gov/ns/oscal",
+		Value: status,
+	}
 }
 
 func convertControlId(controlKey string) string {
