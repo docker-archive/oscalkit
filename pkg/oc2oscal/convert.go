@@ -58,9 +58,7 @@ func convertComponent(component common.Component, metadata ssp.Metadata, outputD
 
 func convertControlImplementation(component common.Component) *ssp.ControlImplementation {
 	var ci ssp.ControlImplementation
-	ci.Description = &ssp.Description{
-		Raw: "<p>FedRAMP SSP Template Section 13</p>",
-	}
+	ci.Description = validation_root.MarkupFromPlain("FedRAMP SSP Template Section 13")
 	ci.ImplementedRequirements = make([]ssp.ImplementedRequirement, 0)
 	for _, sat := range component.GetAllSatisfies() {
 		id := convertControlId(sat.GetControlKey())
@@ -109,9 +107,7 @@ func convertSystemCharacteristics(component common.Component) *ssp.SystemCharact
 	}
 	syschar.SystemName = ssp.SystemName(component.GetName())
 	syschar.SystemNameShort = ssp.SystemNameShort(component.GetKey())
-	syschar.Description = &ssp.Description{
-		Raw: "<p>Automatically generated OSCAL SSP from OpenControl guidance for " + component.GetName() + "</p>",
-	}
+	syschar.Description = validation_root.MarkupFromPlain("Automatically generated OSCAL SSP from OpenControl guidance for " + component.GetName())
 	syschar.SecuritySensitivityLevel = ssp.SecuritySensitivityLevel("low")
 	syschar.SystemInformation = staticSystemInformation()
 	syschar.SecurityImpactLevel = &ssp.SecurityImpactLevel{
@@ -123,9 +119,7 @@ func convertSystemCharacteristics(component common.Component) *ssp.SystemCharact
 		State: "operational",
 	}
 	syschar.AuthorizationBoundary = &ssp.AuthorizationBoundary{
-		Description: &ssp.Description{
-			Raw: "<p>A holistic, top-level explanation of the FedRAMP authorization boundary.</p>",
-		},
+		Description: validation_root.MarkupFromPlain("A holistic, top-level explanation of the FedRAMP authorization boundary."),
 	}
 	return &syschar
 }
@@ -134,10 +128,8 @@ func staticSystemInformation() *ssp.SystemInformation {
 	var sysinf ssp.SystemInformation
 	sysinf.InformationTypes = []ssp.InformationType{
 		ssp.InformationType{
-			Name: "Information Type Name",
-			Description: &ssp.Description{
-				Raw: "<p>This item is useless nevertheless required.</p>",
-			},
+			Name:        "Information Type Name",
+			Description: validation_root.MarkupFromPlain("This item is useless nevertheless required."),
 			ConfidentialityImpact: &ssp.ConfidentialityImpact{
 				Base: "fips-199-moderate",
 			},
