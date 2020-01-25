@@ -3,6 +3,8 @@ package oc2oscal
 import (
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/docker/oscalkit/pkg/oc2oscal/masonry"
@@ -50,7 +52,34 @@ func convertComponent(component common.Component, metadata ssp.Metadata, outputD
 		Href: "https://raw.githubusercontent.com/usnistgov/OSCAL/master/content/fedramp.gov/xml/FedRAMP_MODERATE-baseline_profile.xml",
 	}
 	plan.SystemCharacteristics = convertSystemCharacteristics(component)
+	plan.ControlImplementation = convertControlImplementation(component)
 	return writeSSP(plan, outputDirectory+"/"+component.GetKey()+".xml")
+}
+
+func convertControlImplementation(component common.Component) *ssp.ControlImplementation {
+	var ci ssp.ControlImplementation
+	ci.Description = &ssp.Description{
+		Raw: "<p>FedRAMP SSP Template Section 13</p>",
+	}
+	ci.ImplementedRequirements = make([]ssp.ImplementedRequirement, 0)
+	for _, sat := range component.GetAllSatisfies() {
+		ci.ImplementedRequirements = append(ci.ImplementedRequirements, ssp.ImplementedRequirement{
+			ControlId: convertControlId(sat.GetControlKey()),
+		})
+	}
+	return &ci
+}
+
+func convertControlId(controlKey string) string {
+	lower := strings.ToLower(controlKey)
+	re := regexp.MustCompile("^([a-z][a-z])-([0-9]+)(\\s+\\(([0-9]+)\\))?$")
+	match := re.FindStringSubmatch(lower)
+	result := fmt.Sprintf("%s-%s", match[1], match[2])
+	if match[4] != "" {
+		result = fmt.Sprintf("%s.%s", result, match[4])
+	}
+	return result
+
 }
 
 func convertSystemCharacteristics(component common.Component) *ssp.SystemCharacteristics {
