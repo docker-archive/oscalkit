@@ -68,10 +68,32 @@ func convertControlImplementation(component common.Component) *ssp.ControlImplem
 			Annotations: []ssp.Annotation{
 				fedrampImplementationStatus(sat.GetImplementationStatus()),
 			},
+			Statements: convertStatements(id, sat.GetNarratives()),
 		})
 	}
 	return &ci
 }
+
+func convertStatements(id string, narratives []common.Section) []ssp.Statement {
+	var res []ssp.Statement
+	if len(narratives) == 1 {
+		return append(res, ssp.Statement{
+			StatementId: fmt.Sprintf("%s_stmt", id),
+			Description: validation_root.MarkupFromPlain(narratives[0].GetText()),
+		})
+
+	}
+
+	for _, narrative := range narratives {
+		res = append(res, ssp.Statement{
+			StatementId: fmt.Sprintf("%s_stmt.%s", id, narrative.GetKey()),
+			Description: validation_root.MarkupFromPlain(narrative.GetText()),
+		})
+
+	}
+	return res
+}
+
 func fedrampImplementationStatus(status string) ssp.Annotation {
 	// Based on "Guide to OSCAL-based FedRAMP System Security Plans" (Version 1.0, November 27, 2019)
 	// 5.3. Implementation Status (page 53)
