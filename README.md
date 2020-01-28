@@ -159,7 +159,7 @@ Convert OpenControl project to OSCAL-formatted JSON:
 
 ### Validate against XML and JSON schemas
 
-The tool supports validation of OSCAL-formatted XML and JSON files against the corresponding OSCAL XML schemas (.xsd) and JSON schemas. Schema is included in the tool and found automatically based on the type of OSCAL file. XML schema validation requires the `xmllint` tool on the local machine (included with macOS and Linux. Windows installation instructions [here](https://stackoverflow.com/a/21227833))
+The tool supports validation of OSCAL-formatted XML and JSON files against the corresponding OSCAL XML schemas (.xsd) and JSON schemas. Schemas are packaged with the tool and found automatically based on the type of OSCAL file. XML schema validation requires the `xmllint` tool on the local machine (included with macOS and Linux. Windows installation instructions [here](https://stackoverflow.com/a/21227833))
 
 ```
 NAME:
