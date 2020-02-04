@@ -70,58 +70,6 @@ func (o *OSCAL) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
-// NewFromOC initializes an OSCAL type from raw docker data
-// func NewFromOC(options dockerOptions) (*OSCAL, error) {
-// 	ocFile, err := os.Open(options.dockerYAMLFilepath)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer ocFile.Close()
-
-// 	rawOC, err := ioutil.ReadAll(ocFile)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	var oc docker.docker
-// 	if err := yaml.Unmarshal(rawOC, &oc); err != nil {
-// 		return nil, err
-// 	}
-
-// 	ocComponentFileList := []string{}
-// 	filepath.Walk(filepath.Join(options.dockersDir, "components/"), func(path string, f os.FileInfo, err error) error {
-// 		if !f.IsDir() && (filepath.Ext(path) == ".yaml" || filepath.Ext(path) == ".yml") {
-// 			absPath, err := filepath.Abs(path)
-// 			if err != nil {
-// 				return err
-// 			}
-// 			ocComponentFileList = append(ocComponentFileList, absPath)
-// 		}
-
-// 		return nil
-// 	})
-
-// 	ocComponents := []docker.Component{}
-// 	for _, ocComponentFilepath := range ocComponentFileList {
-// 		ocComponentFile, err := os.Open(ocComponentFilepath)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		defer ocComponentFile.Close()
-
-// 		rawOCComponentFile, err := ioutil.ReadAll(ocComponentFile)
-
-// 		var ocComponent docker.Component
-// 		if err := yaml.Unmarshal(rawOCComponentFile, &ocComponent); err != nil {
-// 			return nil, err
-// 		}
-
-// 		ocComponents = append(ocComponents, ocComponent)
-// 	}
-
-// 	return convertOC(oc, ocComponents)
-// }
-
 // New returns a concrete OSCAL type from a reader
 func New(r io.Reader) (*OSCAL, error) {
 	oscalBytes, err := ioutil.ReadAll(r)
