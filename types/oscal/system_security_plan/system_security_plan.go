@@ -490,7 +490,7 @@ type ImplementedRequirement struct {
 	// A reference to one or more roles with responsibility for performing a function relative to the control.
 	ResponsibleRoles []ResponsibleRole `xml:"responsible-role,omitempty" json:"responsible-roles,omitempty"`
 	// Identifies the parameter that will be filled in by the enclosed value element.
-	SetParams []SetParam `xml:"set-param,omitempty" json:"set-params,omitempty"`
+	ParameterSettings []SetParameter `xml:"set-parameter,omitempty" json:"parameter-settings,omitempty"`
 	// Identifies which statements within a control are addressed.
 	Statements []Statement `xml:"statement,omitempty" json:"statements,omitempty"`
 }
@@ -550,11 +550,11 @@ type ByComponent struct {
 	// A reference to one or more roles with responsibility for performing a function relative to the control.
 	ResponsibleRoles []ResponsibleRole `xml:"responsible-role,omitempty" json:"responsible-roles,omitempty"`
 	// Identifies the parameter that will be filled in by the enclosed value element.
-	SetParams []SetParam `xml:"set-param,omitempty" json:"set-params,omitempty"`
+	ParameterSettings []SetParameter `xml:"set-parameter,omitempty" json:"parameter-settings,omitempty"`
 }
 
 // Identifies the parameter that will be filled in by the enclosed value element.
-type SetParam struct {
+type SetParameter struct {
 
 	// Points to a parameter within a control, to which the contained value will be assigned.
 	ParamId string `xml:"param-id,attr,omitempty" json:"paramId,omitempty"`

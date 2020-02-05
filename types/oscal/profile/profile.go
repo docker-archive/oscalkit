@@ -95,7 +95,7 @@ type Group struct {
 type Modify struct {
 
 	// A parameter setting, to be propagated to points of insertion
-	Settings []Set `xml:"set,omitempty" json:"settings,omitempty"`
+	ParameterSettings []SetParameter `xml:"set-parameter,omitempty" json:"parameter-settings,omitempty"`
 	// An Alter element specifies changes to be made to an included control when a profile is resolved.
 	Alterations []Alter `xml:"alter,omitempty" json:"alterations,omitempty"`
 }
@@ -123,7 +123,7 @@ type Exclude struct {
 }
 
 // A parameter setting, to be propagated to points of insertion
-type Set struct {
+type SetParameter struct {
 
 	// Indicates the value of the 'id' flag on a target parameter; i.e. which parameter to set
 	ParamId string `xml:"param-id,attr,omitempty" json:"paramId,omitempty"`
