@@ -67,7 +67,7 @@ func ProcessAlterations(alterations []profile.Alter, c *catalog.Catalog) *catalo
 }
 
 // ProcessSetParam processes set-param of a profile
-func ProcessSetParam(setParams []profile.Set, c *catalog.Catalog, catalogHelper impl.Catalog) *catalog.Catalog {
+func ProcessSetParam(setParams []profile.SetParameter, c *catalog.Catalog, catalogHelper impl.Catalog) *catalog.Catalog {
 	for _, sp := range setParams {
 		ctrlID := catalogHelper.GetControl(sp.ParamId)
 		for i, g := range c.Groups {
