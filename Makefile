@@ -20,12 +20,6 @@ generate:
 
 test:
 	@echo "Running Oscalkit test Utility"
-	@sh test_util/RunTest.sh -p test_util/artifacts/NIST_SP-800-53_rev4_HIGH-baseline_profile.xml
-	@sh test_util/RunTest.sh -p test_util/artifacts/NIST_SP-800-53_rev4_MODERATE-baseline_profile.xml
-	@sh test_util/RunTest.sh -p test_util/artifacts/NIST_SP-800-53_rev4_LOW-baseline_profile.xml
-	@sh test_util/RunTest.sh -p test_util/artifacts/FedRAMP_HIGH-baseline_profile.xml
-	@sh test_util/RunTest.sh -p test_util/artifacts/FedRAMP_MODERATE-baseline_profile.xml
-	@sh test_util/RunTest.sh -p test_util/artifacts/FedRAMP_LOW-baseline_profile.xml
 	@echo "Running remaining tests"
 	@go test -race -coverprofile=coverage.txt -covermode=atomic -v $(shell go list ./... | grep -v "/vendor/\|/test_util/src")
 

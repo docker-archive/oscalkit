@@ -3,34 +3,43 @@ package metaschema
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/iancoleman/strcase"
 	"net/url"
+	"sort"
+	"strings"
 )
 
 //go:generate go run generate.go
 
 // ...
 const (
-	AsBoolean As = "boolean"
-	AsEmpty   As = "empty"
-	AsString  As = "string"
-	AsMixed   As = "mixed"
+	AsTypeBoolean         AsType = "boolean"
+	AsTypeEmpty           AsType = "empty"
+	AsTypeString          AsType = "string"
+	AsTypeMixed           AsType = "mixed"
+	AsTypeMarkupLine      AsType = "markup-line"
+	AsTypeMarkupMultiLine AsType = "markup-multiline"
+	AsTypeDate            AsType = "date"
+	AsTypeDateTimeTZ      AsType = "dateTime-with-timezone"
+	AsTypeNCName          AsType = "NCName"
+	AsTypeEmail           AsType = "email"
+	AsTypeURI             AsType = "uri"
+	AsTypeBase64          AsType = "base64Binary"
 
 	ShowDocsXML     ShowDocs = "xml"
 	ShowDocsJSON    ShowDocs = "json"
 	ShowDocsXMLJSON ShowDocs = "xml json"
 )
 
-var FieldConstraints = []As{
-	AsBoolean,
-	AsEmpty,
-	AsString,
-	AsMixed,
-}
-
 var ShowDocsOptions = []ShowDocs{
 	ShowDocsXML,
 	ShowDocsJSON,
 	ShowDocsXMLJSON,
+}
+
+type GoType interface {
+	GoName() string
+	GetMetaschema() *Metaschema
 }
 
 // Metaschema is the root metaschema element
@@ -51,7 +60,7 @@ type Metaschema struct {
 	Remarks *Remarks `xml:"remarks,omitempty"`
 
 	// Import is a URI to an external metaschema
-	Import *Import `xml:"import,omitempty"`
+	Import []Import `xml:"import"`
 
 	// DefineAssembly is one or more assembly definitions
 	DefineAssembly []DefineAssembly `xml:"define-assembly"`
@@ -62,7 +71,180 @@ type Metaschema struct {
 	// DefineFlag is one or more flag definitions
 	DefineFlag []DefineFlag `xml:"define-flag"`
 
-	ImportedMetaschema *Metaschema
+	ImportedMetaschema []Metaschema
+	Dependencies       map[string]GoType
+}
+
+func (metaschema *Metaschema) ImportedDependencies() []*Metaschema {
+	result := make(map[string]*Metaschema)
+	for _, dep := range metaschema.Dependencies {
+		m := dep.GetMetaschema()
+		result[m.GoPackageName()] = m
+	}
+
+	ret := make([]*Metaschema, 0, len(result))
+	for _, v := range result {
+		ret = append(ret, v)
+	}
+	sort.Slice(ret, func(i, j int) bool {
+		return strings.Compare(ret[i].GoPackageName(), ret[j].GoPackageName()) > 0
+	})
+	return ret
+}
+
+func (metaschema *Metaschema) registerDependency(name string, dependency GoType) {
+	if dependency.GetMetaschema() != metaschema {
+		if metaschema.Dependencies == nil {
+			metaschema.Dependencies = make(map[string]GoType)
+		}
+		if _, ok := metaschema.Dependencies[name]; !ok {
+			metaschema.Dependencies[name] = dependency
+		}
+	}
+}
+
+func (metaschema *Metaschema) linkAssemblies(list []Assembly) error {
+	var err error
+	for i, a := range list {
+		if a.Ref != "" {
+			a.Def, err = metaschema.GetDefineAssembly(a.Ref)
+			if err != nil {
+				return err
+			}
+			a.Metaschema = metaschema
+			metaschema.registerDependency(a.Ref, a.Def)
+			list[i] = a
+		}
+	}
+	return nil
+}
+
+func (metaschema *Metaschema) linkFields(list []Field) error {
+	var err error
+	for i, f := range list {
+		if f.Ref != "" {
+			f.Def, err = metaschema.GetDefineField(f.Ref)
+			if err != nil {
+				return err
+			}
+			f.Metaschema = metaschema
+			metaschema.registerDependency(f.Ref, f.Def)
+			list[i] = f
+		}
+	}
+	return nil
+}
+
+func (metaschema *Metaschema) linkFlags(list []Flag) error {
+	var err error
+	for i, f := range list {
+		if f.Ref != "" {
+			f.Def, err = metaschema.GetDefineFlag(f.Ref)
+			if err != nil {
+				return err
+			}
+			f.Metaschema = metaschema
+			list[i] = f
+		}
+	}
+	return nil
+}
+
+func (metaschema *Metaschema) LinkDefinitions() error {
+	var err error
+	for _, da := range metaschema.DefineAssembly {
+		if err = metaschema.linkFlags(da.Flags); err != nil {
+			return err
+		}
+		if err = metaschema.linkAssemblies(da.Model.Assembly); err != nil {
+			return err
+		}
+		if err = metaschema.linkFields(da.Model.Field); err != nil {
+			return err
+		}
+		for _, c := range da.Model.Choice {
+			if err = metaschema.linkAssemblies(c.Assembly); err != nil {
+				return err
+			}
+			if err = metaschema.linkFields(c.Field); err != nil {
+				return err
+			}
+		}
+	}
+
+	for _, df := range metaschema.DefineField {
+		if err = metaschema.linkFlags(df.Flags); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (metaschema *Metaschema) GetDefineField(name string) (*DefineField, error) {
+	for _, v := range metaschema.DefineField {
+		if name == v.Name {
+			if v.Metaschema == nil {
+				v.Metaschema = metaschema
+			}
+			return &v, nil
+		}
+	}
+	for _, m := range metaschema.ImportedMetaschema {
+		f, err := m.GetDefineField(name)
+		if err == nil {
+			return f, err
+		}
+	}
+	return nil, fmt.Errorf("Could not find define-field element with name='%s'.", name)
+}
+
+func (metaschema *Metaschema) GetDefineAssembly(name string) (*DefineAssembly, error) {
+	for _, v := range metaschema.DefineAssembly {
+		if name == v.Name {
+			if v.Metaschema == nil {
+				v.Metaschema = metaschema
+			}
+			return &v, nil
+		}
+	}
+	for _, m := range metaschema.ImportedMetaschema {
+		a, err := m.GetDefineAssembly(name)
+		if err == nil {
+			return a, err
+		}
+	}
+	return nil, fmt.Errorf("Could not find define-assembly element with name='%s'.", name)
+}
+
+func (metaschema *Metaschema) GetDefineFlag(name string) (*DefineFlag, error) {
+	for _, v := range metaschema.DefineFlag {
+		if name == v.Name {
+			if v.Metaschema == nil {
+				v.Metaschema = metaschema
+			}
+			return &v, nil
+		}
+	}
+	for _, m := range metaschema.ImportedMetaschema {
+		f, err := m.GetDefineFlag(name)
+		if err == nil {
+			return f, err
+		}
+	}
+	return nil, fmt.Errorf("Could not find define-flag element with name='%s'.", name)
+}
+
+func (metaschema *Metaschema) GoPackageName() string {
+	return strings.ReplaceAll(strings.ToLower(metaschema.Root), "-", "_")
+}
+
+func (Metaschema *Metaschema) ContainsRootElement() bool {
+	for _, v := range Metaschema.DefineAssembly {
+		if v.RepresentsRootElement() {
+			return true
+		}
+	}
+	return false
 }
 
 // DefineAssembly is a definition for for an object or element that contains
@@ -79,6 +261,23 @@ type DefineAssembly struct {
 	Remarks     *Remarks  `xml:"remarks"`
 	Model       *Model    `xml:"model"`
 	Examples    []Example `xml:"example"`
+	Metaschema  *Metaschema
+}
+
+func (da *DefineAssembly) GoName() string {
+	return strcase.ToCamel(da.Name)
+}
+
+func (da *DefineAssembly) RepresentsRootElement() bool {
+	return da.Name == "catalog" || da.Name == "profile" || da.Name == "declarations" || da.Name == "system-security-plan"
+}
+
+func (a *DefineAssembly) GoComment() string {
+	return handleMultiline(a.Description)
+}
+
+func (a *DefineAssembly) GetMetaschema() *Metaschema {
+	return a.Metaschema
 }
 
 type DefineField struct {
@@ -91,28 +290,56 @@ type DefineField struct {
 	Description string    `xml:"description"`
 	Remarks     *Remarks  `xml:"remarks"`
 	Examples    []Example `xml:"example"`
-	As          As        `xml:"as"`
+	AsType      AsType    `xml:"as-type,attr"`
+	Metaschema  *Metaschema
+}
+
+func (df *DefineField) GoName() string {
+	return strcase.ToCamel(df.Name)
+}
+
+func (df *DefineField) RequiresPointer() bool {
+	return len(df.Flags) > 0 || df.IsMarkup()
+}
+
+func (f *DefineField) GoComment() string {
+	return handleMultiline(f.Description)
+}
+
+func (df *DefineField) GetMetaschema() *Metaschema {
+	return df.Metaschema
+}
+
+func (df *DefineField) IsMarkup() bool {
+	return df.AsType == AsTypeMarkupMultiLine
 }
 
 type DefineFlag struct {
 	Name     string   `xml:"name,attr"`
-	Datatype string   `xml:"datatype,attr"`
+	AsType   datatype `xml:"as-type,attr"`
 	ShowDocs ShowDocs `xml:"show-docs,attr"`
 
 	FormalName  string    `xml:"formal-name"`
 	Description string    `xml:"description"`
 	Remarks     *Remarks  `xml:"remarks"`
 	Examples    []Example `xml:"example"`
+	Metaschema  *Metaschema
+}
+
+func (df *DefineFlag) GoName() string {
+	return strcase.ToCamel(df.Name)
+}
+
+func (df *DefineFlag) GetMetaschema() *Metaschema {
+	return df.Metaschema
 }
 
 type Model struct {
-	Assembly   []Assembly   `xml:"assembly"`
-	Assemblies []Assemblies `xml:"assemblies"`
-	Field      []Field      `xml:"field"`
-	Fields     []Fields     `xml:"fields"`
-	Choice     []Choice     `xml:"choice"`
-	Prose      *struct{}    `xml:"prose"`
-	Any        *struct{}    `xml:"any"`
+	Assembly []Assembly `xml:"assembly"`
+	Field    []Field    `xml:"field"`
+	Choice   []Choice   `xml:"choice"`
+	Prose    *struct{}  `xml:"prose"`
+	Any      *struct{}  `xml:"any"`
 }
 
 type Assembly struct {
@@ -120,15 +347,56 @@ type Assembly struct {
 
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
+	Ref         string   `xml:"ref,attr"`
+	GroupAs     *GroupAs `xml:"group-as"`
+	Def         *DefineAssembly
+	Metaschema  *Metaschema
 }
 
-type Assemblies struct {
-	Named   string `xml:"named,attr"`
-	GroupAs string `xml:"group-as,attr"`
-	Address string `xml:"address,attr"`
+func (a *Assembly) GoComment() string {
+	if a.Description != "" {
+		return handleMultiline(a.Description)
+	}
+	return a.Def.GoComment()
+}
 
-	Description string   `xml:"description"`
-	Remarks     *Remarks `xml:"remarks"`
+func (a *Assembly) GoName() string {
+	if a.Named != "" {
+		return strcase.ToCamel(a.Named)
+	}
+	return a.Def.GoName()
+}
+
+func (a *Assembly) GoMemLayout() string {
+	if a.GroupAs != nil {
+		return "[]"
+	}
+	return "*"
+}
+
+func (a *Assembly) JsonName() string {
+	if a.GroupAs != nil {
+		return a.GroupAs.Name
+	}
+	return strcase.ToLowerCamel(a.XmlName())
+}
+
+func (a *Assembly) XmlName() string {
+	if a.Named != "" {
+		return a.Named
+	} else {
+		return a.Def.Name
+	}
+}
+
+func (a *Assembly) GoPackageName() string {
+	if a.Ref == "" {
+		return ""
+	} else if a.Def.Metaschema == a.Metaschema {
+		return ""
+	} else {
+		return a.Def.Metaschema.GoPackageName() + "."
+	}
 }
 
 type Field struct {
@@ -137,31 +405,124 @@ type Field struct {
 
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
+	Ref         string   `xml:"ref,attr"`
+	GroupAs     *GroupAs `xml:"group-as"`
+	Def         *DefineField
+	Metaschema  *Metaschema
 }
 
-type Fields struct {
-	Named   string `xml:"named,attr"`
-	GroupAs string `xml:"group-as,attr"`
+func (f *Field) GoComment() string {
+	if f.Description != "" {
+		return handleMultiline(f.Description)
+	}
+	return f.Def.GoComment()
+}
 
-	Description string   `xml:"description"`
-	Remarks     *Remarks `xml:"remarks"`
+func (f *Field) RequiresPointer() bool {
+	return f.Def.RequiresPointer()
+}
+
+func (f *Field) GoName() string {
+	if f.Named != "" {
+		return strcase.ToCamel(f.Named)
+	}
+	return f.Def.GoName()
+}
+
+func (f *Field) GoPackageName() string {
+	if f.Ref == "" {
+		return ""
+	} else if f.Def.Metaschema == f.Metaschema {
+		return ""
+	} else {
+		return f.Def.Metaschema.GoPackageName() + "."
+	}
+}
+
+func (f *Field) GoMemLayout() string {
+	if f.GroupAs != nil {
+		return "[]"
+	} else if f.RequiresPointer() {
+		return "*"
+	}
+	return ""
+}
+
+func (f *Field) JsonName() string {
+	if f.GroupAs != nil {
+		return f.GroupAs.Name
+	}
+	return strcase.ToLowerCamel(f.XmlName())
+}
+
+func (f *Field) XmlName() string {
+	if f.Named != "" {
+		return f.Named
+	} else {
+		return f.Def.Name
+	}
 }
 
 type Flag struct {
-	Name     string `xml:"name,attr"`
-	Datatype string `xml:"datatype,attr"`
-	Required string `xml:"required,attr"`
+	Name     string   `xml:"name,attr"`
+	AsType   datatype `xml:"as-type,attr"`
+	Required string   `xml:"required,attr"`
 
 	Description string   `xml:"description"`
 	Remarks     *Remarks `xml:"remarks"`
 	Values      []Value  `xml:"value"`
+	Ref         string   `xml:"ref,attr"`
+	Def         *DefineFlag
+	Metaschema  *Metaschema
+}
+
+func (f *Flag) GoComment() string {
+	if f.Description != "" {
+		return handleMultiline(f.Description)
+	}
+	return handleMultiline(f.Def.Description)
+}
+
+func (f *Flag) GoDatatype() (string, error) {
+	dt := f.AsType
+	if dt == "" {
+		if f.Ref == "" && (f.Name == "position" || f.Name == "asset-id" || f.Name == "use" || f.Name == "system") {
+			// workaround bug: inline definition without type hint https://github.com/usnistgov/OSCAL/pull/570
+			return "string", nil
+		}
+		dt = f.Def.AsType
+	}
+
+	if goDatatypeMap[dt] == "" {
+		return "", fmt.Errorf("Unknown as-type='%s' found.", dt)
+	}
+	return goDatatypeMap[dt], nil
+}
+
+func (f *Flag) GoName() string {
+	if f.Name != "" {
+		return strcase.ToCamel(f.Name)
+	}
+	return f.Def.GoName()
+}
+
+func (f *Flag) JsonName() string {
+	return strcase.ToLowerCamel(f.XmlName())
+}
+func (f *Flag) XmlName() string {
+	if f.Name != "" {
+		return f.Name
+	}
+	return f.Def.Name
 }
 
 type Choice struct {
-	Field      []Field      `xml:"field"`
-	Fields     []Fields     `xml:"fields"`
-	Assembly   []Assembly   `xml:"assembly"`
-	Assemblies []Assemblies `xml:"assemblies"`
+	Field    []Field    `xml:"field"`
+	Assembly []Assembly `xml:"assembly"`
+}
+
+type GroupAs struct {
+	Name string `xml:"name,attr"`
 }
 
 type Import struct {
@@ -268,20 +629,7 @@ func (h *Href) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
 	return xml.Attr{Name: name}, nil
 }
 
-type As string
-
-func (a As) UnmarshalXMLAttr(attr xml.Attr) error {
-	as := As(attr.Value)
-
-	for _, fieldConstraint := range FieldConstraints {
-		if as == fieldConstraint {
-			a = as
-			return nil
-		}
-	}
-
-	return fmt.Errorf("Field constraint \"%s\" is not a valid constraint", attr.Value)
-}
+type AsType string
 
 type ShowDocs string
 
@@ -296,4 +644,33 @@ func (sd ShowDocs) UnmarshalXMLAttr(attr xml.Attr) error {
 	}
 
 	return fmt.Errorf("Show docs option \"%s\" is not a valid option", attr.Value)
+}
+
+type datatype string
+
+const (
+	datatypeString             datatype = "string"
+	datatypeIDRef              datatype = "IDREF"
+	datatypeNCName             datatype = "NCName"
+	datatypeNMToken            datatype = "NMTOKEN"
+	datatypeID                 datatype = "ID"
+	datatypeAnyURI             datatype = "anyURI"
+	datatypeURIRef             datatype = "uri-reference"
+	datatypeURI                datatype = "uri"
+	datatypeNonNegativeInteger datatype = "nonNegativeInteger"
+)
+
+var goDatatypeMap = map[datatype]string{
+	datatypeString:             "string",
+	datatypeIDRef:              "string",
+	datatypeNCName:             "string",
+	datatypeNMToken:            "string",
+	datatypeID:                 "string",
+	datatypeURIRef:             "string",
+	datatypeURI:                "string",
+	datatypeNonNegativeInteger: "uint64",
+}
+
+func handleMultiline(comment string) string {
+	return strings.ReplaceAll(comment, "\n", "\n // ")
 }

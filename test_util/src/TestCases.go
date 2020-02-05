@@ -9,8 +9,8 @@ import (
 	"github.com/fatih/color"
 )
 
-// SecurityControlsSubcontrolCheck is a test to verify that all controls from the catalog are being mapped correctly
-func SecurityControlsSubcontrolCheck(check []catalog.Catalog, ProfileFile string) error {
+// SecurityControlsControlCheck is a test to verify that all controls from the catalog are being mapped correctly
+func SecurityControlsControlCheck(check []catalog.Catalog, ProfileFile string) error {
 
 	codeGeneratedControls := ProtocolsMapping(check)
 
@@ -33,11 +33,11 @@ func SecurityControlsSubcontrolCheck(check []catalog.Catalog, ProfileFile string
 		println("Go file control & sub-control count: ", Count(codeGeneratedControls, "controls"))
 		println("Profile control & sub-control count: ", Count(profileControlsDetails, "controls"))
 	} else if Count(codeGeneratedControls, "controls") > Count(profileControlsDetails, "controls") {
-		color.Red("Controls & Subcontrols in go file are greater in number then present in profile")
+		color.Red("Controls & Controls in go file are greater in number then present in profile")
 		println("Go file control & sub-control count: ", Count(codeGeneratedControls, "controls"))
 		println("Profile control & sub-control count: ", Count(profileControlsDetails, "controls"))
 	} else if Count(codeGeneratedControls, "controls") < Count(profileControlsDetails, "controls") {
-		color.Red("Controls & Subcontrols in profile are greater in number then present in go file")
+		color.Red("Controls & Controls in profile are greater in number then present in go file")
 		println("Go file control & sub-control count: ", Count(codeGeneratedControls, "controls"))
 		println("Profile control & sub-control count: ", Count(profileControlsDetails, "controls"))
 	}

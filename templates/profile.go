@@ -36,7 +36,7 @@ var ApplicableProfileControls = profile.Profile{
 						{{range .Include.IdSelectors}}
 							{
 									ControlId: "{{.ControlId}}",
-									SubcontrolId: "{{.SubcontrolId}}",
+									ControlId: "{{.ControlId}}",
 							},
 						{{end}}
 

@@ -9,7 +9,6 @@ import (
 	"sync"
 
 	"github.com/docker/oscalkit/types/oscal"
-	"github.com/docker/oscalkit/types/oscal/catalog"
 	"github.com/docker/oscalkit/types/oscal/profile"
 )
 
@@ -27,8 +26,8 @@ func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, err
 
 	if p.Modify == nil {
 		p.Modify = &profile.Modify{
-			Alterations:   []profile.Alter{},
-			ParamSettings: []profile.SetParam{},
+			Alterations:       []profile.Alter{},
+			ParameterSettings: []profile.SetParameter{},
 		}
 	}
 	for _, alt := range p.Modify.Alterations {
@@ -37,19 +36,19 @@ func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, err
 		}
 	}
 	for _, imp := range p.Imports {
-		err := ValidateHref(imp.Href)
+		err := imp.ValidateHref()
 		if err != nil {
 			return nil, false, err
 		}
-		path := imp.Href.String()
-		if isHTTPResource(imp.Href.URL) {
+		path := imp.Href
+		if imp.IsHttpResource() {
 			pathmap.Lock()
-			if v, ok := pathmap.m[imp.Href.String()]; !ok {
-				path, err = GetFilePath(imp.Href.String())
+			if v, ok := pathmap.m[imp.Href]; !ok {
+				path, err = GetFilePath(imp.Href)
 				if err != nil {
 					return nil, false, err
 				}
-				pathmap.m[imp.Href.String()] = path
+				pathmap.m[imp.Href] = path
 			} else {
 				path = v
 			}
@@ -68,7 +67,7 @@ func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, err
 		if o.Profile == nil {
 			continue
 		}
-		p, err = SetBasePath(o.Profile, imp.Href.String())
+		p, err = SetBasePath(o.Profile, imp.Href)
 		if err != nil {
 			return nil, false, err
 		}
@@ -88,10 +87,10 @@ func findAlter(p *profile.Profile, call profile.Call) (*profile.Alter, bool, err
 // EquateAlter equates alter with call
 func EquateAlter(alt profile.Alter, call profile.Call) bool {
 
-	if alt.ControlId == "" && alt.SubcontrolId == call.SubcontrolId {
+	if alt.ControlId == "" && alt.ControlId == call.ControlId {
 		return true
 	}
-	if alt.SubcontrolId == "" && alt.ControlId == call.ControlId {
+	if alt.ControlId == "" && alt.ControlId == call.ControlId {
 		return true
 	}
 	return false
@@ -106,8 +105,8 @@ func GetAlters(p *profile.Profile) ([]profile.Alter, error) {
 			found := false
 			if p.Modify == nil {
 				p.Modify = &profile.Modify{
-					Alterations:   []profile.Alter{},
-					ParamSettings: []profile.SetParam{},
+					Alterations:       []profile.Alter{},
+					ParameterSettings: []profile.SetParameter{},
 				}
 			}
 			for _, alt := range p.Modify.Alterations {
@@ -137,7 +136,7 @@ func GetAlters(p *profile.Profile) ([]profile.Alter, error) {
 // SetBasePath sets up base paths for profiles
 func SetBasePath(p *profile.Profile, parentPath string) (*profile.Profile, error) {
 	for i, x := range p.Imports {
-		err := ValidateHref(x.Href)
+		err := x.ValidateHref()
 		if err != nil {
 			return nil, err
 		}
@@ -146,19 +145,19 @@ func SetBasePath(p *profile.Profile, parentPath string) (*profile.Profile, error
 			return nil, err
 		}
 		// If the import href is http. Do nothing as it doesn't depend on the parent path
-		if isHTTPResource(x.Href.URL) {
+		if x.IsHttpResource() {
 			continue
 		}
 		//if parent is HTTP, and imports are relative, modify imports to http
-		if !isHTTPResource(x.Href.URL) && isHTTPResource(parentURL) {
-			url, err := makeURL(parentURL, x.Href.URL)
+		if isHTTPResource(parentURL) {
+			url, err := makeURL(parentURL, x.Href)
 			if err != nil {
 				return nil, err
 			}
-			p.Imports[i].Href = &catalog.Href{URL: url}
+			p.Imports[i].Href = url.String()
 			continue
 		}
-		path := fmt.Sprintf("%s/%s", path.Dir(parentPath), path.Base(x.Href.String()))
+		path := fmt.Sprintf("%s/%s", path.Dir(parentPath), path.Base(x.Href))
 		path, err = filepath.Abs(path)
 		if err != nil {
 			return nil, err
@@ -167,13 +166,13 @@ func SetBasePath(p *profile.Profile, parentPath string) (*profile.Profile, error
 		if err != nil {
 			return nil, err
 		}
-		p.Imports[i].Href = &catalog.Href{URL: uri}
+		p.Imports[i].Href = uri.String()
 	}
 	return p, nil
 }
 
-func makeURL(url, child *url.URL) (*url.URL, error) {
-	newURL, err := url.Parse(fmt.Sprintf("%s://%s%s/%s", url.Scheme, url.Host, path.Dir(url.Path), child.String()))
+func makeURL(url *url.URL, child string) (*url.URL, error) {
+	newURL, err := url.Parse(fmt.Sprintf("%s://%s%s/%s", url.Scheme, url.Host, path.Dir(url.Path), child))
 	if err != nil {
 		return nil, err
 	}

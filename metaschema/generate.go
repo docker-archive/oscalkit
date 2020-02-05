@@ -15,15 +15,7 @@ import (
 
 const (
 	oscalRepo         = "https://github.com/usnistgov/OSCAL.git"
-	metaschemaBaseDir = "OSCAL/schema/metaschema/%s"
-)
-
-var (
-	pkgName = map[string]string{
-		"catalog":              "catalog",
-		"profile":              "profile",
-		"system-security-plan": "ssp",
-	}
+	metaschemaBaseDir = "OSCAL/src/metaschema/%s"
 )
 
 func main() {
@@ -32,18 +24,22 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cloneCmd := exec.Command("git", "clone", oscalRepo)
+	cloneCmd := exec.Command("git", "clone", "--depth", "1", oscalRepo)
 	if err := cloneCmd.Run(); err != nil {
 		log.Fatal(err)
 	}
 
 	metaschemaPaths := map[string]string{
-		"catalog": "oscal-catalog-metaschema.xml",
-		"profile": "oscal-profile-metaschema.xml",
-		"ssp":     "oscal-ssp-metaschema.xml",
+		"validation_root": "oscal_metadata_metaschema.xml",
+		"nominal_catalog": "oscal_control-common_metaschema.xml",
+		"catalog":         "oscal_catalog_metaschema.xml",
+		"profile":         "oscal_profile_metaschema.xml",
+		"implementation":  "oscal_implementation-common_metaschema.xml",
+		"ssp":             "oscal_ssp_metaschema.xml",
+		"component":       "oscal_component_metaschema.xml",
 	}
 
-	for pkg, metaschemaPath := range metaschemaPaths {
+	for _, metaschemaPath := range metaschemaPaths {
 		f, err := os.Open(fmt.Sprintf(metaschemaBaseDir, metaschemaPath))
 		if err != nil {
 			log.Fatal(err)
@@ -54,7 +50,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		meta.Root = pkg
 
 		if err := metaschema.GenerateTypes(meta); err != nil {
 			log.Fatalf("Error generating go types for metaschema: %s", err)
@@ -76,8 +71,11 @@ func decode(r io.Reader) (*metaschema.Metaschema, error) {
 		return nil, fmt.Errorf("Error decoding metaschema: %s", err)
 	}
 
-	if meta.Import != nil && meta.Import.Href != nil && meta.Import.Href.URL != nil {
-		imf, err := os.Open(fmt.Sprintf(metaschemaBaseDir, meta.Import.Href.URL.String()))
+	for _, imported := range meta.Import {
+		if imported.Href == nil {
+			return nil, fmt.Errorf("import element in %s is missing 'href' attribute", r)
+		}
+		imf, err := os.Open(fmt.Sprintf(metaschemaBaseDir, imported.Href.URL.String()))
 		if err != nil {
 			return nil, err
 		}
@@ -88,8 +86,9 @@ func decode(r io.Reader) (*metaschema.Metaschema, error) {
 			return nil, err
 		}
 
-		meta.ImportedMetaschema = importedMeta
+		meta.ImportedMetaschema = append(meta.ImportedMetaschema, *importedMeta)
 	}
+	err := meta.LinkDefinitions()
 
-	return &meta, nil
+	return &meta, err
 }

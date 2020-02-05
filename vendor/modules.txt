@@ -8,8 +8,6 @@ github.com/konsorten/go-windows-terminal-sequences
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.4
 github.com/mattn/go-isatty
-# github.com/mitchellh/go-wordwrap v1.0.0
-github.com/mitchellh/go-wordwrap
 # github.com/santhosh-tekuri/jsonschema v0.0.0-20181206154329-5d49c9dfc783
 github.com/santhosh-tekuri/jsonschema
 github.com/santhosh-tekuri/jsonschema/loader

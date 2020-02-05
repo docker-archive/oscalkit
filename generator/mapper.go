@@ -32,7 +32,7 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 	logrus.Debug("processing alteration and parameters... \nmapping to controls...")
 	// Get first import of the profile (which is a catalog)
 	for _, profileImport := range profileArg.Imports {
-		err := ValidateHref(profileImport.Href)
+		err := profileImport.ValidateHref()
 		if err != nil {
 			return nil, err
 		}
@@ -43,14 +43,14 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 			// ForEach Import's Href, Fetch the Catalog JSON file
-			getCatalogForImport(ctx, profileImport, c, e, profileImport.Href.String())
+			getCatalogForImport(ctx, profileImport, c, e, profileImport.Href)
 			select {
 			case importedCatalog := <-c:
 				// Prepare a new catalog object to merge into the final List of OutputCatalogs
 				if profileArg.Modify != nil {
 					nc := impl.NISTCatalog{}
 					importedCatalog = ProcessAlterations(alterations, importedCatalog)
-					importedCatalog = ProcessSetParam(profileArg.Modify.ParamSettings, importedCatalog, &nc)
+					importedCatalog = ProcessSetParam(profileArg.Modify.ParameterSettings, importedCatalog, &nc)
 				}
 				newCatalog, err := GetMappedCatalogControlsFromImport(importedCatalog, profileImport, &catalogHelper)
 				if err != nil {
@@ -83,24 +83,24 @@ func CreateCatalogsFromProfile(profileArg *profile.Profile) ([]*catalog.Catalog,
 		}
 	}
 }
-func getSubControl(call profile.Call, ctrls []catalog.Control, helper impl.Catalog) (catalog.Subcontrol, error) {
+func getSubControl(call profile.Call, ctrls []catalog.Control, helper impl.Catalog) (catalog.Control, error) {
 	for _, ctrl := range ctrls {
-		if ctrl.Id == helper.GetControl(call.SubcontrolId) {
-			for _, subctrl := range ctrl.Subcontrols {
-				if subctrl.Id == call.SubcontrolId {
+		if ctrl.Id == helper.GetControl(call.ControlId) {
+			for _, subctrl := range ctrl.Controls {
+				if subctrl.Id == call.ControlId {
 					return subctrl, nil
 				}
 			}
 		}
 	}
-	return catalog.Subcontrol{}, fmt.Errorf("could not find subcontrol %s in catalog", call.SubcontrolId)
+	return catalog.Control{}, fmt.Errorf("could not find subcontrol %s in catalog", call.ControlId)
 }
 
 // GetMappedCatalogControlsFromImport gets mapped controls in catalog per profile import
 func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profileImport profile.Import, catalogHelper impl.Catalog) (catalog.Catalog, error) {
 	newCatalog := catalog.Catalog{
-		Title:  importedCatalog.Title,
-		Groups: []catalog.Group{},
+		Metadata: importedCatalog.Metadata,
+		Groups:   []catalog.Group{},
 	}
 
 	for _, group := range importedCatalog.Groups {
@@ -111,27 +111,27 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 		for _, ctrl := range group.Controls {
 			for _, call := range profileImport.Include.IdSelectors {
 				if call.ControlId == "" {
-					if strings.ToLower(ctrl.Id) == strings.ToLower(catalogHelper.GetControl(call.SubcontrolId)) {
+					if strings.ToLower(ctrl.Id) == strings.ToLower(catalogHelper.GetControl(call.ControlId)) {
 						ctrlExistsInGroup := false
 						sc, err := getSubControl(call, group.Controls, &impl.NISTCatalog{})
 						if err != nil {
 							return catalog.Catalog{}, err
 						}
 						for i, mappedCtrl := range newGroup.Controls {
-							if mappedCtrl.Id == strings.ToLower(catalogHelper.GetControl(call.SubcontrolId)) {
+							if mappedCtrl.Id == strings.ToLower(catalogHelper.GetControl(call.ControlId)) {
 								ctrlExistsInGroup = true
-								newGroup.Controls[i].Subcontrols = append(newGroup.Controls[i].Subcontrols, sc)
+								newGroup.Controls[i].Controls = append(newGroup.Controls[i].Controls, sc)
 							}
 						}
 						if !ctrlExistsInGroup {
 							newGroup.Controls = append(newGroup.Controls,
 								catalog.Control{
-									Id:          ctrl.Id,
-									Class:       ctrl.Class,
-									Title:       ctrl.Title,
-									Parameters:  ctrl.Parameters,
-									Parts:       ctrl.Parts,
-									Subcontrols: []catalog.Subcontrol{sc},
+									Id:         ctrl.Id,
+									Class:      ctrl.Class,
+									Title:      ctrl.Title,
+									Parameters: ctrl.Parameters,
+									Parts:      ctrl.Parts,
+									Controls:   []catalog.Control{sc},
 								})
 						}
 					}
@@ -147,12 +147,12 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 					if !ctrlExists {
 						newGroup.Controls = append(newGroup.Controls,
 							catalog.Control{
-								Id:          ctrl.Id,
-								Class:       ctrl.Class,
-								Title:       ctrl.Title,
-								Subcontrols: []catalog.Subcontrol{},
-								Parameters:  ctrl.Parameters,
-								Parts:       ctrl.Parts,
+								Id:         ctrl.Id,
+								Class:      ctrl.Class,
+								Title:      ctrl.Title,
+								Controls:   []catalog.Control{},
+								Parameters: ctrl.Parameters,
+								Parts:      ctrl.Parts,
 							},
 						)
 					}
@@ -168,12 +168,12 @@ func GetMappedCatalogControlsFromImport(importedCatalog *catalog.Catalog, profil
 
 func getCatalogForImport(ctx context.Context, i profile.Import, c chan *catalog.Catalog, e chan error, basePath string) {
 	go func(i profile.Import) {
-		err := ValidateHref(i.Href)
+		err := i.ValidateHref()
 		if err != nil {
 			e <- fmt.Errorf("href cannot be nil")
 			return
 		}
-		path, err := GetFilePath(i.Href.String())
+		path, err := GetFilePath(i.Href)
 		if err != nil {
 			e <- err
 			return

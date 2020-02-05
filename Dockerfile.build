@@ -1,10 +1,10 @@
-FROM golang:1.11 AS race-detector
+FROM golang:1.13 AS race-detector
 WORKDIR /go/src/github.com/docker/oscalkit
 COPY . .
 WORKDIR /go/src/github.com/docker/oscalkit/cli
 RUN go build -race
 
-FROM golang:1.11
+FROM golang:1.13
 ARG GOOS
 ARG GOARCH
 ARG VERSION

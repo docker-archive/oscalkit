@@ -30,8 +30,8 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 			}
 			controls[j] = ctrl
 		}
-		for k, subctrl := range controls[j].Subcontrols {
-			if subctrl.Id == alt.SubcontrolId {
+		for k, subctrl := range controls[j].Controls {
+			if subctrl.Id == alt.ControlId {
 				for _, add := range alt.Additions {
 					for _, p := range add.Parts {
 						appended := false
@@ -50,7 +50,7 @@ func ProcessAddition(alt profile.Alter, controls []catalog.Control) []catalog.Co
 
 				}
 			}
-			controls[j].Subcontrols[k] = subctrl
+			controls[j].Controls[k] = subctrl
 		}
 	}
 	return controls
@@ -67,9 +67,9 @@ func ProcessAlterations(alterations []profile.Alter, c *catalog.Catalog) *catalo
 }
 
 // ProcessSetParam processes set-param of a profile
-func ProcessSetParam(setParams []profile.SetParam, c *catalog.Catalog, catalogHelper impl.Catalog) *catalog.Catalog {
+func ProcessSetParam(setParams []profile.SetParameter, c *catalog.Catalog, catalogHelper impl.Catalog) *catalog.Catalog {
 	for _, sp := range setParams {
-		ctrlID := catalogHelper.GetControl(sp.Id)
+		ctrlID := catalogHelper.GetControl(sp.ParamId)
 		for i, g := range c.Groups {
 			for j, catalogCtrl := range g.Controls {
 				if ctrlID == catalogCtrl.Id {
@@ -77,7 +77,7 @@ func ProcessSetParam(setParams []profile.SetParam, c *catalog.Catalog, catalogHe
 						if len(sp.Constraints) == 0 {
 							continue
 						}
-						c.Groups[i].Controls[j].Parts[k].ModifyProse(sp.Id, sp.Constraints[0].Value)
+						c.Groups[i].Controls[j].Parts[k].ModifyProse(sp.ParamId, sp.Constraints[0].Value)
 					}
 				}
 			}

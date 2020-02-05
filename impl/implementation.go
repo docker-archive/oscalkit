@@ -314,7 +314,7 @@ func (*NISTCatalog) isSubControl(s string) bool {
 }
 
 // GenerateImplementationParameter GenerateImplementationParameter
-func GenerateImplementationParameter(param profile.SetParam, guidance []string) implementation.Parameter {
+func GenerateImplementationParameter(param catalog.Param, guidance []string) implementation.Parameter {
 	return implementation.Parameter{
 		ParameterID: param.Id,
 		PossibleValues: func() []string {
@@ -357,7 +357,7 @@ func getComponentID(componentName string) string {
 func getGuidance(alterations []profile.Alter, paramID string) []string {
 	subControlID := getSubControlIDFromParam(paramID)
 	for _, alter := range alterations {
-		if alter.SubcontrolId == subControlID {
+		if alter.ControlId == subControlID {
 			for _, addition := range alter.Additions {
 				for _, part := range addition.Parts {
 					if part.Class == "guidance" {
@@ -379,8 +379,6 @@ func getSubControlIDFromParam(paramID string) string {
 
 func getGuidanceFromPart(part *catalog.Prose) []string {
 	var guidance []string
-	for _, p := range part.P {
-		guidance = append(guidance, p.Raw)
-	}
+	guidance = append(guidance, part.Raw)
 	return guidance
 }

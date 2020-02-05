@@ -5,11 +5,11 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/docker/oscalkit/generator"
+	"github.com/docker/oscalkit/pkg/oscal_source"
 	"github.com/urfave/cli"
 )
 
@@ -45,23 +45,13 @@ var Catalog = cli.Command{
 		return nil
 	},
 	Action: func(c *cli.Context) error {
-
-		profilePath, err := generator.GetAbsolutePath(profilePath)
-		if err != nil {
-			return cli.NewExitError(fmt.Sprintf("cannot get absolute path, err: %v", err), 1)
-		}
-
-		_, err = os.Stat(profilePath)
-		if err != nil {
-			return cli.NewExitError(fmt.Sprintf("cannot fetch file, err %v", err), 1)
-		}
-		f, err := os.Open(profilePath)
+		os, err := oscal_source.Open(profilePath)
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
-		defer f.Close()
+		defer os.Close()
 
-		profile, err := generator.ReadProfile(f)
+		profile, err := generator.ReadProfile(os.OSCAL())
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
