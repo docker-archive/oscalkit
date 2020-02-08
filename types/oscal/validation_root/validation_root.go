@@ -43,8 +43,12 @@ type Metadata struct {
 	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	// An entry in a sequential list of revisions to the containing document in reverse chronological order (i.e., most recent previous revision first).
+	RevisionHistory []Revision `xml:"revision,omitempty" json:"revision-history,omitempty"`
 	// Defining a role to be assigned to a party
 	Roles []Role `xml:"role,omitempty" json:"roles,omitempty"`
+	// A location, with associated metadata that can be referenced.
+	Locations []Location `xml:"location,omitempty" json:"locations,omitempty"`
 	// A responsible entity, either singular (an organization or person) or collective (multiple persons)
 	Parties []Party `xml:"party,omitempty" json:"parties,omitempty"`
 	// A reference to a set of organizations or persons that have responsibility for performing a referenced role relative to the parent context.
@@ -54,10 +58,29 @@ type Metadata struct {
 // A collection of citations and resource references.
 type BackMatter struct {
 
-	// A citation to resources, either external or internal (by means of internal cross-reference).
-	Citations []Citation `xml:"citation,omitempty" json:"citations,omitempty"`
-	// A resource associated with the present document.
+	// A resource associated with the present document, which may be a pointer to other data or a citation.
 	Resources []Resource `xml:"resource,omitempty" json:"resources,omitempty"`
+}
+
+// An entry in a sequential list of revisions to the containing document in reverse chronological order (i.e., most recent previous revision first).
+type Revision struct {
+
+	// A title for display and navigation
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
+	// The date and time this document was published.
+	Published Published `xml:"published,omitempty" json:"published,omitempty"`
+	// Date and time of last modification.
+	LastModified LastModified `xml:"last-modified,omitempty" json:"lastModified,omitempty"`
+	// The version of the document content.
+	Version Version `xml:"version,omitempty" json:"version,omitempty"`
+	// OSCAL model version.
+	OscalVersion OscalVersion `xml:"oscal-version,omitempty" json:"oscalVersion,omitempty"`
+	// A value with a name, attributed to the containing control, part, or group.
+	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
+	// A reference to a local or remote resource
+	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
+	// Additional commentary on the parent item.
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 }
 
 // A name/value pair with optional explanatory remarks.
@@ -74,6 +97,30 @@ type Annotation struct {
 
 	// Additional commentary on the parent item.
 	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+}
+
+// A location, with associated metadata that can be referenced.
+type Location struct {
+
+	// Unique identifier of the containing object
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
+
+	// Email address
+	EmailAddresses []Email `xml:"email,omitempty" json:"email-addresses,omitempty"`
+	// Contact number by telephone
+	TelephoneNumbers []Phone `xml:"phone,omitempty" json:"telephone-numbers,omitempty"`
+	// URL for web site or Internet presence
+	URLs []Url `xml:"url,omitempty" json:"URLs,omitempty"`
+	// A value with a name, attributed to the containing control, part, or group.
+	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
+	// A reference to a local or remote resource
+	Links []Link `xml:"link,omitempty" json:"links,omitempty"`
+	// Additional commentary on the parent item.
+	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	// A postal address.
+	Address *Address `xml:"address,omitempty" json:"address,omitempty"`
+	// A name/value pair with optional explanatory remarks.
+	Annotations []Annotation `xml:"annotation,omitempty" json:"annotations,omitempty"`
 }
 
 // A responsible entity, either singular (an organization or person) or collective (multiple persons)
@@ -109,6 +156,8 @@ type Person struct {
 	PersonIds []PersonId `xml:"person-id,omitempty" json:"person-ids,omitempty"`
 	// An identifier for an organization using a designated scheme.
 	OrganizationIds []OrgId `xml:"org-id,omitempty" json:"organization-ids,omitempty"`
+	// References a  defined in .
+	LocationIds []LocationId `xml:"location-id,omitempty" json:"location-ids,omitempty"`
 	// Email address
 	EmailAddresses []Email `xml:"email,omitempty" json:"email-addresses,omitempty"`
 	// Contact number by telephone
@@ -136,6 +185,8 @@ type Org struct {
 	ShortName ShortName `xml:"short-name,omitempty" json:"shortName,omitempty"`
 	// An identifier for an organization using a designated scheme.
 	OrganizationIds []OrgId `xml:"org-id,omitempty" json:"organization-ids,omitempty"`
+	// References a  defined in .
+	LocationIds []LocationId `xml:"location-id,omitempty" json:"location-ids,omitempty"`
 	// Email address
 	EmailAddresses []Email `xml:"email,omitempty" json:"email-addresses,omitempty"`
 	// Contact number by telephone
@@ -184,22 +235,43 @@ type Address struct {
 	Country Country `xml:"country,omitempty" json:"country,omitempty"`
 }
 
-// A resource associated with the present document.
+// A container in which a set of bibliographic information can included. The model of this information is undefined by OSCAL.
+type Biblio struct {
+}
+
+// A resource associated with the present document, which may be a pointer to other data or a citation.
 type Resource struct {
 
 	// Unique identifier of the containing object
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
 
+	// A title for display and navigation
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A short textual description
 	Desc Desc `xml:"desc,omitempty" json:"desc,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
+	// A document identifier qualified by an identifier .
+	DocumentIds []DocId `xml:"doc-id,omitempty" json:"document-ids,omitempty"`
 	//
-	Base64 *Base64 `xml:"base64,omitempty" json:"base64,omitempty"`
+	Attachments []Base64 `xml:"base64,omitempty" json:"attachments,omitempty"`
 	// Additional commentary on the parent item.
 	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
+	// A citation consisting of end note text and optional structured bibliographic data.
+	Citation *Citation `xml:"citation,omitempty" json:"citation,omitempty"`
 	// A pointer to an external copy of a document with optional hash for verification
 	Rlinks []Rlink `xml:"rlink,omitempty" json:"rlinks,omitempty"`
+}
+
+// A citation consisting of end note text and optional structured bibliographic data.
+type Citation struct {
+
+	// A line of textual content whose semantic is determined by the context of use.
+	Text Text `xml:"text,omitempty" json:"text,omitempty"`
+	// A value with a name, attributed to the containing control, part, or group.
+	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
+	// A container in which a set of bibliographic information can included. The model of this information is undefined by OSCAL.
+	Biblio *Biblio `xml:"biblio,omitempty" json:"biblio,omitempty"`
 }
 
 // Defining a role to be assigned to a party
@@ -240,24 +312,6 @@ type ResponsibleParty struct {
 	Remarks *Remarks `xml:"remarks,omitempty" json:"remarks,omitempty"`
 	// A name/value pair with optional explanatory remarks.
 	Annotations []Annotation `xml:"annotation,omitempty" json:"annotations,omitempty"`
-}
-
-// A citation to resources, either external or internal (by means of internal cross-reference).
-type Citation struct {
-
-	// Unique identifier of the containing object
-	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-
-	// An address for retrieval of a citation
-	Targets []Target `xml:"target,omitempty" json:"targets,omitempty"`
-	// A title for display and navigation
-	Title Title `xml:"title,omitempty" json:"title,omitempty"`
-	// A short textual description
-	Desc Desc `xml:"desc,omitempty" json:"desc,omitempty"`
-	// A document identifier qualified by an identifier .
-	DocumentIds []DocId `xml:"doc-id,omitempty" json:"document-ids,omitempty"`
-	// A value with a name, attributed to the containing control, part, or group.
-	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
 }
 
 // A reference to a local or remote resource
@@ -311,6 +365,10 @@ type Prop struct {
 	Class string `xml:"class,attr,omitempty" json:"class,omitempty"`
 	Value string `xml:",chardata" json:"value,omitempty"`
 }
+
+// References a  defined in .
+
+type LocationId string
 
 // References a  defined in .
 
@@ -381,6 +439,10 @@ type Url string
 
 type Desc string
 
+// A line of textual content whose semantic is determined by the context of use.
+
+type Text string
+
 // A representation of a cryptographic digest generated over a resource using a hash algorithm.
 type Hash struct {
 	// Method by which a hash is derived
@@ -401,10 +463,6 @@ type Base64 struct {
 	MediaType string `xml:"media-type,attr,omitempty" json:"mediaType,omitempty"`
 	Value     string `xml:",chardata" json:"value,omitempty"`
 }
-
-// An address for retrieval of a citation
-
-type Target string
 
 // A description supporting the parent item.
 
