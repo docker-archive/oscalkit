@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/docker/oscalkit/pkg/oscal/constants"
 	"github.com/docker/oscalkit/types/oscal"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,6 +21,15 @@ type OSCALSource struct {
 func Open(path string) (*OSCALSource, error) {
 	result := OSCALSource{UserPath: path}
 	return &result, result.open()
+}
+
+func OpenFromReader(name string, r io.Reader) (*OSCALSource, error) {
+	s := OSCALSource{UserPath: name}
+	var err error
+	if s.oscal, err = oscal.New(r); err != nil {
+		return nil, fmt.Errorf("Cannot parse file: %v", err)
+	}
+	return &s, nil
 }
 
 func (s *OSCALSource) open() error {
