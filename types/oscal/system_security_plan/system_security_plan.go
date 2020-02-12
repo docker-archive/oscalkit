@@ -96,9 +96,9 @@ type InformationType struct {
 
 	// Unique identifier of the containing object
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-	// The name of the information type.
-	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
+	// A human readable name for the information type. This title should be meaningful within the context of the system.
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A description supporting the parent item.
 	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// An identifier qualified by the given identification  used, such as NIST SP 800-60.
@@ -178,9 +178,9 @@ type LeveragedAuthorization struct {
 
 	// Unique identifier of the containing object
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-	// Identifying the purpose and intended use of the property, part or other object.
-	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
+	// A human readable name for the leveraged authorization in the context of the system.
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
 	Properties []Prop `xml:"prop,omitempty" json:"properties,omitempty"`
 	// A reference to a local or remote resource
@@ -316,9 +316,8 @@ type User struct {
 // Identifies a specific system privilege held by the user, along with an associated description and/or rationale for the privilege.
 type AuthorizedPrivilege struct {
 
-	// The name of the identified privilege.
-	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
-
+	// A human readable name for the privilege.
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A description supporting the parent item.
 	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// Describes a  function performed for a given authorized privilege by this user class.
@@ -330,11 +329,11 @@ type Component struct {
 
 	// A unique identifier for a component.
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-	// The component's human-readable name.
-	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 	// A category describing the purpose of the component.
 	ComponentType string `xml:"component-type,attr,omitempty" json:"componentType,omitempty"`
 
+	// A human readable name for the system component.
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A description of the component, including information about its function.
 	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
@@ -356,9 +355,9 @@ type Service struct {
 
 	// Unique identifier of the containing object
 	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
-	// Identifying the purpose and intended use of the property, part or other object.
-	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
+	// A human readable name for the system service.
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// A description of what the service provides.
 	Description *Description `xml:"description,omitempty" json:"description,omitempty"`
 	// A value with a name, attributed to the containing control, part, or group.
@@ -378,9 +377,13 @@ type Service struct {
 // Information about the protocol used to provide a service.
 type Protocol struct {
 
-	// Identifying the purpose and intended use of the property, part or other object.
+	// Unique identifier of the containing object
+	Id string `xml:"id,attr,omitempty" json:"id,omitempty"`
+	// The short name of the protocol (e.g., TLS).
 	Name string `xml:"name,attr,omitempty" json:"name,omitempty"`
 
+	// A human readable name for the protocol (e.g., Transport Layer Security).
+	Title Title `xml:"title,omitempty" json:"title,omitempty"`
 	// Where applicable this is the IPv4 port range on which the service operates.
 	PortRanges []PortRange `xml:"port-range,omitempty" json:"port-ranges,omitempty"`
 }
