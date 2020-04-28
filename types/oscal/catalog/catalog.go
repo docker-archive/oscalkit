@@ -17,12 +17,14 @@ type Catalog struct {
 
 	// Provides information about the publication and availability of the containing document.
 	Metadata *Metadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
-	// Back matter including references and resources.
-	BackMatter *BackMatter `xml:"back-matter,omitempty" json:"backMatter,omitempty"`
-	// A group of controls, or of groups of controls.
-	Groups []Group `xml:"group,omitempty" json:"groups,omitempty"`
+	// Parameters provide a mechanism for the dynamic assignment of value(s) in a control.
+	Parameters []Param `xml:"param,omitempty" json:"parameters,omitempty"`
 	// A structured information object representing a security or privacy control. Each security or privacy control within the Catalog is defined by a distinct control instance.
 	Controls []Control `xml:"control,omitempty" json:"controls,omitempty"`
+	// A group of controls, or of groups of controls.
+	Groups []Group `xml:"group,omitempty" json:"groups,omitempty"`
+	// Back matter including references and resources.
+	BackMatter *BackMatter `xml:"back-matter,omitempty" json:"backMatter,omitempty"`
 }
 
 // A group of controls, or of groups of controls.
